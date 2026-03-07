@@ -226,6 +226,11 @@ export const GridSheet = <const C extends readonly ColumnType[]>({
                 (() => {
                     const cornerSpan =
                         (hasTitle ? 1 : 0) + (headers?.length ?? 0);
+                    const canSelectAll =
+                        selectableRowNumbers &&
+                        ((hasTitle && selectableTitles) ||
+                            ((headers?.length ?? 0) > 0 &&
+                                selectableHeaders));
                     return (
                         <div
                             key="select-all"
@@ -234,7 +239,9 @@ export const GridSheet = <const C extends readonly ColumnType[]>({
                             role="columnheader"
                             data-row={fullMinRow}
                             data-col={0}
-                            data-type="selectAll"
+                            {...(canSelectAll
+                                ? { "data-type": "selectAll" }
+                                : {})}
                         />
                     );
                 })()}
