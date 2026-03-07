@@ -52,6 +52,7 @@ describe("SelectCell", () => {
                 value="b"
                 options={options}
                 readOnly={false}
+                editing={false}
                 style={undefined}
                 className={undefined}
                 onChangeValue={vi.fn()}
@@ -69,12 +70,13 @@ describe("NumberCell", () => {
             <NumberCell
                 value={42}
                 readOnly={false}
+                editing={false}
                 style={undefined}
                 className={undefined}
                 onChangeValue={vi.fn()}
             />,
         );
-        const input = screen.getByRole("spinbutton") as HTMLInputElement;
+        const input = screen.getByRole("textbox") as HTMLInputElement;
         expect(input.value).toBe("42");
     });
 });
@@ -85,6 +87,7 @@ describe("TextCell", () => {
             <TextCell
                 value="hello"
                 readOnly={false}
+                editing={false}
                 style={undefined}
                 className={undefined}
                 onChangeValue={vi.fn()}
