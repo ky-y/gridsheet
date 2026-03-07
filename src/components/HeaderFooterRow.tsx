@@ -23,6 +23,7 @@ export function renderHeaderFooterRow(
 ) {
     const cellClassName =
         variant === "header" ? styles.headerCell : styles.footerCell;
+    const cellRole = variant === "header" ? "columnheader" : "gridcell";
 
     const elements: JSX.Element[] = [];
 
@@ -39,6 +40,7 @@ export function renderHeaderFooterRow(
                     cellClassName,
                     selected ? styles.selected : undefined,
                 )}
+                role={cellRole}
                 {...(rowInfo != null
                     ? {
                           "data-row": rowInfo.rowIndex,
@@ -67,6 +69,7 @@ export function renderHeaderFooterRow(
             <div
                 key={`${keyPrefix}-${colIndex}`}
                 style={style}
+                role={cellRole}
                 {...(rowInfo != null
                     ? {
                           "data-row": rowInfo.rowIndex,
@@ -92,6 +95,7 @@ export function renderHeaderFooterRow(
             <div
                 key={`${keyPrefix}-${colIndex}`}
                 className={cellClassName}
+                role={cellRole}
                 {...(rowInfo != null
                     ? {
                           "data-row": rowInfo.rowIndex,
@@ -103,5 +107,9 @@ export function renderHeaderFooterRow(
         );
         colIndex++;
     }
-    return elements;
+    return (
+        <div key={keyPrefix} role="row" style={{ display: "contents" }}>
+            {elements}
+        </div>
+    );
 }
