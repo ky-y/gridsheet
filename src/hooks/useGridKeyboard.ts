@@ -509,19 +509,16 @@ export function useGridKeyboard<C extends readonly ColumnType[]>(
     const paramsRef = useRef(params);
     paramsRef.current = params;
 
-    const handleKeyDown = useCallback(
-        (e: KeyboardEvent<HTMLDivElement>) => {
-            const p = paramsRef.current;
+    const handleKeyDown = useCallback((e: KeyboardEvent<HTMLDivElement>) => {
+        const p = paramsRef.current;
 
-            if (handleEditingKeys(e, p)) return;
-            if (handleCopy(e, p)) return;
-            if (handleDelete(e, p)) return;
-            if (handleEnterEdit(e, p)) return;
-            if (handleCharInput(e, p)) return;
-            handleArrowNavigation(e, p);
-        },
-        [],
-    );
+        if (handleEditingKeys(e, p)) return;
+        if (handleCopy(e, p)) return;
+        if (handleDelete(e, p)) return;
+        if (handleEnterEdit(e, p)) return;
+        if (handleCharInput(e, p)) return;
+        handleArrowNavigation(e, p);
+    }, []);
 
     return handleKeyDown;
 }
