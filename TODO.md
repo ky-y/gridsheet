@@ -14,12 +14,6 @@
 
 ## 設計改善（低優先度）
 
-### 3. ~~セルごとに毎レンダリングで新しい `onChange` 関数が生成~~ ✅
-- `useRef` + `useCallback` で安定した `handleCellChange` を作成し、`RenderCell` に `rowIndex`/`colKey` を渡す形に変更。`memo` が有効に機能するようになった
-
-### 4. ~~ARIA ロールがない~~ ✅
-- コンテナに `role="grid"`、データ行に `role="row"`（`display: contents`）、データセルに `role="gridcell"`、行番号に `role="rowheader"`、タイトル・ヘッダーセルに `role="columnheader"` を追加
-
 ### 5. a11y チェックが `'todo'` モード
 - **ファイル:** `.storybook/preview.ts`
 - アクセシビリティ違反がテストを失敗させない設定のまま
