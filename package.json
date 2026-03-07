@@ -26,8 +26,8 @@
         "test": "vitest",
         "format": "biome format --write",
         "format:check": "biome format",
-        "lint": "biome lint",
-        "lint:check": "biome lint --write",
+        "lint": "biome lint --write",
+        "lint:check": "biome lint",
         "storybook": "storybook dev -p 6006",
         "build-storybook": "storybook build"
     },
