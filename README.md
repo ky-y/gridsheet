@@ -1,35 +1,36 @@
 # @ky-y./gridsheet
 
-React 向けの軽量なグリッドシートコンポーネント。スプレッドシートから計算機能を省いた、データ表示・編集に特化したコンポーネントです。
+A lightweight React grid sheet component — a spreadsheet without formula support, focused on data display and editing.
 
-## 特徴
+## Features
 
-- セル型: テキスト (`string`)、数値 (`number`)、数値文字列 (`numberString`)、チェックボックス (`check`)、セレクトボックス (`select`)
-- セル単位・カラム単位の `readonly` 制御
-- セル単位・カラム単位のスタイル / クラス名指定
-- キーボード操作（矢印キー・Tab・Enter・F2・Escape・Ctrl+C・Backspace/Delete・Ctrl+Arrow）
-- マウスドラッグによる範囲選択
-- クリップボードからのペースト（TSV / 単一値の複数セル展開）
-- ヘッダー / フッター行（セル結合対応）
-- 行番号表示
-- 選択変更コールバック
+- **Cell types**: Text (`string`), Number (`number`), Number string (`numberString`), Checkbox (`check`), Select (`select`)
+- **Read-only control** at cell and column level
+- **Custom styling / class names** at cell and column level
+- **Keyboard navigation**: Arrow keys, Tab, Enter, F2, Escape, Ctrl+C, Backspace/Delete, Ctrl+Arrow
+- **Mouse drag** range selection
+- **Clipboard paste** support (TSV and single-value expansion to multiple cells)
+- **Header / Footer rows** with cell merging
+- **Row numbers** display
+- **Selection change** callback
+- **ARIA grid roles** for screen reader accessibility
 
-## インストール
+## Installation
 
 ```bash
 pnpm add @ky-y./gridsheet
 ```
 
-## 使い方
+## Usage
 
 ```tsx
 import { GridSheet, createCol, type DataType } from "@ky-y./gridsheet";
 import { useState } from "react";
 
 const columns = [
-  createCol("name", "string", { title: "名前", width: 200 }),
-  createCol("age", "number", { title: "年齢", width: 100 }),
-  createCol("active", "check", { title: "有効" }),
+  createCol("name", "string", { title: "Name", width: 200 }),
+  createCol("age", "number", { title: "Age", width: 100 }),
+  createCol("active", "check", { title: "Active" }),
 ] as const;
 
 function App() {
@@ -53,41 +54,41 @@ function App() {
 
 ### `<GridSheet>` Props
 
-| Prop | 型 | 説明 |
-|------|------|------|
-| `columns` | `ColumnType[]` | カラム定義の配列 |
-| `data` | `DataType<C>[]` | 行データの配列 |
-| `headers` | `HeaderFooterCell[][]` | ヘッダー行（省略可） |
-| `footers` | `HeaderFooterCell[][]` | フッター行（省略可） |
-| `configs` | `GridSheetConfigs` | 設定オプション（省略可） |
-| `onChange` | `(data: DataType<C>[]) => void` | データ変更時のコールバック（省略可） |
-| `onSelectionChange` | `(selection: Selection) => void` | 選択変更時のコールバック（省略可） |
-| `className` | `string` | ルート要素に付与するクラス名（省略可） |
+| Prop | Type | Description |
+|------|------|-------------|
+| `columns` | `ColumnType[]` | Array of column definitions |
+| `data` | `DataType<C>[]` | Array of row data |
+| `headers` | `HeaderFooterCell[][]` | Header rows (optional) |
+| `footers` | `HeaderFooterCell[][]` | Footer rows (optional) |
+| `configs` | `GridSheetConfigs` | Configuration options (optional) |
+| `onChange` | `(data: DataType<C>[]) => void` | Callback when data changes (optional) |
+| `onSelectionChange` | `(selection: Selection) => void` | Callback when selection changes (optional) |
+| `className` | `string` | Class name for the root element (optional) |
 
 ### `GridSheetConfigs`
 
-| オプション | デフォルト | 説明 |
-|------|------|------|
-| `showRowNumbers` | `false` | 行番号列を表示する |
-| `selectableTitles` | `false` | タイトル行を選択可能にする |
-| `selectableHeaders` | `false` | ヘッダー行を選択可能にする |
-| `selectableFooters` | `false` | フッター行を選択可能にする |
-| `selectableRowNumbers` | `false` | 行番号列を選択可能にする |
-| `scrollToSelection` | `true` | 選択セルが画面外に出た場合にスクロールする |
+| Option | Default | Description |
+|--------|---------|-------------|
+| `showRowNumbers` | `false` | Show a row number column |
+| `selectableTitles` | `false` | Allow selecting the title row |
+| `selectableHeaders` | `false` | Allow selecting header rows |
+| `selectableFooters` | `false` | Allow selecting footer rows |
+| `selectableRowNumbers` | `false` | Allow selecting the row number column |
+| `scrollToSelection` | `true` | Scroll to keep the selected cell in view |
 
-### セル型
+### Cell Types
 
-| 型 | 値の型 | 説明 |
-|------|------|------|
-| `string` | `string` | テキスト入力 |
-| `number` | `number` | 数値入力（右揃え） |
-| `numberString` | `string` | 数値文字列（`"0010.000"` など、右揃え） |
-| `check` | `boolean` | チェックボックス |
-| `select` | `string` | セレクトボックス（`options` が必要） |
+| Type | Value Type | Description |
+|------|------------|-------------|
+| `string` | `string` | Text input |
+| `number` | `number` | Numeric input (right-aligned) |
+| `numberString` | `string` | Numeric string preserving format, e.g. `"0010.000"` (right-aligned) |
+| `check` | `boolean` | Checkbox |
+| `select` | `string` | Select dropdown (requires `options`) |
 
 ### `CellDataType`
 
-セルの値に直接値を渡す代わりに、`CellDataType` オブジェクトでセル単位の制御が可能です。
+Instead of passing a plain value, you can pass a `CellDataType` object for per-cell control:
 
 ```tsx
 const data = [
@@ -99,34 +100,34 @@ const data = [
 ];
 ```
 
-| プロパティ | 型 | 説明 |
-|------|------|------|
-| `value` | セル型に応じた値 | セルの値 |
-| `readonly` | `boolean` | セル単位の読み取り専用（省略可） |
-| `style` | `CSSProperties` | セル単位のスタイル（省略可） |
-| `className` | `string` | セル単位のクラス名（省略可） |
+| Property | Type | Description |
+|----------|------|-------------|
+| `value` | Value type for the cell type | The cell value |
+| `readonly` | `boolean` | Per-cell read-only flag (optional) |
+| `style` | `CSSProperties` | Per-cell inline style (optional) |
+| `className` | `string` | Per-cell class name (optional) |
 
 ### `createCol(key, type, options?)`
 
-型安全なカラム定義のヘルパー関数です。
+A type-safe helper for creating column definitions.
 
 ```tsx
-createCol("name", "string", { title: "名前", width: 200 });
-createCol("status", "select", { title: "状態", options: [{ label: "有効", value: "active" }] });
+createCol("name", "string", { title: "Name", width: 200 });
+createCol("status", "select", { title: "Status", options: [{ label: "Active", value: "active" }] });
 ```
 
-## 開発
+## Development
 
 ```bash
 pnpm install
-pnpm dev          # Playground 起動
-pnpm storybook    # Storybook 起動
-pnpm test         # テスト実行
-pnpm build        # ライブラリビルド
-pnpm format       # コードフォーマット
-pnpm lint         # Lint（自動修正）
+pnpm dev          # Start playground
+pnpm storybook    # Start Storybook
+pnpm test         # Run tests
+pnpm build        # Build library
+pnpm format       # Format code
+pnpm lint         # Lint (auto-fix)
 ```
 
-## ライセンス
+## License
 
 MIT
