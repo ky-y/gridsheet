@@ -2,6 +2,7 @@ import { describe, expect, it, vi } from "vitest";
 import { renderHook, act } from "@testing-library/react";
 import { useGridMouse } from "./useGridMouse.js";
 import type { GridMouseParams } from "./useGridMouse.js";
+import type { Selection } from "../types.js";
 
 function createParams(
     overrides: Partial<GridMouseParams> = {},
@@ -31,7 +32,7 @@ function makeMouseEvent(
 
 describe("useGridMouse", () => {
     it("selects all on selectAll cell type click", () => {
-        const setSelection = vi.fn((updater: (prev: unknown) => unknown) =>
+        const setSelection = vi.fn((updater: (prev: Selection | null) => Selection | null) =>
             updater(null),
         );
         const onSelectionChange = vi.fn();
@@ -51,7 +52,7 @@ describe("useGridMouse", () => {
     });
 
     it("selects column on title cell click", () => {
-        const setSelection = vi.fn((updater: (prev: unknown) => unknown) =>
+        const setSelection = vi.fn((updater: (prev: Selection | null) => Selection | null) =>
             updater(null),
         );
         const { result } = renderHook(() =>
@@ -70,7 +71,7 @@ describe("useGridMouse", () => {
     });
 
     it("selects columns with span on header cell click", () => {
-        const setSelection = vi.fn((updater: (prev: unknown) => unknown) =>
+        const setSelection = vi.fn((updater: (prev: Selection | null) => Selection | null) =>
             updater(null),
         );
         const { result } = renderHook(() =>
@@ -94,7 +95,7 @@ describe("useGridMouse", () => {
     });
 
     it("selects row on rowNumber cell click", () => {
-        const setSelection = vi.fn((updater: (prev: unknown) => unknown) =>
+        const setSelection = vi.fn((updater: (prev: Selection | null) => Selection | null) =>
             updater(null),
         );
         const { result } = renderHook(() =>
@@ -113,7 +114,7 @@ describe("useGridMouse", () => {
     });
 
     it("selects single cell on regular cell click", () => {
-        const setSelection = vi.fn((updater: (prev: unknown) => unknown) =>
+        const setSelection = vi.fn((updater: (prev: Selection | null) => Selection | null) =>
             updater(null),
         );
         const { result } = renderHook(() =>
@@ -177,7 +178,7 @@ describe("useGridMouse", () => {
 
     it("fires onSelectionChange on mouseUp after drag", () => {
         const onSelectionChange = vi.fn();
-        const setSelection = vi.fn((updater: (prev: unknown) => unknown) => {
+        const setSelection = vi.fn((updater: (prev: Selection | null) => Selection | null) => {
             updater({ start: { row: 0, col: 0 }, end: { row: 0, col: 0 } });
         });
         const { result } = renderHook(() =>
