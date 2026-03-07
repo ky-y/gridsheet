@@ -1,11 +1,11 @@
-import { describe, expect, it, vi, afterEach } from "vitest";
-import { render, screen, cleanup } from "@testing-library/react";
+import { cleanup, render, screen } from "@testing-library/react";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import {
     CheckCell,
     NumberCell,
+    RenderCell,
     SelectCell,
     TextCell,
-    RenderCell,
 } from "./Cell.js";
 
 afterEach(cleanup);
