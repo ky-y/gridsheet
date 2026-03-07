@@ -1,4 +1,10 @@
-import { type MouseEvent, useCallback, useEffect, useRef, useState } from "react";
+import {
+    type MouseEvent,
+    useCallback,
+    useEffect,
+    useRef,
+    useState,
+} from "react";
 import type { CellAddress, Selection } from "../types.js";
 import { getCellAddress } from "../utils/grid.js";
 
