@@ -265,28 +265,30 @@ export const GridSheet = <const C extends readonly ColumnType[]>({
                                             : undefined,
                                     )}
                                 >
-                                    {renderCell(
-                                        col,
-                                        cell.value,
-                                        cell.readonly,
-                                        cell.style,
-                                        cell.className,
-                                        onChange
-                                            ? (newValue) => {
-                                                  const newData = data.map(
-                                                      (r, i) =>
-                                                          i === rowIndex
-                                                              ? ({
-                                                                    ...r,
-                                                                    [col.key]:
-                                                                        newValue,
-                                                                } as DataType<C>)
-                                                              : r,
-                                                  );
-                                                  onChange(newData);
-                                              }
-                                            : undefined,
-                                    )}
+                                    <RenderCell
+                                        col={col}
+                                        value={cell.value}
+                                        isReadonly={cell.readonly}
+                                        cellStyle={cell.style}
+                                        cellClassName={cell.className}
+                                        onChangeValue={
+                                            onChange
+                                                ? (newValue) => {
+                                                      const newData = data.map(
+                                                          (r, i) =>
+                                                              i === rowIndex
+                                                                  ? ({
+                                                                        ...r,
+                                                                        [col.key]:
+                                                                            newValue,
+                                                                    } as DataType<C>)
+                                                                  : r,
+                                                      );
+                                                      onChange(newData);
+                                                  }
+                                                : undefined
+                                        }
+                                    />
                                 </div>
                             );
                         })}
