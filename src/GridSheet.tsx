@@ -1,7 +1,7 @@
 import { Fragment, useEffect, useRef, useState } from "react";
 import { cn } from "@/utils/cn.js";
 import { isSelected, resolveCellData, getCellRaw } from "./utils/grid.js";
-import { renderCell } from "./components/Cell.js";
+import { RenderCell } from "./components/Cell.js";
 import cellStyles from "./components/Cell.module.scss";
 import { renderHeaderFooterRow } from "./components/HeaderFooterRow.js";
 import { useGridKeyboard } from "./hooks/useGridKeyboard.js";
