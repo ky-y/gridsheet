@@ -219,6 +219,7 @@ export const GridSheet = <const C extends readonly ColumnType[]>({
                     },
                 ),
             )}
+            {/* biome-ignore lint/suspicious/noArrayIndexKey: grid data rows have no stable unique ID */}
             {data.map((row, rowIndex) => {
                 const absoluteRow = dataRowOffset + rowIndex;
                 const rowNum = rowIndex + 1;
