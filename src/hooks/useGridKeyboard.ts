@@ -506,8 +506,6 @@ function handleArrowNavigation<C extends readonly ColumnType[]>(
 export function useGridKeyboard<C extends readonly ColumnType[]>(
     params: GridKeyboardParams<C>,
 ) {
-    const { setEditingCell, containerRef, setSelection } = params;
-
     const paramsRef = useRef(params);
     paramsRef.current = params;
 
