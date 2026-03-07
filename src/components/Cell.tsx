@@ -1,4 +1,4 @@
-import type { CSSProperties } from "react";
+import { type CSSProperties, memo } from "react";
 import { cn } from "@/utils/cn.js";
 import type {
     CellType,
@@ -113,14 +113,23 @@ export function TextCell({
     );
 }
 
-export function renderCell(
-    col: ColumnType,
-    value: unknown,
-    isReadonly: boolean,
-    cellStyle: CSSProperties | undefined,
-    cellClassName: string | undefined,
-    onChangeValue: ((newValue: CellTypeToValue[CellType]) => void) | undefined,
-) {
+type RenderCellProps = {
+    col: ColumnType;
+    value: unknown;
+    isReadonly: boolean;
+    cellStyle: CSSProperties | undefined;
+    cellClassName: string | undefined;
+    onChangeValue: ((newValue: CellTypeToValue[CellType]) => void) | undefined;
+};
+
+export const RenderCell = memo(function RenderCell({
+    col,
+    value,
+    isReadonly,
+    cellStyle,
+    cellClassName,
+    onChangeValue,
+}: RenderCellProps) {
     const baseStyle: CSSProperties | undefined =
         col.type === "number" || col.type === "numberString"
             ? { textAlign: "right" }
@@ -145,4 +154,4 @@ export function renderCell(
         default:
             return <TextCell value={value} {...props} />;
     }
-}
+});
