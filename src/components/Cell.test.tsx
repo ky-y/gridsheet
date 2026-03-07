@@ -99,7 +99,14 @@ describe("RenderCell", () => {
     it("dispatches to CheckCell for check type", () => {
         const col = { key: "active", type: "check" as const };
         const { container } = render(
-            <RenderCell col={col} value={true} isReadonly={false} cellStyle={undefined} cellClassName={undefined} onChangeValue={vi.fn()} />,
+            <RenderCell
+                col={col}
+                value={true}
+                isReadonly={false}
+                cellStyle={undefined}
+                cellClassName={undefined}
+                onChangeValue={vi.fn()}
+            />,
         );
         expect(container.querySelector("input[type='checkbox']")).toBeTruthy();
     });
@@ -111,7 +118,14 @@ describe("RenderCell", () => {
             options: [{ label: "A", value: "a" }],
         };
         const { container } = render(
-            <RenderCell col={col} value="a" isReadonly={false} cellStyle={undefined} cellClassName={undefined} onChangeValue={vi.fn()} />,
+            <RenderCell
+                col={col}
+                value="a"
+                isReadonly={false}
+                cellStyle={undefined}
+                cellClassName={undefined}
+                onChangeValue={vi.fn()}
+            />,
         );
         expect(container.querySelector("select")).toBeTruthy();
     });
@@ -145,7 +159,14 @@ describe("RenderCell", () => {
             className: "col-class",
         };
         const { container } = render(
-            <RenderCell col={col} value="test" isReadonly={false} cellStyle={undefined} cellClassName="cell-class" onChangeValue={vi.fn()} />,
+            <RenderCell
+                col={col}
+                value="test"
+                isReadonly={false}
+                cellStyle={undefined}
+                cellClassName="cell-class"
+                onChangeValue={vi.fn()}
+            />,
         );
         const input = container.querySelector("input") as HTMLInputElement;
         expect(input.className).toContain("col-class");
