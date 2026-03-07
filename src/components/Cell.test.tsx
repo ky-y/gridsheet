@@ -150,6 +150,7 @@ describe("RenderCell", () => {
                 col={col}
                 value={100}
                 isReadonly={false}
+                isEditing={false}
                 cellStyle={{ fontWeight: "bold" }}
                 cellClassName={undefined}
                 rowIndex={0}
