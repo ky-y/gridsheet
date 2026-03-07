@@ -5,7 +5,7 @@ import {
     NumberCell,
     SelectCell,
     TextCell,
-    renderCell,
+    RenderCell,
 } from "./Cell.js";
 
 afterEach(cleanup);
