@@ -12,8 +12,9 @@ describe("renderHeaderFooterRow", () => {
             "header",
         );
         const { container } = render(<div>{elements}</div>);
-        const wrapper = container.firstElementChild!;
-        const cells = wrapper.children;
+        const rowDiv = container.firstElementChild!.firstElementChild!;
+        expect(rowDiv.getAttribute("role")).toBe("row");
+        const cells = rowDiv.children;
         // First cell has span 2
         expect(cells[0]!.textContent).toBe("個人情報");
         expect((cells[0] as HTMLElement).style.gridColumn).toBe("span 2");
@@ -31,7 +32,7 @@ describe("renderHeaderFooterRow", () => {
             "header",
         );
         const { container } = render(<div>{elements}</div>);
-        const cells = container.firstElementChild!.children;
+        const cells = container.firstElementChild!.firstElementChild!.children;
         expect(cells).toHaveLength(5); // 5 columns total
         expect(cells[0]!.textContent).toBe("Only one");
         expect(cells[1]!.textContent).toBe("");
@@ -47,7 +48,7 @@ describe("renderHeaderFooterRow", () => {
             { content: "#" },
         );
         const { container } = render(<div>{elements}</div>);
-        const cells = container.firstElementChild!.children;
+        const cells = container.firstElementChild!.firstElementChild!.children;
         // First element is the row number cell
         expect(cells[0]!.textContent).toBe("#");
     });
@@ -69,7 +70,7 @@ describe("renderHeaderFooterRow", () => {
             },
         );
         const { container } = render(<div>{elements}</div>);
-        const cells = container.firstElementChild!.children;
+        const cells = container.firstElementChild!.firstElementChild!.children;
         // First cell at col 0 should be selected
         expect(cells[0]!.className).toContain("selected");
     });
