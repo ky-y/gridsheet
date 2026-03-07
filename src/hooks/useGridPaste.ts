@@ -1,7 +1,7 @@
 import type React from "react";
 import { useCallback, useRef } from "react";
 import type { CellAddress, ColumnType, DataType } from "../types.js";
-import { getCellRaw, resolveCellData } from "../utils/grid.js";
+import { getCellRaw, resolveCellData, updateCellValue } from "../utils/grid.js";
 
 export type GridPasteParams<C extends readonly ColumnType[]> = {
     editingCell: CellAddress | null;
