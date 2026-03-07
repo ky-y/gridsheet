@@ -6,7 +6,11 @@ import type {
     HeaderFooterCell,
     Selection,
 } from "../types.js";
-import { getCellRaw, resolveCellData } from "../utils/grid.js";
+import {
+    getCellRaw,
+    resolveCellData,
+    updateCellValue,
+} from "../utils/grid.js";
 
 export type GridKeyboardParams<C extends readonly ColumnType[]> = {
     editingCell: CellAddress | null;
