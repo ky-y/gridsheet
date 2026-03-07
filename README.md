@@ -124,7 +124,7 @@ pnpm storybook    # Storybook 起動
 pnpm test         # テスト実行
 pnpm build        # ライブラリビルド
 pnpm format       # コードフォーマット
-pnpm lint         # Lint チェック
+pnpm lint         # Lint（自動修正）
 ```
 
 ## ライセンス
