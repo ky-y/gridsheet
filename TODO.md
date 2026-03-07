@@ -8,14 +8,12 @@
 
 ## コード品質（中優先度）
 
-### 2. CellDataType 判定ロジックが複数箇所に重複
-- `utils/grid.ts`, `hooks/useGridKeyboard.ts`, `hooks/useGridPaste.ts` 等
-- 共通ユーティリティ（例: `updateCellValue(raw, newValue)`）に集約すべき
+### ~~2. CellDataType 判定ロジックが複数箇所に重複~~ ✅
+- `isCellDataType()` / `updateCellValue()` を `utils/grid.ts` に追加し、全箇所を集約済み
 
-### 3. `lint` / `lint:check` のスクリプト命名が逆
-- **ファイル:** `package.json`
-- `lint` がチェックのみ、`lint:check` が `--write`（自動修正）になっている
-- `format` / `format:check` と整合性がない
+### ~~3. `lint` / `lint:check` のスクリプト命名が逆~~ ✅
+- `lint` = `--write`（自動修正）、`lint:check` = チェックのみ に修正済み
+- CI・READMEも合わせて更新済み
 
 ### 4. `sampleData.ts` が9140行
 - **ファイル:** `src/playground/sampleData.ts`
