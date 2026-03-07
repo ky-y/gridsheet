@@ -1,4 +1,4 @@
-import { type MouseEvent, useCallback, useRef, useState } from "react";
+import { type MouseEvent, useCallback, useEffect, useRef, useState } from "react";
 import type { CellAddress, Selection } from "../types.js";
 import { getCellAddress } from "../utils/grid.js";
 
@@ -15,7 +15,6 @@ export type GridMouseParams = {
     fullMinCol: number;
     maxRow: number;
     maxCol: number;
-    colOffset: number;
 };
 
 export function useGridMouse(params: GridMouseParams) {
@@ -151,6 +150,21 @@ export function useGridMouse(params: GridMouseParams) {
             }
             return current;
         });
+    }, [isDragging, setSelection]);
+
+    useEffect(() => {
+        if (!isDragging) return;
+        const onWindowMouseUp = () => {
+            setIsDragging(false);
+            setSelection((current) => {
+                if (current) {
+                    paramsRef.current.onSelectionChange?.(current);
+                }
+                return current;
+            });
+        };
+        window.addEventListener("mouseup", onWindowMouseUp);
+        return () => window.removeEventListener("mouseup", onWindowMouseUp);
     }, [isDragging, setSelection]);
 
     return { handleMouseDown, handleMouseMove, handleMouseUp };
