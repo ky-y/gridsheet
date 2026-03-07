@@ -1,9 +1,9 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { cn } from "@/utils/cn.js";
-import { isSelected, resolveCellData, getCellRaw } from "./utils/grid.js";
 import { RenderCell } from "./components/Cell.js";
 import cellStyles from "./components/Cell.module.scss";
 import { renderHeaderFooterRow } from "./components/HeaderFooterRow.js";
+import styles from "./GridSheet.module.scss";
 import { useGridKeyboard } from "./hooks/useGridKeyboard.js";
 import { useGridMouse } from "./hooks/useGridMouse.js";
 import { useGridPaste } from "./hooks/useGridPaste.js";
@@ -15,7 +15,7 @@ import type {
     DataType,
     GridSheetType,
 } from "./types.js";
-import styles from "./GridSheet.module.scss";
+import { getCellRaw, isSelected, resolveCellData } from "./utils/grid.js";
 
 export const GridSheet = <const C extends readonly ColumnType[]>({
     className,
@@ -124,6 +124,23 @@ export const GridSheet = <const C extends readonly ColumnType[]>({
                 input.setSelectionRange(len, len);
             }
         }
+    }, [editingCell]);
+
+    // GridSheet外クリックでeditingモード終了
+    useEffect(() => {
+        if (!editingCell) return;
+        const handleOutsideClick = (e: MouseEvent) => {
+            if (
+                containerRef.current &&
+                !containerRef.current.contains(e.target as Node)
+            ) {
+                setEditingCell(null);
+                setSelection(null);
+            }
+        };
+        document.addEventListener("mousedown", handleOutsideClick);
+        return () =>
+            document.removeEventListener("mousedown", handleOutsideClick);
     }, [editingCell]);
 
     // 選択セルが画面外に出た場合にスクロール
@@ -313,6 +330,10 @@ export const GridSheet = <const C extends readonly ColumnType[]>({
                                         col={col}
                                         value={cell.value}
                                         isReadonly={cell.readonly}
+                                        isEditing={
+                                            editingCell?.row === absoluteRow &&
+                                            editingCell?.col === absCol
+                                        }
                                         cellStyle={cell.style}
                                         cellClassName={cell.className}
                                         rowIndex={rowIndex}
