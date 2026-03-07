@@ -231,7 +231,7 @@ export function useGridKeyboard<C extends readonly ColumnType[]>(
                     lines.push(cells.join("\t"));
                 }
                 const text = lines.join("\n");
-                navigator.clipboard.writeText(text);
+                navigator.clipboard.writeText(text).catch(() => {});
                 e.preventDefault();
                 return;
             }
