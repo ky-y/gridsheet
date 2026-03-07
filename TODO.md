@@ -19,10 +19,8 @@
 - **ファイル:** `src/playground/sampleData.ts`
 - ループやジェネレータで生成すれば大幅に縮小できる
 
-### 5. `useGridKeyboard` が巨大で責務が多すぎる
-- **ファイル:** `src/hooks/useGridKeyboard.ts`
-- コピー、編集モード遷移、矢印キー、文字入力がすべて1つの `useCallback` に集約されている
-- 機能ごとに分割すると保守性が向上
+### ~~5. `useGridKeyboard` が巨大で責務が多すぎる~~ ✅
+- 機能ごとにヘルパー関数に分割済み（`handleEditingKeys`, `handleCopy`, `handleDelete`, `handleEnterEdit`, `handleCharInput`, `handleArrowNavigation`）
 
 ## 設計改善（低優先度）
 
