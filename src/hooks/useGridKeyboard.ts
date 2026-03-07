@@ -6,11 +6,7 @@ import type {
     HeaderFooterCell,
     Selection,
 } from "../types.js";
-import {
-    getCellRaw,
-    resolveCellData,
-    updateCellValue,
-} from "../utils/grid.js";
+import { getCellRaw, resolveCellData, updateCellValue } from "../utils/grid.js";
 
 export type GridKeyboardParams<C extends readonly ColumnType[]> = {
     editingCell: CellAddress | null;
@@ -267,20 +263,7 @@ export function useGridKeyboard<C extends readonly ColumnType[]>(
                                     : colDef.type === "number"
                                       ? 0
                                       : "";
-                            let cellUpdate: unknown;
-                            if (
-                                raw != null &&
-                                typeof raw === "object" &&
-                                !Array.isArray(raw) &&
-                                "value" in raw
-                            ) {
-                                cellUpdate = {
-                                    ...(raw as object),
-                                    value: emptyValue,
-                                };
-                            } else {
-                                cellUpdate = emptyValue;
-                            }
+                            const cellUpdate = updateCellValue(raw, emptyValue);
                             const newData = data.map((d, i) =>
                                 i === r - dataRowOffset
                                     ? ({
@@ -342,20 +325,7 @@ export function useGridKeyboard<C extends readonly ColumnType[]>(
                                 (colDef.type === "string" ||
                                     colDef.type === "numberString")
                             ) {
-                                let cellUpdate: unknown;
-                                if (
-                                    raw != null &&
-                                    typeof raw === "object" &&
-                                    !Array.isArray(raw) &&
-                                    "value" in raw
-                                ) {
-                                    cellUpdate = {
-                                        ...(raw as object),
-                                        value: e.key,
-                                    };
-                                } else {
-                                    cellUpdate = e.key;
-                                }
+                                const cellUpdate = updateCellValue(raw, e.key);
                                 const newData = data.map((d, i) =>
                                     i === r - dataRowOffset
                                         ? ({
@@ -370,20 +340,10 @@ export function useGridKeyboard<C extends readonly ColumnType[]>(
                                 colDef.type === "number" &&
                                 /\d/.test(e.key)
                             ) {
-                                let cellUpdate: unknown;
-                                if (
-                                    raw != null &&
-                                    typeof raw === "object" &&
-                                    !Array.isArray(raw) &&
-                                    "value" in raw
-                                ) {
-                                    cellUpdate = {
-                                        ...(raw as object),
-                                        value: Number(e.key),
-                                    };
-                                } else {
-                                    cellUpdate = Number(e.key);
-                                }
+                                const cellUpdate = updateCellValue(
+                                    raw,
+                                    Number(e.key),
+                                );
                                 const newData = data.map((d, i) =>
                                     i === r - dataRowOffset
                                         ? ({
