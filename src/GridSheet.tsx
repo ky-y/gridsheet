@@ -127,8 +127,14 @@ export const GridSheet = <const C extends readonly ColumnType[]>({
     }, [editingCell]);
 
     // 選択セルが画面外に出た場合にスクロール
+    // 列全選択・行全選択・全選択時はスクロールしない
     useEffect(() => {
         if (!scrollToSelection || !selection || !containerRef.current) return;
+        const isFullRowSpan =
+            selection.start.row === fullMinRow && selection.end.row === maxRow;
+        const isFullColSpan =
+            selection.start.col === fullMinCol && selection.end.col === maxCol;
+        if (isFullRowSpan || isFullColSpan) return;
         const targetRow = selection.end.row;
         const targetCol = selection.end.col;
         const cell = containerRef.current.querySelector<HTMLElement>(
@@ -137,7 +143,7 @@ export const GridSheet = <const C extends readonly ColumnType[]>({
         if (cell) {
             cell.scrollIntoView({ block: "nearest", inline: "nearest" });
         }
-    }, [scrollToSelection, selection]);
+    }, [scrollToSelection, selection, fullMinRow, maxRow, fullMinCol, maxCol]);
 
     const { handleMouseDown, handleMouseMove, handleMouseUp } = useGridMouse({
         selection,
