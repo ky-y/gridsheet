@@ -2,6 +2,7 @@ import { describe, expect, it, vi, beforeEach } from "vitest";
 import { renderHook, act } from "@testing-library/react";
 import { useGridKeyboard } from "./useGridKeyboard.js";
 import type { GridKeyboardParams } from "./useGridKeyboard.js";
+import type { Selection } from "../types.js";
 import { testColumns, testData } from "../test/fixtures.js";
 
 function createParams(
@@ -68,7 +69,7 @@ describe("useGridKeyboard", () => {
 
     // === Arrow navigation ===
     it("moves selection down with ArrowDown", () => {
-        const setSelection = vi.fn((updater: (prev: unknown) => unknown) =>
+        const setSelection = vi.fn((updater: (prev: Selection | null) => Selection | null) =>
             updater(null),
         );
         const { result } = renderHook(() =>
@@ -87,7 +88,7 @@ describe("useGridKeyboard", () => {
     });
 
     it("moves selection right with ArrowRight", () => {
-        const setSelection = vi.fn((updater: (prev: unknown) => unknown) =>
+        const setSelection = vi.fn((updater: (prev: Selection | null) => Selection | null) =>
             updater(null),
         );
         const { result } = renderHook(() =>
@@ -105,7 +106,7 @@ describe("useGridKeyboard", () => {
     });
 
     it("clamps selection at grid boundaries", () => {
-        const setSelection = vi.fn((updater: (prev: unknown) => unknown) =>
+        const setSelection = vi.fn((updater: (prev: Selection | null) => Selection | null) =>
             updater(null),
         );
         const { result } = renderHook(() =>
@@ -117,12 +118,12 @@ describe("useGridKeyboard", () => {
             end: { row: 0, col: 0 },
         });
         // row should stay at 0 (minRow)
-        expect(sel.start.row).toBe(0);
+        expect(sel!.start.row).toBe(0);
     });
 
     // === Shift+Arrow (range extension) ===
     it("extends selection with Shift+Arrow", () => {
-        const setSelection = vi.fn((updater: (prev: unknown) => unknown) =>
+        const setSelection = vi.fn((updater: (prev: Selection | null) => Selection | null) =>
             updater(null),
         );
         const { result } = renderHook(() =>
@@ -143,7 +144,7 @@ describe("useGridKeyboard", () => {
 
     // === Ctrl+Arrow (jump to edge) ===
     it("jumps to edge with Ctrl+Arrow", () => {
-        const setSelection = vi.fn((updater: (prev: unknown) => unknown) =>
+        const setSelection = vi.fn((updater: (prev: Selection | null) => Selection | null) =>
             updater(null),
         );
         const { result } = renderHook(() =>
@@ -162,7 +163,7 @@ describe("useGridKeyboard", () => {
 
     // === Shift+Ctrl+Arrow ===
     it("extends to edge with Shift+Ctrl+Arrow", () => {
-        const setSelection = vi.fn((updater: (prev: unknown) => unknown) =>
+        const setSelection = vi.fn((updater: (prev: Selection | null) => Selection | null) =>
             updater(null),
         );
         const { result } = renderHook(() =>
@@ -234,7 +235,7 @@ describe("useGridKeyboard", () => {
     // === Tab exits editing and moves ===
     it("exits edit mode and moves on Tab", () => {
         const setEditingCell = vi.fn();
-        const setSelection = vi.fn((updater: (prev: unknown) => unknown) =>
+        const setSelection = vi.fn((updater: (prev: Selection | null) => Selection | null) =>
             updater(null),
         );
         const { result } = renderHook(() =>
@@ -252,7 +253,7 @@ describe("useGridKeyboard", () => {
             start: { row: 0, col: 0 },
             end: { row: 0, col: 0 },
         });
-        expect(sel.start.col).toBe(1);
+        expect(sel!.start.col).toBe(1);
     });
 
     // === Backspace clears cell ===
