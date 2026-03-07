@@ -1,6 +1,8 @@
-import { describe, expect, it, vi } from "vitest";
-import { render, screen } from "@testing-library/react";
+import { describe, expect, it, vi, afterEach } from "vitest";
+import { render, screen, cleanup } from "@testing-library/react";
 import { CheckCell, NumberCell, SelectCell, TextCell, renderCell } from "./Cell.js";
+
+afterEach(cleanup);
 
 describe("CheckCell", () => {
     it("renders checked checkbox", () => {
