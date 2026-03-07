@@ -12,12 +12,13 @@ describe("renderHeaderFooterRow", () => {
             "header",
         );
         const { container } = render(<div>{elements}</div>);
-        const cells = container.querySelectorAll("div > div");
+        const wrapper = container.firstElementChild!;
+        const cells = wrapper.children;
         // First cell has span 2
-        expect(cells[0]?.textContent).toBe("個人情報");
+        expect(cells[0]!.textContent).toBe("個人情報");
         expect((cells[0] as HTMLElement).style.gridColumn).toBe("span 2");
         // Second cell has no span
-        expect(cells[1]?.textContent).toBe("コード");
+        expect(cells[1]!.textContent).toBe("コード");
         expect((cells[1] as HTMLElement).style.gridColumn).toBe("");
     });
 
@@ -30,10 +31,10 @@ describe("renderHeaderFooterRow", () => {
             "header",
         );
         const { container } = render(<div>{elements}</div>);
-        const cells = container.querySelectorAll("div > div");
+        const cells = container.firstElementChild!.children;
         expect(cells).toHaveLength(5); // 5 columns total
-        expect(cells[0]?.textContent).toBe("Only one");
-        expect(cells[1]?.textContent).toBe("");
+        expect(cells[0]!.textContent).toBe("Only one");
+        expect(cells[1]!.textContent).toBe("");
     });
 
     it("renders row number cell when provided", () => {
@@ -46,8 +47,9 @@ describe("renderHeaderFooterRow", () => {
             { content: "#" },
         );
         const { container } = render(<div>{elements}</div>);
-        const cells = container.querySelectorAll("div > div");
-        expect(cells[0]?.textContent).toBe("#");
+        const cells = container.firstElementChild!.children;
+        // First element is the row number cell
+        expect(cells[0]!.textContent).toBe("#");
     });
 
     it("highlights selected cells", () => {
@@ -64,8 +66,8 @@ describe("renderHeaderFooterRow", () => {
             },
         );
         const { container } = render(<div>{elements}</div>);
-        const cells = container.querySelectorAll("div > div");
+        const cells = container.firstElementChild!.children;
         // First cell at col 0 should be selected
-        expect(cells[0]?.className).toContain("selected");
+        expect(cells[0]!.className).toContain("selected");
     });
 });
