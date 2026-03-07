@@ -21,9 +21,10 @@
 
 ## コード品質（中優先度）
 
-### 5. `colOffset` パラメータが未使用
+### ~~5. `colOffset` パラメータが未使用~~ ✅
 - **ファイル:** `src/hooks/useGridMouse.ts`
-- 型定義にあるが実際には使われていない
+- ~~型定義にあるが実際には使われていない~~
+- 対応済み: `GridMouseParams` から `colOffset` を削除
 
 ### 6. CellDataType 判定ロジックが複数箇所に重複
 - `utils/grid.ts`, `hooks/useGridKeyboard.ts`, `hooks/useGridPaste.ts` 等
