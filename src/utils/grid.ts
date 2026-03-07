@@ -6,6 +6,17 @@ import type {
     DataType,
 } from "../types.js";
 
+/** CellDataType ラッパーかどうかを判定する型ガード */
+export function isCellDataType(raw: unknown): raw is CellDataType {
+    return (
+        raw != null &&
+        typeof raw === "object" &&
+        !Array.isArray(raw) &&
+        Object.getPrototypeOf(raw) === Object.prototype &&
+        "value" in raw
+    );
+}
+
 /** CellDataType か素の値かを判定し、value / readonly / style を返す */
 export function resolveCellData(raw: unknown): {
     value: unknown;
@@ -13,19 +24,12 @@ export function resolveCellData(raw: unknown): {
     style: CSSProperties | undefined;
     className: string | undefined;
 } {
-    if (
-        raw != null &&
-        typeof raw === "object" &&
-        !Array.isArray(raw) &&
-        Object.getPrototypeOf(raw) === Object.prototype &&
-        "value" in raw
-    ) {
-        const cell = raw as CellDataType;
+    if (isCellDataType(raw)) {
         return {
-            value: cell.value,
-            readonly: cell.readonly ?? false,
-            style: cell.style,
-            className: cell.className,
+            value: raw.value,
+            readonly: raw.readonly ?? false,
+            style: raw.style,
+            className: raw.className,
         };
     }
     return {
@@ -34,6 +38,14 @@ export function resolveCellData(raw: unknown): {
         style: undefined,
         className: undefined,
     };
+}
+
+/** CellDataType 構造を保持しつつセル値を更新する */
+export function updateCellValue(raw: unknown, newValue: unknown): unknown {
+    if (isCellDataType(raw)) {
+        return { ...raw, value: newValue };
+    }
+    return newValue;
 }
 
 // セル値の取得用ヘルパー（型アサーション1箇所に集約）
