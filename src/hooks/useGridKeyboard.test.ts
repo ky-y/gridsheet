@@ -67,7 +67,7 @@ describe("useGridKeyboard", () => {
         );
         act(() => result.current(makeKeyEvent("ArrowDown")));
         expect(setSelection).toHaveBeenCalled();
-        const sel = setSelection.mock.calls[0]![0]({
+        const sel = setSelection.mock.calls[0]?.[0]({
             start: { row: 0, col: 0 },
             end: { row: 0, col: 0 },
         });
@@ -83,7 +83,7 @@ describe("useGridKeyboard", () => {
             useGridKeyboard(createParams({ setSelection })),
         );
         act(() => result.current(makeKeyEvent("ArrowRight")));
-        const sel = setSelection.mock.calls[0]![0]({
+        const sel = setSelection.mock.calls[0]?.[0]({
             start: { row: 0, col: 0 },
             end: { row: 0, col: 0 },
         });
@@ -99,7 +99,7 @@ describe("useGridKeyboard", () => {
             useGridKeyboard(createParams({ setSelection })),
         );
         act(() => result.current(makeKeyEvent("ArrowUp")));
-        const sel = setSelection.mock.calls[0]![0]({
+        const sel = setSelection.mock.calls[0]?.[0]({
             start: { row: 0, col: 0 },
             end: { row: 0, col: 0 },
         });
@@ -114,7 +114,7 @@ describe("useGridKeyboard", () => {
             useGridKeyboard(createParams({ setSelection })),
         );
         act(() => result.current(makeKeyEvent("ArrowDown", { shiftKey: true })));
-        const sel = setSelection.mock.calls[0]![0]({
+        const sel = setSelection.mock.calls[0]?.[0]({
             start: { row: 0, col: 0 },
             end: { row: 0, col: 0 },
         });
@@ -131,7 +131,7 @@ describe("useGridKeyboard", () => {
             useGridKeyboard(createParams({ setSelection })),
         );
         act(() => result.current(makeKeyEvent("ArrowDown", { ctrlKey: true })));
-        const sel = setSelection.mock.calls[0]![0]({
+        const sel = setSelection.mock.calls[0]?.[0]({
             start: { row: 0, col: 0 },
             end: { row: 0, col: 0 },
         });
@@ -148,7 +148,7 @@ describe("useGridKeyboard", () => {
             useGridKeyboard(createParams({ setSelection })),
         );
         act(() => result.current(makeKeyEvent("ArrowRight", { shiftKey: true, ctrlKey: true })));
-        const sel = setSelection.mock.calls[0]![0]({
+        const sel = setSelection.mock.calls[0]?.[0]({
             start: { row: 0, col: 0 },
             end: { row: 0, col: 0 },
         });
@@ -217,7 +217,7 @@ describe("useGridKeyboard", () => {
         );
         act(() => result.current(makeKeyEvent("Tab")));
         expect(setEditingCell).toHaveBeenCalledWith(null);
-        const sel = setSelection.mock.calls[0]![0]({
+        const sel = setSelection.mock.calls[0]?.[0]({
             start: { row: 0, col: 0 },
             end: { row: 0, col: 0 },
         });
@@ -233,7 +233,7 @@ describe("useGridKeyboard", () => {
         );
         act(() => result.current(makeKeyEvent("Backspace")));
         expect(onChange).toHaveBeenCalled();
-        const newData = onChange.mock.calls[0]![0];
+        const newData = onChange.mock.calls[0]?.[0];
         expect(newData[0].name).toBe("");
         expect(setEditingCell).toHaveBeenCalledWith({ row: 0, col: 0 });
     });
@@ -247,7 +247,7 @@ describe("useGridKeyboard", () => {
         );
         act(() => result.current(makeKeyEvent("X")));
         expect(onChange).toHaveBeenCalled();
-        const newData = onChange.mock.calls[0]![0];
+        const newData = onChange.mock.calls[0]?.[0];
         expect(newData[0].name).toBe("X");
         expect(setEditingCell).toHaveBeenCalledWith({ row: 0, col: 0 });
     });
@@ -267,7 +267,7 @@ describe("useGridKeyboard", () => {
         // digit key should work
         act(() => result.current(makeKeyEvent("5")));
         expect(onChange).toHaveBeenCalled();
-        expect(onChange.mock.calls[0]![0][0].age).toBe(5);
+        expect(onChange.mock.calls[0]?.[0][0].age).toBe(5);
 
         // letter key should NOT trigger onChange for number cell
         const onChange2 = vi.fn();

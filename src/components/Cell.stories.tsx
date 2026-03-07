@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { fn } from "storybook/test";
-import { CheckCell, NumberCell, SelectCell, TextCell } from "./Cell.js";
+import { TextCell } from "./Cell.js";
 import styles from "./Cell.module.scss";
 
 const cellDecorator = (Story: () => React.JSX.Element) => (

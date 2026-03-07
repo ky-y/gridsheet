@@ -50,7 +50,7 @@ export function useGridPaste<C extends readonly ColumnType[]>(
                 .split("\n")
                 .map((line) => line.split("\t"));
             const isSingleValue =
-                rows.length === 1 && rows[0]!.length === 1;
+                rows.length === 1 && rows[0]?.length === 1;
             const isMultiCellSelection =
                 sMinRow !== sMaxRow || sMinCol !== sMaxCol;
 
@@ -91,7 +91,7 @@ export function useGridPaste<C extends readonly ColumnType[]>(
                         const raw = getCellRaw(r, col.key);
                         const cell = resolveCellData(raw);
                         if (cell.readonly || col.readonly === true) continue;
-                        const newValue = applyValue(rows[0]![0]!, col);
+                        const newValue = applyValue(rows[0]?.[0]!, col);
                         if (
                             raw != null &&
                             typeof raw === "object" &&

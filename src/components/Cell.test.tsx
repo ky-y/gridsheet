@@ -50,7 +50,7 @@ describe("renderCell", () => {
     it("dispatches to CheckCell for check type", () => {
         const col = { key: "active", type: "check" as const };
         const { container } = render(
-            <>{renderCell(col, true, false, undefined, undefined, vi.fn())}</>,
+            renderCell(col, true, false, undefined, undefined, vi.fn()),
         );
         expect(container.querySelector("input[type='checkbox']")).toBeTruthy();
     });
@@ -62,7 +62,7 @@ describe("renderCell", () => {
             options: [{ label: "A", value: "a" }],
         };
         const { container } = render(
-            <>{renderCell(col, "a", false, undefined, undefined, vi.fn())}</>,
+            renderCell(col, "a", false, undefined, undefined, vi.fn()),
         );
         expect(container.querySelector("select")).toBeTruthy();
     });
@@ -74,7 +74,7 @@ describe("renderCell", () => {
             style: { color: "blue" },
         };
         const { container } = render(
-            <>{renderCell(col, 100, false, { fontWeight: "bold" }, undefined, vi.fn())}</>,
+            renderCell(col, 100, false, { fontWeight: "bold" }, undefined, vi.fn()),
         );
         const input = container.querySelector("input") as HTMLInputElement;
         expect(input.style.textAlign).toBe("right"); // base style for number
@@ -89,7 +89,7 @@ describe("renderCell", () => {
             className: "col-class",
         };
         const { container } = render(
-            <>{renderCell(col, "test", false, undefined, "cell-class", vi.fn())}</>,
+            renderCell(col, "test", false, undefined, "cell-class", vi.fn()),
         );
         const input = container.querySelector("input") as HTMLInputElement;
         expect(input.className).toContain("col-class");

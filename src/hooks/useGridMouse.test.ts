@@ -42,7 +42,7 @@ describe("useGridMouse", () => {
                 makeMouseEvent({ row: "0", col: "0", type: "selectAll" }),
             );
         });
-        const sel = setSelection.mock.calls[0]![0](null);
+        const sel = setSelection.mock.calls[0]?.[0](null);
         expect(sel).toEqual({
             start: { row: 0, col: 0 },
             end: { row: 9, col: 4 },
@@ -59,7 +59,7 @@ describe("useGridMouse", () => {
                 makeMouseEvent({ row: "0", col: "2", type: "title" }),
             );
         });
-        const sel = setSelection.mock.calls[0]![0](null);
+        const sel = setSelection.mock.calls[0]?.[0](null);
         expect(sel).toEqual({
             start: { row: 0, col: 2 },
             end: { row: 9, col: 2 },
@@ -76,7 +76,7 @@ describe("useGridMouse", () => {
                 makeMouseEvent({ row: "1", col: "1", type: "header", span: "3" }),
             );
         });
-        const sel = setSelection.mock.calls[0]![0](null);
+        const sel = setSelection.mock.calls[0]?.[0](null);
         expect(sel).toEqual({
             start: { row: 0, col: 1 },
             end: { row: 9, col: 3 },
@@ -93,7 +93,7 @@ describe("useGridMouse", () => {
                 makeMouseEvent({ row: "3", col: "0", type: "rowNumber" }),
             );
         });
-        const sel = setSelection.mock.calls[0]![0](null);
+        const sel = setSelection.mock.calls[0]?.[0](null);
         expect(sel).toEqual({
             start: { row: 3, col: 0 },
             end: { row: 3, col: 4 },
@@ -110,7 +110,7 @@ describe("useGridMouse", () => {
                 makeMouseEvent({ row: "2", col: "3" }),
             );
         });
-        const sel = setSelection.mock.calls[0]![0](null);
+        const sel = setSelection.mock.calls[0]?.[0](null);
         expect(sel).toEqual({
             start: { row: 2, col: 3 },
             end: { row: 2, col: 3 },

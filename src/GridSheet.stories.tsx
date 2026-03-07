@@ -6,7 +6,6 @@ import {
     createCol,
     type ColumnType,
     type DataType,
-    type HeaderFooterCell,
 } from "./types.js";
 
 const columns = [

@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { getCellAddress, getCellRaw, isSelected, resolveCellData } from "./grid.js";
 import type { CellDataType } from "../types.js";
-import { testColumns, testData } from "../test/fixtures.js";
+import { testData } from "../test/fixtures.js";
 
 describe("resolveCellData", () => {
     it("returns raw value when given a primitive", () => {

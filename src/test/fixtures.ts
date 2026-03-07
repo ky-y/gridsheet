@@ -1,4 +1,4 @@
-import type { ColumnType, DataType, HeaderFooterCell } from "../types.js";
+import type { DataType, HeaderFooterCell } from "../types.js";
 import { createCol } from "../types.js";
 
 export const testColumns = [
