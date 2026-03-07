@@ -410,10 +410,15 @@ function handleArrowNavigation<C extends readonly ColumnType[]>(
         // 列全体選択 + 左右キー: 列選択を移動/拡張
         if (isColumnSelection && dir.col !== 0) {
             if (e.shiftKey) {
-                const newEndCol = Math.max(
-                    colOffset,
-                    Math.min(maxCol, current.end.col + dir.col),
-                );
+                const newEndCol =
+                    e.ctrlKey || e.metaKey
+                        ? dir.col < 0
+                            ? colOffset
+                            : maxCol
+                        : Math.max(
+                              colOffset,
+                              Math.min(maxCol, current.end.col + dir.col),
+                          );
                 const next = {
                     start: current.start,
                     end: { row: maxRow, col: newEndCol },
@@ -421,10 +426,15 @@ function handleArrowNavigation<C extends readonly ColumnType[]>(
                 onSelectionChange?.(next);
                 return next;
             }
-            const newCol = Math.max(
-                colOffset,
-                Math.min(maxCol, selMinCol + dir.col),
-            );
+            const newCol =
+                e.ctrlKey || e.metaKey
+                    ? dir.col < 0
+                        ? colOffset
+                        : maxCol
+                    : Math.max(
+                          colOffset,
+                          Math.min(maxCol, selMinCol + dir.col),
+                      );
             const next = {
                 start: { row: fullMinRow, col: newCol },
                 end: { row: maxRow, col: newCol },
@@ -436,10 +446,15 @@ function handleArrowNavigation<C extends readonly ColumnType[]>(
         // 行全体選択 + 上下キー: 行選択を移動/拡張
         if (isRowSelection && dir.row !== 0) {
             if (e.shiftKey) {
-                const newEndRow = Math.max(
-                    minRow,
-                    Math.min(maxRow, current.end.row + dir.row),
-                );
+                const newEndRow =
+                    e.ctrlKey || e.metaKey
+                        ? dir.row < 0
+                            ? minRow
+                            : maxRow
+                        : Math.max(
+                              minRow,
+                              Math.min(maxRow, current.end.row + dir.row),
+                          );
                 const next = {
                     start: current.start,
                     end: { row: newEndRow, col: maxCol },
@@ -447,10 +462,12 @@ function handleArrowNavigation<C extends readonly ColumnType[]>(
                 onSelectionChange?.(next);
                 return next;
             }
-            const newRow = Math.max(
-                minRow,
-                Math.min(maxRow, selMinRow + dir.row),
-            );
+            const newRow =
+                e.ctrlKey || e.metaKey
+                    ? dir.row < 0
+                        ? minRow
+                        : maxRow
+                    : Math.max(minRow, Math.min(maxRow, selMinRow + dir.row));
             const next = {
                 start: { row: newRow, col: fullMinCol },
                 end: { row: newRow, col: maxCol },
