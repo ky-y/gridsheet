@@ -69,8 +69,9 @@ describe("useGridKeyboard", () => {
 
     // === Arrow navigation ===
     it("moves selection down with ArrowDown", () => {
-        const setSelection = vi.fn((updater: (prev: Selection | null) => Selection | null) =>
-            updater(null),
+        const setSelection = vi.fn(
+            (updater: (prev: Selection | null) => Selection | null) =>
+                updater(null),
         );
         const { result } = renderHook(() =>
             useGridKeyboard(createParams({ setSelection })),
@@ -88,8 +89,9 @@ describe("useGridKeyboard", () => {
     });
 
     it("moves selection right with ArrowRight", () => {
-        const setSelection = vi.fn((updater: (prev: Selection | null) => Selection | null) =>
-            updater(null),
+        const setSelection = vi.fn(
+            (updater: (prev: Selection | null) => Selection | null) =>
+                updater(null),
         );
         const { result } = renderHook(() =>
             useGridKeyboard(createParams({ setSelection })),
@@ -106,8 +108,9 @@ describe("useGridKeyboard", () => {
     });
 
     it("clamps selection at grid boundaries", () => {
-        const setSelection = vi.fn((updater: (prev: Selection | null) => Selection | null) =>
-            updater(null),
+        const setSelection = vi.fn(
+            (updater: (prev: Selection | null) => Selection | null) =>
+                updater(null),
         );
         const { result } = renderHook(() =>
             useGridKeyboard(createParams({ setSelection })),
@@ -123,8 +126,9 @@ describe("useGridKeyboard", () => {
 
     // === Shift+Arrow (range extension) ===
     it("extends selection with Shift+Arrow", () => {
-        const setSelection = vi.fn((updater: (prev: Selection | null) => Selection | null) =>
-            updater(null),
+        const setSelection = vi.fn(
+            (updater: (prev: Selection | null) => Selection | null) =>
+                updater(null),
         );
         const { result } = renderHook(() =>
             useGridKeyboard(createParams({ setSelection })),
@@ -144,8 +148,9 @@ describe("useGridKeyboard", () => {
 
     // === Ctrl+Arrow (jump to edge) ===
     it("jumps to edge with Ctrl+Arrow", () => {
-        const setSelection = vi.fn((updater: (prev: Selection | null) => Selection | null) =>
-            updater(null),
+        const setSelection = vi.fn(
+            (updater: (prev: Selection | null) => Selection | null) =>
+                updater(null),
         );
         const { result } = renderHook(() =>
             useGridKeyboard(createParams({ setSelection })),
@@ -163,8 +168,9 @@ describe("useGridKeyboard", () => {
 
     // === Shift+Ctrl+Arrow ===
     it("extends to edge with Shift+Ctrl+Arrow", () => {
-        const setSelection = vi.fn((updater: (prev: Selection | null) => Selection | null) =>
-            updater(null),
+        const setSelection = vi.fn(
+            (updater: (prev: Selection | null) => Selection | null) =>
+                updater(null),
         );
         const { result } = renderHook(() =>
             useGridKeyboard(createParams({ setSelection })),
@@ -235,8 +241,9 @@ describe("useGridKeyboard", () => {
     // === Tab exits editing and moves ===
     it("exits edit mode and moves on Tab", () => {
         const setEditingCell = vi.fn();
-        const setSelection = vi.fn((updater: (prev: Selection | null) => Selection | null) =>
-            updater(null),
+        const setSelection = vi.fn(
+            (updater: (prev: Selection | null) => Selection | null) =>
+                updater(null),
         );
         const { result } = renderHook(() =>
             useGridKeyboard(
