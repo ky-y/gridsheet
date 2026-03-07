@@ -522,7 +522,7 @@ export function useGridKeyboard<C extends readonly ColumnType[]>(
             if (handleCharInput(e, p)) return;
             handleArrowNavigation(e, p);
         },
-        [setEditingCell, setSelection, containerRef],
+        [],
     );
 
     return handleKeyDown;
