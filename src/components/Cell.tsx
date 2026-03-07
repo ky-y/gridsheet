@@ -258,7 +258,9 @@ export const RenderCell = memo(function RenderCell({
                 />
             );
         case "number":
-            return <NumberCell value={value} editing={editing} {...baseProps} />;
+            return (
+                <NumberCell value={value} editing={editing} {...baseProps} />
+            );
         case "numberString":
             return (
                 <NumberStringCell
@@ -268,8 +270,6 @@ export const RenderCell = memo(function RenderCell({
                 />
             );
         default:
-            return (
-                <TextCell value={value} editing={editing} {...baseProps} />
-            );
+            return <TextCell value={value} editing={editing} {...baseProps} />;
     }
 });
