@@ -1,4 +1,4 @@
-import { Fragment, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { cn } from "@/utils/cn.js";
 import { isSelected, resolveCellData, getCellRaw } from "./utils/grid.js";
 import { RenderCell } from "./components/Cell.js";
@@ -9,6 +9,8 @@ import { useGridMouse } from "./hooks/useGridMouse.js";
 import { useGridPaste } from "./hooks/useGridPaste.js";
 import type {
     CellAddress,
+    CellType,
+    CellTypeToValue,
     ColumnType,
     DataType,
     GridSheetType,
@@ -44,6 +46,30 @@ export const GridSheet = <const C extends readonly ColumnType[]>({
     const scrollToSelection = configs?.scrollToSelection !== false;
 
     const colOffset = showRowNumbers ? 1 : 0;
+
+    const dataRef = useRef(data);
+    dataRef.current = data;
+    const onChangeRef = useRef(onChange);
+    onChangeRef.current = onChange;
+
+    const handleCellChange = useCallback(
+        (
+            rowIndex: number,
+            colKey: string,
+            newValue: CellTypeToValue[CellType],
+        ) => {
+            const currentOnChange = onChangeRef.current;
+            if (!currentOnChange) return;
+            const currentData = dataRef.current;
+            const newData = currentData.map((r, i) =>
+                i === rowIndex
+                    ? ({ ...r, [colKey]: newValue } as DataType<C>)
+                    : r,
+            );
+            currentOnChange(newData);
+        },
+        [],
+    );
 
     const gridTemplateColumns = [
         ...(showRowNumbers ? ["3rem"] : []),
@@ -164,6 +190,7 @@ export const GridSheet = <const C extends readonly ColumnType[]>({
             ref={containerRef}
             className={cn(styles.GridSheet, className)}
             style={{ gridTemplateColumns }}
+            role="grid"
             tabIndex={0}
             onMouseDown={handleMouseDown}
             onMouseMove={handleMouseMove}
@@ -181,35 +208,40 @@ export const GridSheet = <const C extends readonly ColumnType[]>({
                             key="select-all"
                             className={styles.selectAll}
                             style={{ gridRow: `span ${cornerSpan}` }}
+                            role="columnheader"
                             data-row={fullMinRow}
                             data-col={0}
                             data-type="selectAll"
                         />
                     );
                 })()}
-            {hasTitle &&
-                columns.map((col, colIndex) => {
-                    const absCol = colIndex + colOffset;
-                    const selected = isSelected(
-                        titleRowIndex,
-                        absCol,
-                        selection,
-                    );
-                    return (
-                        <div
-                            key={`title-${col.key}`}
-                            data-row={titleRowIndex}
-                            data-col={absCol}
-                            data-type="title"
-                            className={cn(
-                                styles.titleCell,
-                                selected ? styles.selected : undefined,
-                            )}
-                        >
-                            {col.title ?? ""}
-                        </div>
-                    );
-                })}
+            {hasTitle && (
+                <div role="row" style={{ display: "contents" }}>
+                    {columns.map((col, colIndex) => {
+                        const absCol = colIndex + colOffset;
+                        const selected = isSelected(
+                            titleRowIndex,
+                            absCol,
+                            selection,
+                        );
+                        return (
+                            <div
+                                key={`title-${col.key}`}
+                                data-row={titleRowIndex}
+                                data-col={absCol}
+                                data-type="title"
+                                role="columnheader"
+                                className={cn(
+                                    styles.titleCell,
+                                    selected ? styles.selected : undefined,
+                                )}
+                            >
+                                {col.title ?? ""}
+                            </div>
+                        );
+                    })}
+                </div>
+            )}
             {headers?.map((row, ri) =>
                 renderHeaderFooterRow(row, columns, `header-${ri}`, "header", {
                     rowIndex: headerRowOffset + ri,
@@ -222,7 +254,11 @@ export const GridSheet = <const C extends readonly ColumnType[]>({
                 const absoluteRow = dataRowOffset + rowIndex;
                 const rowNum = rowIndex + 1;
                 return (
-                    <Fragment key={rowIndex}>
+                    <div
+                        key={rowIndex}
+                        role="row"
+                        style={{ display: "contents" }}
+                    >
                         {showRowNumbers && (
                             <div
                                 key={`rn-${rowIndex}`}
@@ -232,6 +268,7 @@ export const GridSheet = <const C extends readonly ColumnType[]>({
                                         ? styles.selected
                                         : undefined,
                                 )}
+                                role="rowheader"
                                 data-row={absoluteRow}
                                 data-col={0}
                                 data-type="rowNumber"
@@ -254,6 +291,7 @@ export const GridSheet = <const C extends readonly ColumnType[]>({
                                     key={`${rowIndex}-${col.key}`}
                                     data-row={absoluteRow}
                                     data-col={absCol}
+                                    role="gridcell"
                                     className={cn(
                                         cellStyles.cell,
                                         selected
@@ -271,28 +309,18 @@ export const GridSheet = <const C extends readonly ColumnType[]>({
                                         isReadonly={cell.readonly}
                                         cellStyle={cell.style}
                                         cellClassName={cell.className}
-                                        onChangeValue={
+                                        rowIndex={rowIndex}
+                                        colKey={col.key}
+                                        onCellChange={
                                             onChange
-                                                ? (newValue) => {
-                                                      const newData = data.map(
-                                                          (r, i) =>
-                                                              i === rowIndex
-                                                                  ? ({
-                                                                        ...r,
-                                                                        [col.key]:
-                                                                            newValue,
-                                                                    } as DataType<C>)
-                                                                  : r,
-                                                      );
-                                                      onChange(newData);
-                                                  }
+                                                ? handleCellChange
                                                 : undefined
                                         }
                                     />
                                 </div>
                             );
                         })}
-                    </Fragment>
+                    </div>
                 );
             })}
             {footers?.map((row, ri) =>
