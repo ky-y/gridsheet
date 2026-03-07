@@ -95,11 +95,11 @@ describe("TextCell", () => {
     });
 });
 
-describe("renderCell", () => {
+describe("RenderCell", () => {
     it("dispatches to CheckCell for check type", () => {
         const col = { key: "active", type: "check" as const };
         const { container } = render(
-            renderCell(col, true, false, undefined, undefined, vi.fn()),
+            <RenderCell col={col} value={true} isReadonly={false} cellStyle={undefined} cellClassName={undefined} onChangeValue={vi.fn()} />,
         );
         expect(container.querySelector("input[type='checkbox']")).toBeTruthy();
     });
@@ -111,7 +111,7 @@ describe("renderCell", () => {
             options: [{ label: "A", value: "a" }],
         };
         const { container } = render(
-            renderCell(col, "a", false, undefined, undefined, vi.fn()),
+            <RenderCell col={col} value="a" isReadonly={false} cellStyle={undefined} cellClassName={undefined} onChangeValue={vi.fn()} />,
         );
         expect(container.querySelector("select")).toBeTruthy();
     });
@@ -123,14 +123,14 @@ describe("renderCell", () => {
             style: { color: "blue" },
         };
         const { container } = render(
-            renderCell(
-                col,
-                100,
-                false,
-                { fontWeight: "bold" },
-                undefined,
-                vi.fn(),
-            ),
+            <RenderCell
+                col={col}
+                value={100}
+                isReadonly={false}
+                cellStyle={{ fontWeight: "bold" }}
+                cellClassName={undefined}
+                onChangeValue={vi.fn()}
+            />,
         );
         const input = container.querySelector("input") as HTMLInputElement;
         expect(input.style.textAlign).toBe("right"); // base style for number
@@ -145,7 +145,7 @@ describe("renderCell", () => {
             className: "col-class",
         };
         const { container } = render(
-            renderCell(col, "test", false, undefined, "cell-class", vi.fn()),
+            <RenderCell col={col} value="test" isReadonly={false} cellStyle={undefined} cellClassName="cell-class" onChangeValue={vi.fn()} />,
         );
         const input = container.querySelector("input") as HTMLInputElement;
         expect(input.className).toContain("col-class");
