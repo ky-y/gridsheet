@@ -18,6 +18,7 @@ const textMeta = {
     parameters: { layout: "centered" },
     tags: ["autodocs"],
     args: {
+        editing: false,
         onChangeValue: fn(),
     },
 } satisfies Meta<typeof TextCell>;
