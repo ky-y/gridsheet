@@ -1,0 +1,8 @@
+# dependencies
+node_modules
+
+# build
+dist
+storybook-static
+
+**/CLAUDE.md
