@@ -119,7 +119,15 @@ type RenderCellProps = {
     isReadonly: boolean;
     cellStyle: CSSProperties | undefined;
     cellClassName: string | undefined;
-    onChangeValue: ((newValue: CellTypeToValue[CellType]) => void) | undefined;
+    rowIndex: number;
+    colKey: string;
+    onCellChange:
+        | ((
+              rowIndex: number,
+              colKey: string,
+              newValue: CellTypeToValue[CellType],
+          ) => void)
+        | undefined;
 };
 
 export const RenderCell = memo(function RenderCell({
@@ -128,8 +136,14 @@ export const RenderCell = memo(function RenderCell({
     isReadonly,
     cellStyle,
     cellClassName,
-    onChangeValue,
+    rowIndex,
+    colKey,
+    onCellChange,
 }: RenderCellProps) {
+    const onChangeValue = onCellChange
+        ? (newValue: CellTypeToValue[CellType]) =>
+              onCellChange(rowIndex, colKey, newValue)
+        : undefined;
     const baseStyle: CSSProperties | undefined =
         col.type === "number" || col.type === "numberString"
             ? { textAlign: "right" }
