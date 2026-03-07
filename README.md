@@ -54,37 +54,37 @@ function App() {
 
 ### `<GridSheet>` Props
 
-| Prop | Type | Description |
-|------|------|-------------|
-| `columns` | `ColumnType[]` | Array of column definitions |
-| `data` | `DataType<C>[]` | Array of row data |
-| `headers` | `HeaderFooterCell[][]` | Header rows (optional) |
-| `footers` | `HeaderFooterCell[][]` | Footer rows (optional) |
-| `configs` | `GridSheetConfigs` | Configuration options (optional) |
-| `onChange` | `(data: DataType<C>[]) => void` | Callback when data changes (optional) |
+| Prop                | Type                             | Description                                |
+|---------------------|----------------------------------|--------------------------------------------|
+| `columns`           | `ColumnType[]`                   | Array of column definitions                |
+| `data`              | `DataType<C>[]`                  | Array of row data                          |
+| `headers`           | `HeaderFooterCell[][]`           | Header rows (optional)                     |
+| `footers`           | `HeaderFooterCell[][]`           | Footer rows (optional)                     |
+| `configs`           | `GridSheetConfigs`               | Configuration options (optional)           |
+| `onChange`          | `(data: DataType<C>[]) => void`  | Callback when data changes (optional)      |
 | `onSelectionChange` | `(selection: Selection) => void` | Callback when selection changes (optional) |
-| `className` | `string` | Class name for the root element (optional) |
+| `className`         | `string`                         | Class name for the root element (optional) |
 
 ### `GridSheetConfigs`
 
-| Option | Default | Description |
-|--------|---------|-------------|
-| `showRowNumbers` | `false` | Show a row number column |
-| `selectableTitles` | `false` | Allow selecting the title row |
-| `selectableHeaders` | `false` | Allow selecting header rows |
-| `selectableFooters` | `false` | Allow selecting footer rows |
-| `selectableRowNumbers` | `false` | Allow selecting the row number column |
-| `scrollToSelection` | `true` | Scroll to keep the selected cell in view |
+| Option                 | Default | Description                              |
+|------------------------|---------|------------------------------------------|
+| `showRowNumbers`       | `false` | Show a row number column                 |
+| `selectableTitles`     | `false` | Allow selecting the title row            |
+| `selectableHeaders`    | `false` | Allow selecting header rows              |
+| `selectableFooters`    | `false` | Allow selecting footer rows              |
+| `selectableRowNumbers` | `false` | Allow selecting the row number column    |
+| `scrollToSelection`    | `true`  | Scroll to keep the selected cell in view |
 
 ### Cell Types
 
-| Type | Value Type | Description |
-|------|------------|-------------|
-| `string` | `string` | Text input |
-| `number` | `number` | Numeric input (right-aligned) |
-| `numberString` | `string` | Numeric string preserving format, e.g. `"0010.000"` (right-aligned) |
-| `check` | `boolean` | Checkbox |
-| `select` | `string` | Select dropdown (requires `options`) |
+| Type           | Value Type | Description                                                         |
+|----------------|------------|---------------------------------------------------------------------|
+| `string`       | `string`   | Text input                                                          |
+| `number`       | `number`   | Numeric input (right-aligned)                                       |
+| `numberString` | `string`   | Numeric string preserving format, e.g. `"0010.000"` (right-aligned) |
+| `check`        | `boolean`  | Checkbox                                                            |
+| `select`       | `string`   | Select dropdown (requires `options`)                                |
 
 ### `CellDataType`
 
@@ -100,12 +100,12 @@ const data = [
 ];
 ```
 
-| Property | Type | Description |
-|----------|------|-------------|
-| `value` | Value type for the cell type | The cell value |
-| `readonly` | `boolean` | Per-cell read-only flag (optional) |
-| `style` | `CSSProperties` | Per-cell inline style (optional) |
-| `className` | `string` | Per-cell class name (optional) |
+| Property    | Type                         | Description                        |
+|-------------|------------------------------|------------------------------------|
+| `value`     | Value type for the cell type | The cell value                     |
+| `readonly`  | `boolean`                    | Per-cell read-only flag (optional) |
+| `style`     | `CSSProperties`              | Per-cell inline style (optional)   |
+| `className` | `string`                     | Per-cell class name (optional)     |
 
 ### `createCol(key, type, options?)`
 
