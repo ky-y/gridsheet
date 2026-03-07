@@ -83,19 +83,7 @@ export function useGridPaste<C extends readonly ColumnType[]>(
                         const cell = resolveCellData(raw);
                         if (cell.readonly || col.readonly === true) continue;
                         const newValue = applyValue(rows[0]?.[0] ?? "", col);
-                        if (
-                            raw != null &&
-                            typeof raw === "object" &&
-                            !Array.isArray(raw) &&
-                            "value" in raw
-                        ) {
-                            updated[col.key] = {
-                                ...(raw as object),
-                                value: newValue,
-                            };
-                        } else {
-                            updated[col.key] = newValue;
-                        }
+                        updated[col.key] = updateCellValue(raw, newValue);
                         changed = true;
                     }
                     return changed ? (updated as DataType<C>) : r;
@@ -115,19 +103,7 @@ export function useGridPaste<C extends readonly ColumnType[]>(
                     const cell = resolveCellData(raw);
                     if (cell.readonly || col.readonly === true) continue;
                     const newValue = applyValue(pasteRow[pci]!, col);
-                    if (
-                        raw != null &&
-                        typeof raw === "object" &&
-                        !Array.isArray(raw) &&
-                        "value" in raw
-                    ) {
-                        updated[col.key] = {
-                            ...(raw as object),
-                            value: newValue,
-                        };
-                    } else {
-                        updated[col.key] = newValue;
-                    }
+                    updated[col.key] = updateCellValue(raw, newValue);
                     changed = true;
                 }
                 return changed ? (updated as DataType<C>) : r;
