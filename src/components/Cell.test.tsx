@@ -105,7 +105,9 @@ describe("RenderCell", () => {
                 isReadonly={false}
                 cellStyle={undefined}
                 cellClassName={undefined}
-                onChangeValue={vi.fn()}
+                rowIndex={0}
+                colKey="active"
+                onCellChange={vi.fn()}
             />,
         );
         expect(container.querySelector("input[type='checkbox']")).toBeTruthy();
@@ -124,7 +126,9 @@ describe("RenderCell", () => {
                 isReadonly={false}
                 cellStyle={undefined}
                 cellClassName={undefined}
-                onChangeValue={vi.fn()}
+                rowIndex={0}
+                colKey="role"
+                onCellChange={vi.fn()}
             />,
         );
         expect(container.querySelector("select")).toBeTruthy();
@@ -143,7 +147,9 @@ describe("RenderCell", () => {
                 isReadonly={false}
                 cellStyle={{ fontWeight: "bold" }}
                 cellClassName={undefined}
-                onChangeValue={vi.fn()}
+                rowIndex={0}
+                colKey="price"
+                onCellChange={vi.fn()}
             />,
         );
         const input = container.querySelector("input") as HTMLInputElement;
@@ -165,7 +171,9 @@ describe("RenderCell", () => {
                 isReadonly={false}
                 cellStyle={undefined}
                 cellClassName="cell-class"
-                onChangeValue={vi.fn()}
+                rowIndex={0}
+                colKey="name"
+                onCellChange={vi.fn()}
             />,
         );
         const input = container.querySelector("input") as HTMLInputElement;
