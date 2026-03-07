@@ -1,9 +1,4 @@
-
-import {
-    type ColumnType,
-    createCol,
-    type DataType,
-} from "../index.js";
+import { type ColumnType, createCol, type DataType } from "../index.js";
 
 export const columns = [
     createCol("name", "string", {

@@ -1,5 +1,10 @@
 import { describe, expect, it } from "vitest";
-import { getCellAddress, getCellRaw, isSelected, resolveCellData } from "./grid.js";
+import {
+    getCellAddress,
+    getCellRaw,
+    isSelected,
+    resolveCellData,
+} from "./grid.js";
 import type { CellDataType } from "../types.js";
 import { testData } from "../test/fixtures.js";
 

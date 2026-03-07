@@ -61,7 +61,10 @@ describe("renderHeaderFooterRow", () => {
             {
                 rowIndex: 0,
                 colOffset: 0,
-                selection: { start: { row: 0, col: 0 }, end: { row: 0, col: 1 } },
+                selection: {
+                    start: { row: 0, col: 0 },
+                    end: { row: 0, col: 1 },
+                },
                 cellType: "header",
             },
         );

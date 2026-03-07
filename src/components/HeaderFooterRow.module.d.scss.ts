@@ -1,8 +1,8 @@
 export type Styles = {
-  'headerCell': string;
-  'footerCell': string;
-  'rowNumber': string;
-  'selected': string;
+    headerCell: string;
+    footerCell: string;
+    rowNumber: string;
+    selected: string;
 };
 
 export type ClassNames = keyof Styles;

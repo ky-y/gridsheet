@@ -1,19 +1,41 @@
 import { describe, expect, it, vi, afterEach } from "vitest";
 import { render, screen, cleanup } from "@testing-library/react";
-import { CheckCell, NumberCell, SelectCell, TextCell, renderCell } from "./Cell.js";
+import {
+    CheckCell,
+    NumberCell,
+    SelectCell,
+    TextCell,
+    renderCell,
+} from "./Cell.js";
 
 afterEach(cleanup);
 
 describe("CheckCell", () => {
     it("renders checked checkbox", () => {
-        render(<CheckCell value={true} readOnly={false} style={undefined} className={undefined} onChangeValue={vi.fn()} />);
+        render(
+            <CheckCell
+                value={true}
+                readOnly={false}
+                style={undefined}
+                className={undefined}
+                onChangeValue={vi.fn()}
+            />,
+        );
         const checkbox = screen.getByRole("checkbox") as HTMLInputElement;
         expect(checkbox.checked).toBe(true);
         expect(checkbox.disabled).toBe(false);
     });
 
     it("renders disabled checkbox when readOnly", () => {
-        render(<CheckCell value={false} readOnly={true} style={undefined} className={undefined} onChangeValue={undefined} />);
+        render(
+            <CheckCell
+                value={false}
+                readOnly={true}
+                style={undefined}
+                className={undefined}
+                onChangeValue={undefined}
+            />,
+        );
         const checkbox = screen.getByRole("checkbox") as HTMLInputElement;
         expect(checkbox.disabled).toBe(true);
     });
@@ -25,7 +47,16 @@ describe("SelectCell", () => {
             { label: "A", value: "a" },
             { label: "B", value: "b" },
         ];
-        render(<SelectCell value="b" options={options} readOnly={false} style={undefined} className={undefined} onChangeValue={vi.fn()} />);
+        render(
+            <SelectCell
+                value="b"
+                options={options}
+                readOnly={false}
+                style={undefined}
+                className={undefined}
+                onChangeValue={vi.fn()}
+            />,
+        );
         const select = screen.getByRole("combobox") as HTMLSelectElement;
         expect(select.value).toBe("b");
         expect(screen.getAllByRole("option")).toHaveLength(2);
@@ -34,7 +65,15 @@ describe("SelectCell", () => {
 
 describe("NumberCell", () => {
     it("renders number input with value", () => {
-        render(<NumberCell value={42} readOnly={false} style={undefined} className={undefined} onChangeValue={vi.fn()} />);
+        render(
+            <NumberCell
+                value={42}
+                readOnly={false}
+                style={undefined}
+                className={undefined}
+                onChangeValue={vi.fn()}
+            />,
+        );
         const input = screen.getByRole("spinbutton") as HTMLInputElement;
         expect(input.value).toBe("42");
     });
@@ -42,7 +81,15 @@ describe("NumberCell", () => {
 
 describe("TextCell", () => {
     it("renders text input with value", () => {
-        render(<TextCell value="hello" readOnly={false} style={undefined} className={undefined} onChangeValue={vi.fn()} />);
+        render(
+            <TextCell
+                value="hello"
+                readOnly={false}
+                style={undefined}
+                className={undefined}
+                onChangeValue={vi.fn()}
+            />,
+        );
         const input = screen.getByRole("textbox") as HTMLInputElement;
         expect(input.value).toBe("hello");
     });
@@ -76,7 +123,14 @@ describe("renderCell", () => {
             style: { color: "blue" },
         };
         const { container } = render(
-            renderCell(col, 100, false, { fontWeight: "bold" }, undefined, vi.fn()),
+            renderCell(
+                col,
+                100,
+                false,
+                { fontWeight: "bold" },
+                undefined,
+                vi.fn(),
+            ),
         );
         const input = container.querySelector("input") as HTMLInputElement;
         expect(input.style.textAlign).toBe("right"); // base style for number

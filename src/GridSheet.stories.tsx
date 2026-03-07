@@ -2,11 +2,7 @@ import { useState } from "react";
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { fn } from "storybook/test";
 import { GridSheet } from "./GridSheet.js";
-import {
-    createCol,
-    type ColumnType,
-    type DataType,
-} from "./types.js";
+import { createCol, type ColumnType, type DataType } from "./types.js";
 
 const columns = [
     createCol("name", "string", { title: "Name", width: "120px" }),
@@ -85,12 +81,7 @@ export const WithFooters: Story = {
             selectableFooters: true,
         },
         footers: [
-            [
-                { body: "Total" },
-                { body: "409" },
-                { body: "" },
-                { body: "" },
-            ],
+            [{ body: "Total" }, { body: "409" }, { body: "" }, { body: "" }],
         ],
     },
 };
@@ -113,12 +104,7 @@ export const WithHeadersAndFooters: Story = {
             ],
         ],
         footers: [
-            [
-                { body: "Total" },
-                { body: "409" },
-                { body: "" },
-                { body: "" },
-            ],
+            [{ body: "Total" }, { body: "409" }, { body: "" }, { body: "" }],
         ],
     },
 };
@@ -149,7 +135,11 @@ export const WithSelectColumn: Story = {
 };
 
 const readonlyColumns = [
-    createCol("name", "string", { title: "Name", width: "120px", readonly: true }),
+    createCol("name", "string", {
+        title: "Name",
+        width: "120px",
+        readonly: true,
+    }),
     createCol("score", "number", { title: "Score", readonly: true }),
     createCol("active", "check", { title: "Active", readonly: true }),
 ] as const satisfies readonly ColumnType[];

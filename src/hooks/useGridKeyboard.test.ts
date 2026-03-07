@@ -10,7 +10,9 @@ function createParams(
     return {
         editingCell: null,
         setEditingCell: vi.fn(),
-        containerRef: { current: { focus: vi.fn() } as unknown as HTMLDivElement },
+        containerRef: {
+            current: { focus: vi.fn() } as unknown as HTMLDivElement,
+        },
         selection: { start: { row: 0, col: 0 }, end: { row: 0, col: 0 } },
         setSelection: vi.fn((updater) => updater(null)),
         onSelectionChange: vi.fn(),
@@ -36,7 +38,12 @@ function createParams(
 
 function makeKeyEvent(
     key: string,
-    mods: { ctrlKey?: boolean; metaKey?: boolean; shiftKey?: boolean; altKey?: boolean } = {},
+    mods: {
+        ctrlKey?: boolean;
+        metaKey?: boolean;
+        shiftKey?: boolean;
+        altKey?: boolean;
+    } = {},
 ): React.KeyboardEvent<HTMLDivElement> {
     return {
         key,
@@ -61,7 +68,9 @@ describe("useGridKeyboard", () => {
 
     // === Arrow navigation ===
     it("moves selection down with ArrowDown", () => {
-        const setSelection = vi.fn((updater: (prev: unknown) => unknown) => updater(null));
+        const setSelection = vi.fn((updater: (prev: unknown) => unknown) =>
+            updater(null),
+        );
         const { result } = renderHook(() =>
             useGridKeyboard(createParams({ setSelection })),
         );
@@ -78,7 +87,9 @@ describe("useGridKeyboard", () => {
     });
 
     it("moves selection right with ArrowRight", () => {
-        const setSelection = vi.fn((updater: (prev: unknown) => unknown) => updater(null));
+        const setSelection = vi.fn((updater: (prev: unknown) => unknown) =>
+            updater(null),
+        );
         const { result } = renderHook(() =>
             useGridKeyboard(createParams({ setSelection })),
         );
@@ -94,7 +105,9 @@ describe("useGridKeyboard", () => {
     });
 
     it("clamps selection at grid boundaries", () => {
-        const setSelection = vi.fn((updater: (prev: unknown) => unknown) => updater(null));
+        const setSelection = vi.fn((updater: (prev: unknown) => unknown) =>
+            updater(null),
+        );
         const { result } = renderHook(() =>
             useGridKeyboard(createParams({ setSelection })),
         );
@@ -109,11 +122,15 @@ describe("useGridKeyboard", () => {
 
     // === Shift+Arrow (range extension) ===
     it("extends selection with Shift+Arrow", () => {
-        const setSelection = vi.fn((updater: (prev: unknown) => unknown) => updater(null));
+        const setSelection = vi.fn((updater: (prev: unknown) => unknown) =>
+            updater(null),
+        );
         const { result } = renderHook(() =>
             useGridKeyboard(createParams({ setSelection })),
         );
-        act(() => result.current(makeKeyEvent("ArrowDown", { shiftKey: true })));
+        act(() =>
+            result.current(makeKeyEvent("ArrowDown", { shiftKey: true })),
+        );
         const sel = setSelection.mock.calls[0]?.[0]({
             start: { row: 0, col: 0 },
             end: { row: 0, col: 0 },
@@ -126,7 +143,9 @@ describe("useGridKeyboard", () => {
 
     // === Ctrl+Arrow (jump to edge) ===
     it("jumps to edge with Ctrl+Arrow", () => {
-        const setSelection = vi.fn((updater: (prev: unknown) => unknown) => updater(null));
+        const setSelection = vi.fn((updater: (prev: unknown) => unknown) =>
+            updater(null),
+        );
         const { result } = renderHook(() =>
             useGridKeyboard(createParams({ setSelection })),
         );
@@ -143,11 +162,17 @@ describe("useGridKeyboard", () => {
 
     // === Shift+Ctrl+Arrow ===
     it("extends to edge with Shift+Ctrl+Arrow", () => {
-        const setSelection = vi.fn((updater: (prev: unknown) => unknown) => updater(null));
+        const setSelection = vi.fn((updater: (prev: unknown) => unknown) =>
+            updater(null),
+        );
         const { result } = renderHook(() =>
             useGridKeyboard(createParams({ setSelection })),
         );
-        act(() => result.current(makeKeyEvent("ArrowRight", { shiftKey: true, ctrlKey: true })));
+        act(() =>
+            result.current(
+                makeKeyEvent("ArrowRight", { shiftKey: true, ctrlKey: true }),
+            ),
+        );
         const sel = setSelection.mock.calls[0]?.[0]({
             start: { row: 0, col: 0 },
             end: { row: 0, col: 0 },
@@ -160,9 +185,7 @@ describe("useGridKeyboard", () => {
 
     // === Ctrl+C copy ===
     it("copies cell value to clipboard with Ctrl+C", () => {
-        const { result } = renderHook(() =>
-            useGridKeyboard(createParams()),
-        );
+        const { result } = renderHook(() => useGridKeyboard(createParams()));
         const e = makeKeyEvent("c", { ctrlKey: true });
         act(() => result.current(e));
         expect(navigator.clipboard.writeText).toHaveBeenCalledWith("Alice");
@@ -191,10 +214,16 @@ describe("useGridKeyboard", () => {
     // === Escape exits editing ===
     it("exits edit mode on Escape", () => {
         const setEditingCell = vi.fn();
-        const containerRef = { current: { focus: vi.fn() } as unknown as HTMLDivElement };
+        const containerRef = {
+            current: { focus: vi.fn() } as unknown as HTMLDivElement,
+        };
         const { result } = renderHook(() =>
             useGridKeyboard(
-                createParams({ editingCell: { row: 0, col: 0 }, setEditingCell, containerRef }),
+                createParams({
+                    editingCell: { row: 0, col: 0 },
+                    setEditingCell,
+                    containerRef,
+                }),
             ),
         );
         act(() => result.current(makeKeyEvent("Escape")));
@@ -205,7 +234,9 @@ describe("useGridKeyboard", () => {
     // === Tab exits editing and moves ===
     it("exits edit mode and moves on Tab", () => {
         const setEditingCell = vi.fn();
-        const setSelection = vi.fn((updater: (prev: unknown) => unknown) => updater(null));
+        const setSelection = vi.fn((updater: (prev: unknown) => unknown) =>
+            updater(null),
+        );
         const { result } = renderHook(() =>
             useGridKeyboard(
                 createParams({
@@ -258,7 +289,10 @@ describe("useGridKeyboard", () => {
         const { result } = renderHook(() =>
             useGridKeyboard(
                 createParams({
-                    selection: { start: { row: 0, col: 1 }, end: { row: 0, col: 1 } },
+                    selection: {
+                        start: { row: 0, col: 1 },
+                        end: { row: 0, col: 1 },
+                    },
                     onChange,
                     setEditingCell,
                 }),
@@ -274,7 +308,10 @@ describe("useGridKeyboard", () => {
         const { result: r2 } = renderHook(() =>
             useGridKeyboard(
                 createParams({
-                    selection: { start: { row: 0, col: 1 }, end: { row: 0, col: 1 } },
+                    selection: {
+                        start: { row: 0, col: 1 },
+                        end: { row: 0, col: 1 },
+                    },
                     onChange: onChange2,
                     setEditingCell: vi.fn(),
                 }),

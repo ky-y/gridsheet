@@ -1,5 +1,10 @@
 import type { CSSProperties } from "react";
-import type { CellAddress, CellDataType, ColumnType, DataType } from "../types.js";
+import type {
+    CellAddress,
+    CellDataType,
+    ColumnType,
+    DataType,
+} from "../types.js";
 
 /** CellDataType か素の値かを判定し、value / readonly / style を返す */
 export function resolveCellData(raw: unknown): {

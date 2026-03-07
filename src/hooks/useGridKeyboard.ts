@@ -1,5 +1,11 @@
 import { type KeyboardEvent, type RefObject, useCallback, useRef } from "react";
-import type { CellAddress, ColumnType, DataType, HeaderFooterCell, Selection } from "../types.js";
+import type {
+    CellAddress,
+    ColumnType,
+    DataType,
+    HeaderFooterCell,
+    Selection,
+} from "../types.js";
 import { getCellRaw, resolveCellData } from "../utils/grid.js";
 
 export type GridKeyboardParams<C extends readonly ColumnType[]> = {
@@ -7,7 +13,11 @@ export type GridKeyboardParams<C extends readonly ColumnType[]> = {
     setEditingCell: (cell: CellAddress | null) => void;
     containerRef: RefObject<HTMLDivElement | null>;
     selection: { start: CellAddress; end: CellAddress } | null;
-    setSelection: (updater: (prev: { start: CellAddress; end: CellAddress } | null) => { start: CellAddress; end: CellAddress } | null) => void;
+    setSelection: (
+        updater: (
+            prev: { start: CellAddress; end: CellAddress } | null,
+        ) => { start: CellAddress; end: CellAddress } | null,
+    ) => void;
     onSelectionChange?: ((selection: Selection) => void) | undefined;
     columns: C;
     data: DataType<C>[];
@@ -119,10 +129,7 @@ export function useGridKeyboard<C extends readonly ColumnType[]>(
             ) {
                 // ブラウザのテキスト選択がある場合はデフォルト動作に任せる
                 const textSelection = window.getSelection();
-                if (
-                    textSelection &&
-                    textSelection.toString().length > 0
-                ) {
+                if (textSelection && textSelection.toString().length > 0) {
                     return;
                 }
 
@@ -155,9 +162,7 @@ export function useGridKeyboard<C extends readonly ColumnType[]>(
                                 r >= dataRowOffset &&
                                 r < dataRowOffset + data.length
                             ) {
-                                cells.push(
-                                    String(r - dataRowOffset + 1),
-                                );
+                                cells.push(String(r - dataRowOffset + 1));
                             } else {
                                 cells.push("");
                             }
@@ -185,10 +190,7 @@ export function useGridKeyboard<C extends readonly ColumnType[]>(
                                 let found = false;
                                 for (const hCell of headerRow) {
                                     const span = hCell.span ?? 1;
-                                    if (
-                                        colIdx >= pos &&
-                                        colIdx < pos + span
-                                    ) {
+                                    if (colIdx >= pos && colIdx < pos + span) {
                                         cells.push(hCell.body);
                                         found = true;
                                         break;
@@ -217,9 +219,7 @@ export function useGridKeyboard<C extends readonly ColumnType[]>(
                                 if (typeof v === "boolean") {
                                     cells.push(v ? "TRUE" : "FALSE");
                                 } else {
-                                    cells.push(
-                                        v != null ? String(v) : "",
-                                    );
+                                    cells.push(v != null ? String(v) : "");
                                 }
                             } else {
                                 cells.push("");
@@ -245,10 +245,7 @@ export function useGridKeyboard<C extends readonly ColumnType[]>(
             ) {
                 const r = selection.start.row;
                 const c = selection.start.col;
-                if (
-                    r >= dataRowOffset &&
-                    r < dataRowOffset + data.length
-                ) {
+                if (r >= dataRowOffset && r < dataRowOffset + data.length) {
                     const colIdx = c - colOffset;
                     if (colIdx >= 0 && colIdx < columns.length) {
                         const colDef = columns[colIdx]!;
@@ -306,10 +303,7 @@ export function useGridKeyboard<C extends readonly ColumnType[]>(
                 ) {
                     const r = selection.start.row;
                     const c = selection.start.col;
-                    if (
-                        r >= dataRowOffset &&
-                        r < dataRowOffset + data.length
-                    ) {
+                    if (r >= dataRowOffset && r < dataRowOffset + data.length) {
                         const colIdx = c - colOffset;
                         if (colIdx >= 0 && colIdx < columns.length) {
                             setEditingCell({ row: r, col: c });
@@ -331,20 +325,14 @@ export function useGridKeyboard<C extends readonly ColumnType[]>(
             ) {
                 const r = selection.start.row;
                 const c = selection.start.col;
-                if (
-                    r >= dataRowOffset &&
-                    r < dataRowOffset + data.length
-                ) {
+                if (r >= dataRowOffset && r < dataRowOffset + data.length) {
                     const colIdx = c - colOffset;
                     if (colIdx >= 0 && colIdx < columns.length) {
                         const colDef = columns[colIdx]!;
                         const dataRow = data[r - dataRowOffset]!;
                         const raw = getCellRaw(dataRow, colDef.key);
                         const cellData = resolveCellData(raw);
-                        if (
-                            !cellData.readonly &&
-                            colDef.readonly !== true
-                        ) {
+                        if (!cellData.readonly && colDef.readonly !== true) {
                             if (
                                 onChange &&
                                 (colDef.type === "string" ||

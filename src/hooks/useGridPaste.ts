@@ -43,14 +43,9 @@ export function useGridPaste<C extends readonly ColumnType[]>(
             const sMinCol = Math.min(selection.start.col, selection.end.col);
             const sMaxCol = Math.max(selection.start.col, selection.end.col);
 
-            const normalized = text
-                .replace(/\r\n?/g, "\n")
-                .replace(/\n$/, "");
-            const rows = normalized
-                .split("\n")
-                .map((line) => line.split("\t"));
-            const isSingleValue =
-                rows.length === 1 && rows[0]?.length === 1;
+            const normalized = text.replace(/\r\n?/g, "\n").replace(/\n$/, "");
+            const rows = normalized.split("\n").map((line) => line.split("\t"));
+            const isSingleValue = rows.length === 1 && rows[0]?.length === 1;
             const isMultiCellSelection =
                 sMinRow !== sMaxRow || sMinCol !== sMaxCol;
 
@@ -80,11 +75,7 @@ export function useGridPaste<C extends readonly ColumnType[]>(
                         return r;
                     const updated = { ...r } as Record<string, unknown>;
                     let changed = false;
-                    for (
-                        let tc = sMinCol;
-                        tc <= sMaxCol;
-                        tc++
-                    ) {
+                    for (let tc = sMinCol; tc <= sMaxCol; tc++) {
                         const colIdx = tc - colOffset;
                         if (colIdx < 0 || colIdx >= columns.length) continue;
                         const col = columns[colIdx]!;
@@ -130,7 +121,10 @@ export function useGridPaste<C extends readonly ColumnType[]>(
                         !Array.isArray(raw) &&
                         "value" in raw
                     ) {
-                        updated[col.key] = { ...(raw as object), value: newValue };
+                        updated[col.key] = {
+                            ...(raw as object),
+                            value: newValue,
+                        };
                     } else {
                         updated[col.key] = newValue;
                     }

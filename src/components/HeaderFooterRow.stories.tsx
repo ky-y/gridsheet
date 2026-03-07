@@ -11,7 +11,12 @@ const columns = [
 
 function HeaderRowWrapper() {
     return (
-        <div style={{ display: "grid", gridTemplateColumns: "120px 1fr 1fr 1fr" }}>
+        <div
+            style={{
+                display: "grid",
+                gridTemplateColumns: "120px 1fr 1fr 1fr",
+            }}
+        >
             {renderHeaderFooterRow(
                 [
                     { body: "Personal", span: 2 },
@@ -27,7 +32,12 @@ function HeaderRowWrapper() {
 
 function FooterRowWrapper() {
     return (
-        <div style={{ display: "grid", gridTemplateColumns: "120px 1fr 1fr 1fr" }}>
+        <div
+            style={{
+                display: "grid",
+                gridTemplateColumns: "120px 1fr 1fr 1fr",
+            }}
+        >
             {renderHeaderFooterRow(
                 [
                     { body: "Total" },
@@ -45,11 +55,14 @@ function FooterRowWrapper() {
 
 function HeaderWithSpanWrapper() {
     return (
-        <div style={{ display: "grid", gridTemplateColumns: "120px 1fr 1fr 1fr" }}>
+        <div
+            style={{
+                display: "grid",
+                gridTemplateColumns: "120px 1fr 1fr 1fr",
+            }}
+        >
             {renderHeaderFooterRow(
-                [
-                    { body: "All Columns", span: 4 },
-                ],
+                [{ body: "All Columns", span: 4 }],
                 columns,
                 "header-span",
                 "header",
@@ -60,7 +73,12 @@ function HeaderWithSpanWrapper() {
 
 function HeaderWithSelectionWrapper() {
     return (
-        <div style={{ display: "grid", gridTemplateColumns: "120px 1fr 1fr 1fr" }}>
+        <div
+            style={{
+                display: "grid",
+                gridTemplateColumns: "120px 1fr 1fr 1fr",
+            }}
+        >
             {renderHeaderFooterRow(
                 [
                     { body: "Col A" },
@@ -74,7 +92,10 @@ function HeaderWithSelectionWrapper() {
                 {
                     rowIndex: 0,
                     colOffset: 0,
-                    selection: { start: { row: 0, col: 1 }, end: { row: 0, col: 2 } },
+                    selection: {
+                        start: { row: 0, col: 1 },
+                        end: { row: 0, col: 2 },
+                    },
                     cellType: "header",
                 },
             )}

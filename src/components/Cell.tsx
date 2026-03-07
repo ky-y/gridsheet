@@ -1,6 +1,11 @@
 import type { CSSProperties } from "react";
 import { cn } from "@/utils/cn.js";
-import type { CellType, CellTypeToValue, ColumnType, SelectOption } from "../types.js";
+import type {
+    CellType,
+    CellTypeToValue,
+    ColumnType,
+    SelectOption,
+} from "../types.js";
 
 export type CellProps = {
     readOnly: boolean;
@@ -132,7 +137,9 @@ export function renderCell(
         case "check":
             return <CheckCell value={value} {...props} />;
         case "select":
-            return <SelectCell value={value} options={col.options} {...props} />;
+            return (
+                <SelectCell value={value} options={col.options} {...props} />
+            );
         case "number":
             return <NumberCell value={value} {...props} />;
         default:

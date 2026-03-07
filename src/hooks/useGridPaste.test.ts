@@ -30,7 +30,9 @@ describe("useGridPaste", () => {
     it("does nothing when editingCell is set", () => {
         const onChange = vi.fn();
         const { result } = renderHook(() =>
-            useGridPaste(createParams({ editingCell: { row: 0, col: 0 }, onChange })),
+            useGridPaste(
+                createParams({ editingCell: { row: 0, col: 0 }, onChange }),
+            ),
         );
         const e = makePasteEvent("test");
         act(() => result.current(e));
@@ -63,7 +65,10 @@ describe("useGridPaste", () => {
         const { result } = renderHook(() =>
             useGridPaste(
                 createParams({
-                    selection: { start: { row: 0, col: 0 }, end: { row: 0, col: 0 } },
+                    selection: {
+                        start: { row: 0, col: 0 },
+                        end: { row: 0, col: 0 },
+                    },
                     onChange,
                 }),
             ),
@@ -81,7 +86,10 @@ describe("useGridPaste", () => {
         const { result } = renderHook(() =>
             useGridPaste(
                 createParams({
-                    selection: { start: { row: 0, col: 3 }, end: { row: 0, col: 3 } },
+                    selection: {
+                        start: { row: 0, col: 3 },
+                        end: { row: 0, col: 3 },
+                    },
                     onChange,
                 }),
             ),
@@ -93,7 +101,10 @@ describe("useGridPaste", () => {
         const { result: r2 } = renderHook(() =>
             useGridPaste(
                 createParams({
-                    selection: { start: { row: 1, col: 3 }, end: { row: 1, col: 3 } },
+                    selection: {
+                        start: { row: 1, col: 3 },
+                        end: { row: 1, col: 3 },
+                    },
                     onChange: onChange2,
                 }),
             ),
@@ -107,7 +118,10 @@ describe("useGridPaste", () => {
         const { result } = renderHook(() =>
             useGridPaste(
                 createParams({
-                    selection: { start: { row: 0, col: 1 }, end: { row: 0, col: 1 } },
+                    selection: {
+                        start: { row: 0, col: 1 },
+                        end: { row: 0, col: 1 },
+                    },
                     onChange,
                 }),
             ),
@@ -121,7 +135,10 @@ describe("useGridPaste", () => {
         const { result } = renderHook(() =>
             useGridPaste(
                 createParams({
-                    selection: { start: { row: 0, col: 1 }, end: { row: 0, col: 1 } },
+                    selection: {
+                        start: { row: 0, col: 1 },
+                        end: { row: 0, col: 1 },
+                    },
                     onChange,
                 }),
             ),
@@ -137,7 +154,10 @@ describe("useGridPaste", () => {
             useGridPaste(
                 createParams({
                     // row 2, col 0 is Charlie (readonly CellDataType)
-                    selection: { start: { row: 2, col: 0 }, end: { row: 2, col: 0 } },
+                    selection: {
+                        start: { row: 2, col: 0 },
+                        end: { row: 2, col: 0 },
+                    },
                     onChange,
                 }),
             ),
@@ -153,7 +173,10 @@ describe("useGridPaste", () => {
         const { result } = renderHook(() =>
             useGridPaste(
                 createParams({
-                    selection: { start: { row: 0, col: 0 }, end: { row: 1, col: 0 } },
+                    selection: {
+                        start: { row: 0, col: 0 },
+                        end: { row: 1, col: 0 },
+                    },
                     onChange,
                 }),
             ),
@@ -171,7 +194,10 @@ describe("useGridPaste", () => {
         const { result } = renderHook(() =>
             useGridPaste(
                 createParams({
-                    selection: { start: { row: 2, col: 1 }, end: { row: 2, col: 1 } },
+                    selection: {
+                        start: { row: 2, col: 1 },
+                        end: { row: 2, col: 1 },
+                    },
                     onChange,
                 }),
             ),

@@ -4,7 +4,11 @@ import { getCellAddress } from "../utils/grid.js";
 
 export type GridMouseParams = {
     selection: { start: CellAddress; end: CellAddress } | null;
-    setSelection: (updater: (prev: { start: CellAddress; end: CellAddress } | null) => { start: CellAddress; end: CellAddress } | null) => void;
+    setSelection: (
+        updater: (
+            prev: { start: CellAddress; end: CellAddress } | null,
+        ) => { start: CellAddress; end: CellAddress } | null,
+    ) => void;
     setEditingCell: (cell: CellAddress | null) => void;
     onSelectionChange?: ((selection: Selection) => void) | undefined;
     fullMinRow: number;
@@ -21,9 +25,7 @@ export function useGridMouse(params: GridMouseParams) {
     paramsRef.current = params;
 
     const [isDragging, setIsDragging] = useState(false);
-    const [dragMode, setDragMode] = useState<"cell" | "column" | "row">(
-        "cell",
-    );
+    const [dragMode, setDragMode] = useState<"cell" | "column" | "row">("cell");
 
     const handleMouseDown = useCallback(
         (e: MouseEvent<HTMLDivElement>) => {
@@ -97,7 +99,10 @@ export function useGridMouse(params: GridMouseParams) {
                     setIsDragging(false);
                     return;
                 }
-                setSelection(() => ({ start: { row, col }, end: { row, col } }));
+                setSelection(() => ({
+                    start: { row, col },
+                    end: { row, col },
+                }));
                 setDragMode("cell");
             }
             setIsDragging(true);

@@ -7,7 +7,12 @@ import { renderHeaderFooterRow } from "./components/HeaderFooterRow.js";
 import { useGridKeyboard } from "./hooks/useGridKeyboard.js";
 import { useGridMouse } from "./hooks/useGridMouse.js";
 import { useGridPaste } from "./hooks/useGridPaste.js";
-import type { CellAddress, ColumnType, DataType, GridSheetType } from "./types.js";
+import type {
+    CellAddress,
+    ColumnType,
+    DataType,
+    GridSheetType,
+} from "./types.js";
 import styles from "./GridSheet.module.scss";
 
 export const GridSheet = <const C extends readonly ColumnType[]>({
@@ -168,7 +173,8 @@ export const GridSheet = <const C extends readonly ColumnType[]>({
             onPaste={handlePaste}
         >
             {showRowNumbers &&
-                (hasTitle || (headers?.length ?? 0) > 0) && (() => {
+                (hasTitle || (headers?.length ?? 0) > 0) &&
+                (() => {
                     const cornerSpan =
                         (hasTitle ? 1 : 0) + (headers?.length ?? 0);
                     return (
@@ -206,18 +212,12 @@ export const GridSheet = <const C extends readonly ColumnType[]>({
                     );
                 })}
             {headers?.map((row, ri) =>
-                renderHeaderFooterRow(
-                    row,
-                    columns,
-                    `header-${ri}`,
-                    "header",
-                    {
-                        rowIndex: headerRowOffset + ri,
-                        colOffset,
-                        selection,
-                        cellType: "header",
-                    },
-                ),
+                renderHeaderFooterRow(row, columns, `header-${ri}`, "header", {
+                    rowIndex: headerRowOffset + ri,
+                    colOffset,
+                    selection,
+                    cellType: "header",
+                }),
             )}
             {data.map((row, rowIndex) => {
                 const absoluteRow = dataRowOffset + rowIndex;
@@ -257,7 +257,9 @@ export const GridSheet = <const C extends readonly ColumnType[]>({
                                     data-col={absCol}
                                     className={cn(
                                         cellStyles.cell,
-                                        selected ? cellStyles.selected : undefined,
+                                        selected
+                                            ? cellStyles.selected
+                                            : undefined,
                                         editingCell?.row === absoluteRow &&
                                             editingCell?.col === absCol
                                             ? cellStyles.editing
