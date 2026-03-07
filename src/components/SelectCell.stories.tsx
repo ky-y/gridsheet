@@ -22,6 +22,7 @@ const meta = {
     parameters: { layout: "centered" },
     tags: ["autodocs"],
     args: {
+        editing: false,
         options: sampleOptions,
         onChangeValue: fn(),
     },
