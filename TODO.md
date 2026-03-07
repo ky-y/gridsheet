@@ -14,9 +14,8 @@
 
 ## 設計改善（低優先度）
 
-### 3. セルごとに毎レンダリングで新しい `onChange` 関数が生成
-- **ファイル:** `src/GridSheet.tsx`
-- `data.map` 内でクロージャが O(rows × cols) 個作られる
+### 3. ~~セルごとに毎レンダリングで新しい `onChange` 関数が生成~~ ✅
+- `useRef` + `useCallback` で安定した `handleCellChange` を作成し、`RenderCell` に `rowIndex`/`colKey` を渡す形に変更。`memo` が有効に機能するようになった
 
 ### 4. ARIA ロールがない
 - グリッドに `role="grid"` / `role="row"` / `role="gridcell"` 等がない
