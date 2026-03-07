@@ -15,7 +15,6 @@ function createParams(
         fullMinCol: 0,
         maxRow: 9,
         maxCol: 4,
-        colOffset: 0,
         ...overrides,
     };
 }
