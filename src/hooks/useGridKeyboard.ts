@@ -104,7 +104,9 @@ function handleCopy<C extends readonly ColumnType[]>(
     e: KeyboardEvent<HTMLDivElement>,
     params: GridKeyboardParams<C>,
 ): boolean {
-    if (!(e.key === "c" && (e.ctrlKey || e.metaKey) && !e.shiftKey && !e.altKey))
+    if (
+        !(e.key === "c" && (e.ctrlKey || e.metaKey) && !e.shiftKey && !e.altKey)
+    )
         return false;
 
     // ブラウザのテキスト選択がある場合はデフォルト動作に任せる
@@ -177,10 +179,7 @@ function handleCopy<C extends readonly ColumnType[]>(
                 } else {
                     cells.push("");
                 }
-            } else if (
-                r >= dataRowOffset &&
-                r < dataRowOffset + data.length
-            ) {
+            } else if (r >= dataRowOffset && r < dataRowOffset + data.length) {
                 // データ行
                 const dataRow = data[r - dataRowOffset];
                 if (colIdx >= 0 && colIdx < columns.length && dataRow) {
@@ -215,8 +214,15 @@ function handleDelete<C extends readonly ColumnType[]>(
 ): boolean {
     if (e.key !== "Backspace" && e.key !== "Delete") return false;
 
-    const { selection, data, columns, colOffset, dataRowOffset, onChange, setEditingCell } =
-        params;
+    const {
+        selection,
+        data,
+        columns,
+        colOffset,
+        dataRowOffset,
+        onChange,
+        setEditingCell,
+    } = params;
 
     if (
         !selection ||
@@ -237,7 +243,8 @@ function handleDelete<C extends readonly ColumnType[]>(
     const raw = getCellRaw(dataRow, colDef.key);
     const cellData = resolveCellData(raw);
 
-    if (cellData.readonly || colDef.readonly === true || !onChange) return false;
+    if (cellData.readonly || colDef.readonly === true || !onChange)
+        return false;
 
     const emptyValue =
         colDef.type === "check" ? false : colDef.type === "number" ? 0 : "";
@@ -260,7 +267,14 @@ function handleEnterEdit<C extends readonly ColumnType[]>(
 ): boolean {
     if (e.key !== "Enter" && e.key !== "F2") return false;
 
-    const { selection, data, columns, colOffset, dataRowOffset, setEditingCell } = params;
+    const {
+        selection,
+        data,
+        columns,
+        colOffset,
+        dataRowOffset,
+        setEditingCell,
+    } = params;
 
     if (
         !selection ||
@@ -288,8 +302,15 @@ function handleCharInput<C extends readonly ColumnType[]>(
 ): boolean {
     if (e.key.length !== 1 || e.ctrlKey || e.metaKey) return false;
 
-    const { selection, data, columns, colOffset, dataRowOffset, onChange, setEditingCell } =
-        params;
+    const {
+        selection,
+        data,
+        columns,
+        colOffset,
+        dataRowOffset,
+        onChange,
+        setEditingCell,
+    } = params;
 
     if (
         !selection ||
@@ -323,11 +344,7 @@ function handleCharInput<C extends readonly ColumnType[]>(
                 : d,
         );
         onChange(newData);
-    } else if (
-        onChange &&
-        colDef.type === "number" &&
-        /\d/.test(e.key)
-    ) {
+    } else if (onChange && colDef.type === "number" && /\d/.test(e.key)) {
         const cellUpdate = updateCellValue(raw, Number(e.key));
         const newData = data.map((d, i) =>
             i === r - dataRowOffset
@@ -388,8 +405,7 @@ function handleArrowNavigation<C extends readonly ColumnType[]>(
         const selMaxCol = Math.max(current.start.col, current.end.col);
         const isColumnSelection =
             selMinRow === fullMinRow && selMaxRow === maxRow;
-        const isRowSelection =
-            selMinCol === fullMinCol && selMaxCol === maxCol;
+        const isRowSelection = selMinCol === fullMinCol && selMaxCol === maxCol;
 
         // 列全体選択 + 左右キー: 列選択を移動/拡張
         if (isColumnSelection && dir.col !== 0) {
