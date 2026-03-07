@@ -16,8 +16,9 @@ export function resolveCellData(raw: unknown): {
     if (
         raw != null &&
         typeof raw === "object" &&
-        "value" in raw &&
-        !Array.isArray(raw)
+        !Array.isArray(raw) &&
+        Object.getPrototypeOf(raw) === Object.prototype &&
+        "value" in raw
     ) {
         const cell = raw as CellDataType;
         return {
