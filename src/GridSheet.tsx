@@ -122,7 +122,6 @@ export const GridSheet = <const C extends readonly ColumnType[]>({
         fullMinCol,
         maxRow,
         maxCol,
-        colOffset,
     });
 
     const handleKeyDown = useGridKeyboard({
