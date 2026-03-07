@@ -229,12 +229,16 @@ export const GridSheet = <const C extends readonly ColumnType[]>({
                     const canSelectAll =
                         selectableRowNumbers &&
                         ((hasTitle && selectableTitles) ||
-                            ((headers?.length ?? 0) > 0 &&
-                                selectableHeaders));
+                            ((headers?.length ?? 0) > 0 && selectableHeaders));
                     return (
                         <div
                             key="select-all"
-                            className={styles.selectAll}
+                            className={cn(
+                                styles.selectAll,
+                                isSelected(fullMinRow, 0, selection)
+                                    ? styles.selected
+                                    : undefined,
+                            )}
                             style={{ gridRow: `span ${cornerSpan}` }}
                             role="columnheader"
                             data-row={fullMinRow}
