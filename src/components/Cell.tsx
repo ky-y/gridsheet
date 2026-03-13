@@ -1,4 +1,4 @@
-import { type CSSProperties, memo, useEffect, useState } from "react";
+import { type CSSProperties, memo, useEffect, useRef, useState } from "react";
 import { cn } from "@/utils/cn.js";
 import type {
     CellType,
@@ -91,12 +91,23 @@ export function NumberCell({
     onChangeValue,
 }: CellProps & { value: unknown }) {
     const [draft, setDraft] = useState(value != null ? String(value) : "");
+    const inputRef = useRef<HTMLInputElement>(null);
 
     useEffect(() => {
         if (editing) {
             setDraft(value != null ? String(value) : "");
         }
     }, [editing, value]);
+
+    useEffect(() => {
+        if (!editing || !inputRef.current) return;
+        const el = inputRef.current;
+        const raf = requestAnimationFrame(() => {
+            el.focus();
+            el.setSelectionRange(el.value.length, el.value.length);
+        });
+        return () => cancelAnimationFrame(raf);
+    }, [editing]);
 
     const handleBlur = () => {
         if (readOnly || !onChangeValue) return;
@@ -106,6 +117,7 @@ export function NumberCell({
 
     return (
         <input
+            ref={inputRef}
             type="text"
             inputMode="numeric"
             value={editing ? draft : value != null ? String(value) : ""}
@@ -131,6 +143,7 @@ export function NumberStringCell({
     onChangeValue,
 }: CellProps & { value: unknown }) {
     const [draft, setDraft] = useState(value != null ? String(value) : "");
+    const inputRef = useRef<HTMLInputElement>(null);
 
     useEffect(() => {
         if (editing) {
@@ -138,14 +151,32 @@ export function NumberStringCell({
         }
     }, [editing, value]);
 
+    useEffect(() => {
+        if (!editing || !inputRef.current) return;
+        const el = inputRef.current;
+        const raf = requestAnimationFrame(() => {
+            el.focus();
+            el.setSelectionRange(el.value.length, el.value.length);
+        });
+        return () => cancelAnimationFrame(raf);
+    }, [editing]);
+
     const handleBlur = () => {
         if (readOnly || !onChangeValue) return;
-        const sanitized = draft.replace(/[^\d.-]/g, "");
+        // Remove non-numeric characters, then ensure at most one leading dash and one dot
+        let sanitized = draft.replace(/[^\d.-]/g, "");
+        const negative = sanitized.startsWith("-");
+        sanitized = sanitized.replace(/-/g, "");
+        const parts = sanitized.split(".");
+        sanitized =
+            parts[0] + (parts.length > 1 ? `.${parts.slice(1).join("")}` : "");
+        if (negative) sanitized = `-${sanitized}`;
         onChangeValue(sanitized);
     };
 
     return (
         <input
+            ref={inputRef}
             type="text"
             value={editing ? draft : value != null ? String(value) : ""}
             readOnly={readOnly || !onChangeValue}
@@ -170,12 +201,23 @@ export function TextCell({
     onChangeValue,
 }: CellProps & { value: unknown }) {
     const [draft, setDraft] = useState(value != null ? String(value) : "");
+    const inputRef = useRef<HTMLInputElement>(null);
 
     useEffect(() => {
         if (editing) {
             setDraft(value != null ? String(value) : "");
         }
     }, [editing, value]);
+
+    useEffect(() => {
+        if (!editing || !inputRef.current) return;
+        const el = inputRef.current;
+        const raf = requestAnimationFrame(() => {
+            el.focus();
+            el.setSelectionRange(el.value.length, el.value.length);
+        });
+        return () => cancelAnimationFrame(raf);
+    }, [editing]);
 
     const handleBlur = () => {
         if (readOnly || !onChangeValue) return;
@@ -184,6 +226,7 @@ export function TextCell({
 
     return (
         <input
+            ref={inputRef}
             type="text"
             value={editing ? draft : value != null ? String(value) : ""}
             readOnly={readOnly || !onChangeValue}

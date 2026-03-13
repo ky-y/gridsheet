@@ -1,8 +1,9 @@
-import { cleanup, render, screen } from "@testing-library/react";
+import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import {
     CheckCell,
     NumberCell,
+    NumberStringCell,
     RenderCell,
     SelectCell,
     TextCell,
@@ -95,6 +96,94 @@ describe("TextCell", () => {
         );
         const input = screen.getByRole("textbox") as HTMLInputElement;
         expect(input.value).toBe("hello");
+    });
+});
+
+describe("NumberStringCell", () => {
+    function renderEditing(initialValue: string) {
+        const onChangeValue = vi.fn();
+        render(
+            <NumberStringCell
+                value={initialValue}
+                readOnly={false}
+                editing={true}
+                style={undefined}
+                className={undefined}
+                onChangeValue={onChangeValue}
+            />,
+        );
+        return { onChangeValue };
+    }
+
+    it("passes through valid number string on blur", () => {
+        const { onChangeValue } = renderEditing("123.45");
+        const input = screen.getByRole("textbox") as HTMLInputElement;
+        fireEvent.blur(input);
+        expect(onChangeValue).toHaveBeenCalledWith("123.45");
+    });
+
+    it("passes through valid negative number string on blur", () => {
+        const { onChangeValue } = renderEditing("-42.5");
+        const input = screen.getByRole("textbox") as HTMLInputElement;
+        fireEvent.blur(input);
+        expect(onChangeValue).toHaveBeenCalledWith("-42.5");
+    });
+
+    it("removes multiple dashes", () => {
+        const { onChangeValue } = renderEditing("");
+        const input = screen.getByRole("textbox") as HTMLInputElement;
+        fireEvent.change(input, { target: { value: "--5" } });
+        fireEvent.blur(input);
+        expect(onChangeValue).toHaveBeenCalledWith("-5");
+    });
+
+    it("removes multiple dots", () => {
+        const { onChangeValue } = renderEditing("");
+        const input = screen.getByRole("textbox") as HTMLInputElement;
+        fireEvent.change(input, { target: { value: "1.2.3" } });
+        fireEvent.blur(input);
+        expect(onChangeValue).toHaveBeenCalledWith("1.23");
+    });
+
+    it("sanitizes mixed invalid characters", () => {
+        const { onChangeValue } = renderEditing("");
+        const input = screen.getByRole("textbox") as HTMLInputElement;
+        fireEvent.change(input, { target: { value: "--5.5.5abc" } });
+        fireEvent.blur(input);
+        expect(onChangeValue).toHaveBeenCalledWith("-5.55");
+    });
+
+    it("strips non-numeric characters", () => {
+        const { onChangeValue } = renderEditing("");
+        const input = screen.getByRole("textbox") as HTMLInputElement;
+        fireEvent.change(input, { target: { value: "abc123def" } });
+        fireEvent.blur(input);
+        expect(onChangeValue).toHaveBeenCalledWith("123");
+    });
+
+    it("handles dash in middle of string", () => {
+        const { onChangeValue } = renderEditing("");
+        const input = screen.getByRole("textbox") as HTMLInputElement;
+        fireEvent.change(input, { target: { value: "12-34" } });
+        fireEvent.blur(input);
+        expect(onChangeValue).toHaveBeenCalledWith("1234");
+    });
+
+    it("does not call onChangeValue when readOnly", () => {
+        const onChangeValue = vi.fn();
+        render(
+            <NumberStringCell
+                value="123"
+                readOnly={true}
+                editing={true}
+                style={undefined}
+                className={undefined}
+                onChangeValue={onChangeValue}
+            />,
+        );
+        const input = screen.getByRole("textbox") as HTMLInputElement;
+        fireEvent.blur(input);
+        expect(onChangeValue).not.toHaveBeenCalled();
     });
 });
 
