@@ -15,7 +15,14 @@
         "cell",
         "typescript"
     ],
-    "author": "kyoya0819 ky-y.",
+    "author": {
+        "name": "ky-y.",
+        "url": "https://ky-y.dev/"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/ky-y/gridsheet.git"
+    },
     "license": "MIT",
     "type": "module",
     "main": "./dist/index.js",
