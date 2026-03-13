@@ -162,7 +162,7 @@ export const GridSheet = <const C extends readonly ColumnType[]>({
         }
     }, [scrollToSelection, selection, fullMinRow, maxRow, fullMinCol, maxCol]);
 
-    const { handleMouseDown, handleMouseMove, handleMouseUp } = useGridMouse({
+    const { handleMouseDown, handleMouseMove } = useGridMouse({
         selection,
         setSelection,
         setEditingCell,
@@ -217,7 +217,6 @@ export const GridSheet = <const C extends readonly ColumnType[]>({
             tabIndex={0}
             onMouseDown={handleMouseDown}
             onMouseMove={handleMouseMove}
-            onMouseUp={handleMouseUp}
             onKeyDown={handleKeyDown}
             onPaste={handlePaste}
         >
