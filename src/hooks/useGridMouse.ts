@@ -147,17 +147,6 @@ export function useGridMouse(params: GridMouseParams) {
         [isDragging, dragMode, setSelection],
     );
 
-    const handleMouseUp = useCallback(() => {
-        if (!isDragging) return;
-        setIsDragging(false);
-        setSelection((current) => {
-            if (current) {
-                paramsRef.current.onSelectionChange?.(current);
-            }
-            return current;
-        });
-    }, [isDragging, setSelection]);
-
     useEffect(() => {
         if (!isDragging) return;
         const onWindowMouseUp = () => {
@@ -173,5 +162,5 @@ export function useGridMouse(params: GridMouseParams) {
         return () => window.removeEventListener("mouseup", onWindowMouseUp);
     }, [isDragging, setSelection]);
 
-    return { handleMouseDown, handleMouseMove, handleMouseUp };
+    return { handleMouseDown, handleMouseMove };
 }

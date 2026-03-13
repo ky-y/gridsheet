@@ -181,7 +181,7 @@ describe("useGridMouse", () => {
         expect(setSelection).not.toHaveBeenCalled();
     });
 
-    it("fires onSelectionChange on mouseUp after drag", () => {
+    it("fires onSelectionChange on window mouseUp after drag", () => {
         const onSelectionChange = vi.fn();
         const setSelection = vi.fn(
             (updater: (prev: Selection | null) => Selection | null) => {
@@ -197,9 +197,9 @@ describe("useGridMouse", () => {
                 makeMouseEvent({ row: "0", col: "0" }),
             );
         });
-        // mouseUp to end drag
+        // window mouseUp to end drag
         act(() => {
-            result.current.handleMouseUp();
+            window.dispatchEvent(new MouseEvent("mouseup"));
         });
         expect(onSelectionChange).toHaveBeenCalled();
     });
