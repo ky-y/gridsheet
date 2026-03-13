@@ -1,0 +1,20 @@
+# source
+src
+
+# config
+biome.json
+tsconfig.json
+vite.config.ts
+vite.playground.config.ts
+vitest.shims.d.ts
+pnpm-workspace.yaml
+
+# dev
+node_modules
+storybook-static
+.storybook
+.github
+.idea
+
+# lock
+pnpm-lock.yaml
