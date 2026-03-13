@@ -5,4 +5,8 @@ node_modules
 dist
 storybook-static
 
+# AI
 **/CLAUDE.md
+
+# IDE
+.idea
