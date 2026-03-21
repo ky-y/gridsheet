@@ -1,4 +1,10 @@
-import { type KeyboardEvent, type RefObject, useCallback, useRef } from "react";
+import {
+    type KeyboardEvent,
+    type ReactNode,
+    type RefObject,
+    useCallback,
+    useRef,
+} from "react";
 import { extractText } from "../utils/reactNode.js";
 import type {
     CellAddress,
@@ -139,6 +145,62 @@ function handleCopy<C extends readonly ColumnType[]>(
     const sMinCol = Math.min(selection.start.col, selection.end.col);
     const sMaxCol = Math.max(selection.start.col, selection.end.col);
 
+    // ヘッダー行のrowSpan/colSpanを解決して、各セル位置に対応するbodyを格納
+    // headerResolved[rowIndex][colIndex] = body (ReactNode | undefined)
+    const headerResolved: (ReactNode | undefined)[][] = [];
+    if (headers) {
+        const totalCols = columns.length;
+        const occupied: boolean[][] = headers.map(() =>
+            new Array(totalCols).fill(false),
+        );
+        for (let ri = 0; ri < headers.length; ri++) {
+            const resolved: (ReactNode | undefined)[] = new Array(
+                totalCols,
+            ).fill(undefined);
+            headerResolved.push(resolved);
+            const row = headers[ri]!;
+            let colIndex = 0;
+            let cellIndex = 0;
+            while (colIndex < totalCols && cellIndex < row.length) {
+                if (occupied[ri]![colIndex]) {
+                    colIndex++;
+                    continue;
+                }
+                const cell = row[cellIndex]!;
+                const colSpan = cell.span ?? 1;
+                const rowSpan = cell.rowSpan ?? 1;
+                // このセルが占有する全位置にbodyを設定
+                for (
+                    let dr = 0;
+                    dr < rowSpan && ri + dr < headers.length;
+                    dr++
+                ) {
+                    for (
+                        let dc = 0;
+                        dc < colSpan && colIndex + dc < totalCols;
+                        dc++
+                    ) {
+                        if (dr === 0 && dc === 0) {
+                            resolved[colIndex + dc] = cell.body;
+                        } else if (dr > 0) {
+                            occupied[ri + dr]![colIndex + dc] = true;
+                            if (!headerResolved[ri + dr]) {
+                                headerResolved[ri + dr] = new Array(
+                                    totalCols,
+                                ).fill(undefined);
+                            }
+                            headerResolved[ri + dr]![colIndex + dc] = cell.body;
+                        } else {
+                            resolved[colIndex + dc] = cell.body;
+                        }
+                    }
+                }
+                colIndex += colSpan;
+                cellIndex++;
+            }
+        }
+    }
+
     const lines: string[] = [];
     for (let r = sMinRow; r <= sMaxRow; r++) {
         const cells: string[] = [];
@@ -166,22 +228,11 @@ function handleCopy<C extends readonly ColumnType[]>(
                 r < dataRowOffset &&
                 headers
             ) {
-                // ヘッダー行
-                const headerRow = headers[r - headerRowOffset];
-                if (headerRow && colIdx >= 0) {
-                    // spanを考慮してセルを探す
-                    let pos = 0;
-                    let found = false;
-                    for (const hCell of headerRow) {
-                        const span = hCell.span ?? 1;
-                        if (colIdx >= pos && colIdx < pos + span) {
-                            cells.push(extractText(hCell.body));
-                            found = true;
-                            break;
-                        }
-                        pos += span;
-                    }
-                    if (!found) cells.push("");
+                // ヘッダー行（headerResolvedを参照）
+                const ri = r - headerRowOffset;
+                const resolved = headerResolved[ri];
+                if (resolved && colIdx >= 0 && colIdx < columns.length) {
+                    cells.push(extractText(resolved[colIdx]));
                 } else {
                     cells.push("");
                 }
