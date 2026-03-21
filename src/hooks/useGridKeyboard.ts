@@ -1,4 +1,5 @@
 import { type KeyboardEvent, type RefObject, useCallback, useRef } from "react";
+import { extractText } from "../utils/reactNode.js";
 import type {
     CellAddress,
     ColumnType,
@@ -156,7 +157,7 @@ function handleCopy<C extends readonly ColumnType[]>(
             if (r === titleRowIndex && hasTitle) {
                 // タイトル行
                 if (colIdx >= 0 && colIdx < columns.length) {
-                    cells.push(columns[colIdx]?.title ?? "");
+                    cells.push(extractText(columns[colIdx]?.title));
                 } else {
                     cells.push("");
                 }
@@ -175,7 +176,7 @@ function handleCopy<C extends readonly ColumnType[]>(
                     for (const hCell of headerRow) {
                         const span = hCell.span ?? 1;
                         if (colIdx >= pos && colIdx < pos + span) {
-                            cells.push(hCell.body);
+                            cells.push(extractText(hCell.body));
                             found = true;
                             break;
                         }
