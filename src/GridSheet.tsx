@@ -272,6 +272,7 @@ export const GridSheet = <const C extends readonly ColumnType[]>({
                                 role="columnheader"
                                 className={cn(
                                     styles.titleCell,
+                                    col.titleClassName,
                                     selected ? styles.selected : undefined,
                                 )}
                             >
@@ -333,6 +334,10 @@ export const GridSheet = <const C extends readonly ColumnType[]>({
                                     role="gridcell"
                                     className={cn(
                                         cellStyles.cell,
+                                        col.type === "number" ||
+                                            col.type === "numberString"
+                                            ? cellStyles.numericCell
+                                            : undefined,
                                         selected
                                             ? cellStyles.selected
                                             : undefined,

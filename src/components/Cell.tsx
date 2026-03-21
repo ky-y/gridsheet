@@ -275,14 +275,8 @@ export const RenderCell = memo(function RenderCell({
         ? (newValue: CellTypeToValue[CellType]) =>
               onCellChange(rowIndex, colKey, newValue)
         : undefined;
-    const baseStyle: CSSProperties | undefined =
-        col.type === "number" || col.type === "numberString"
-            ? { textAlign: "right" }
-            : undefined;
     const style: CSSProperties | undefined =
-        baseStyle || col.style || cellStyle
-            ? { ...baseStyle, ...col.style, ...cellStyle }
-            : undefined;
+        col.style || cellStyle ? { ...col.style, ...cellStyle } : undefined;
     const className = cn(col.className, cellClassName) || undefined;
     const readOnly = isReadonly || col.readonly === true;
     const editing = isEditing;

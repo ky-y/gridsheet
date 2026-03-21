@@ -57,6 +57,12 @@
     }
 }
 
+:where(.numericCell) {
+    input {
+        text-align: right;
+    }
+}
+
 .cell:not(.editing) {
     input:not([type="checkbox"]),
     select {

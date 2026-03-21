@@ -80,6 +80,7 @@ export function renderHeaderFooterRow(
                     : {})}
                 className={cn(
                     cellClassName,
+                    cell.className,
                     selected ? styles.selected : undefined,
                 )}
             >

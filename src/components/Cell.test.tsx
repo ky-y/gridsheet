@@ -248,7 +248,6 @@ describe("RenderCell", () => {
             />,
         );
         const input = container.querySelector("input") as HTMLInputElement;
-        expect(input.style.textAlign).toBe("right"); // base style for number
         expect(input.style.color).toBe("blue"); // column style
         expect(input.style.fontWeight).toBe("bold"); // cell style
     });

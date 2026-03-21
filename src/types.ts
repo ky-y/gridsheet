@@ -31,6 +31,7 @@ export type ExtCell<V = unknown> = {
 type BaseColumn = {
     key: string;
     title?: string;
+    titleClassName?: string;
     width?: "auto" | string | number;
     readonly?: boolean;
     style?: CSSProperties;
@@ -61,6 +62,7 @@ export type PlainRow<C extends readonly ColumnType[]> = {
 export type HeaderFooterCell = {
     body: string;
     span?: number;
+    className?: string;
 };
 
 export type CellAddress = {
