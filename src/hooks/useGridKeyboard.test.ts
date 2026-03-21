@@ -31,7 +31,6 @@ function createParams(
         maxRow: 2,
         minCol: 0,
         maxCol: 4,
-        fullMinRow: 0,
         fullMinCol: 0,
         ...overrides,
     };

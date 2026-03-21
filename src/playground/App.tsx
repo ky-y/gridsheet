@@ -48,9 +48,7 @@ export function App() {
                 onChange={handleChange}
                 configs={{
                     showRowNumbers: true,
-                    selectableHeaders: true,
                     selectableRowNumbers: true,
-                    selectableTitles: true,
                 }}
             />
             <pre>{JSON.stringify(data, null, 2)}</pre>

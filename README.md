@@ -70,9 +70,6 @@ function App() {
 | Option                 | Default | Description                              |
 |------------------------|---------|------------------------------------------|
 | `showRowNumbers`       | `false` | Show a row number column                 |
-| `selectableTitles`     | `false` | Allow selecting the title row            |
-| `selectableHeaders`    | `false` | Allow selecting header rows              |
-| `selectableFooters`    | `false` | Allow selecting footer rows              |
 | `selectableRowNumbers` | `false` | Allow selecting the row number column    |
 | `scrollToSelection`    | `true`  | Scroll to keep the selected cell in view |
 

@@ -40,7 +40,6 @@ export type GridKeyboardParams<C extends readonly ColumnType[]> = {
     maxRow: number;
     minCol: number;
     maxCol: number;
-    fullMinRow: number;
     fullMinCol: number;
 };
 
@@ -389,7 +388,6 @@ function handleArrowNavigation<C extends readonly ColumnType[]>(
         maxRow,
         minCol,
         maxCol,
-        fullMinRow,
         fullMinCol,
     } = params;
 
@@ -410,8 +408,7 @@ function handleArrowNavigation<C extends readonly ColumnType[]>(
         const selMaxRow = Math.max(current.start.row, current.end.row);
         const selMinCol = Math.min(current.start.col, current.end.col);
         const selMaxCol = Math.max(current.start.col, current.end.col);
-        const isColumnSelection =
-            selMinRow === fullMinRow && selMaxRow === maxRow;
+        const isColumnSelection = selMinRow === minRow && selMaxRow === maxRow;
         const isRowSelection = selMinCol === fullMinCol && selMaxCol === maxCol;
 
         // 列全体選択 + 左右キー: 列選択を移動/拡張
@@ -443,7 +440,7 @@ function handleArrowNavigation<C extends readonly ColumnType[]>(
                           Math.min(maxCol, selMinCol + dir.col),
                       );
             const next = {
-                start: { row: fullMinRow, col: newCol },
+                start: { row: minRow, col: newCol },
                 end: { row: maxRow, col: newCol },
             };
             onSelectionChange?.(next);

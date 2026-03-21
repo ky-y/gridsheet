@@ -42,9 +42,6 @@ export const GridSheet = <const C extends readonly ColumnType[]>({
     const [editingCell, setEditingCell] = useState<CellAddress | null>(null);
 
     const hasTitle = columns.some((col) => col.title != null);
-    const selectableTitles = configs?.selectableTitles === true;
-    const selectableHeaders = configs?.selectableHeaders === true;
-    const selectableFooters = configs?.selectableFooters === true;
     const showRowNumbers = configs?.showRowNumbers === true;
     const selectableRowNumbers =
         configs?.selectableRowNumbers === true && showRowNumbers;
@@ -99,24 +96,16 @@ export const GridSheet = <const C extends readonly ColumnType[]>({
     const dataCssRowStart = headerCssRowStart + (headers?.length ?? 0);
     const footerCssRowStart = dataCssRowStart + data.length;
 
-    const minRow =
-        selectableTitles && hasTitle
-            ? titleRowIndex
-            : selectableHeaders && headers?.length
-              ? headerRowOffset
-              : dataRowOffset;
-    const maxRow =
-        selectableFooters && footers?.length
-            ? footerRowOffset + footers.length - 1
-            : dataRowOffset + data.length - 1;
-    const minCol = selectableRowNumbers ? 0 : colOffset;
-    const maxCol = columns.length - 1 + colOffset;
-
-    const fullMinRow = hasTitle
+    const minRow = hasTitle
         ? titleRowIndex
         : headers?.length
           ? headerRowOffset
           : dataRowOffset;
+    const maxRow = footers?.length
+        ? footerRowOffset + footers.length - 1
+        : dataRowOffset + data.length - 1;
+    const minCol = selectableRowNumbers ? 0 : colOffset;
+    const maxCol = columns.length - 1 + colOffset;
     const fullMinCol = showRowNumbers ? 0 : colOffset;
 
     // 編集モード時にinputをフォーカス
@@ -138,9 +127,9 @@ export const GridSheet = <const C extends readonly ColumnType[]>({
         }
     }, [editingCell]);
 
-    // GridSheet外クリックでeditingモード終了
+    // GridSheet外クリックでeditingモード・選択モード終了
     useEffect(() => {
-        if (!editingCell) return;
+        if (!editingCell && !selection) return;
         const handleOutsideClick = (e: MouseEvent) => {
             if (
                 containerRef.current &&
@@ -153,14 +142,14 @@ export const GridSheet = <const C extends readonly ColumnType[]>({
         document.addEventListener("mousedown", handleOutsideClick);
         return () =>
             document.removeEventListener("mousedown", handleOutsideClick);
-    }, [editingCell]);
+    }, [editingCell, selection]);
 
     // 選択セルが画面外に出た場合にスクロール
     // 列全選択・行全選択・全選択時はスクロールしない
     useEffect(() => {
         if (!scrollToSelection || !selection || !containerRef.current) return;
         const isFullRowSpan =
-            selection.start.row === fullMinRow && selection.end.row === maxRow;
+            selection.start.row === minRow && selection.end.row === maxRow;
         const isFullColSpan =
             selection.start.col === fullMinCol && selection.end.col === maxCol;
         if (isFullRowSpan || isFullColSpan) return;
@@ -172,7 +161,7 @@ export const GridSheet = <const C extends readonly ColumnType[]>({
         if (cell) {
             cell.scrollIntoView({ block: "nearest", inline: "nearest" });
         }
-    }, [scrollToSelection, selection, fullMinRow, maxRow, fullMinCol, maxCol]);
+    }, [scrollToSelection, selection, minRow, maxRow, fullMinCol, maxCol]);
 
     const { handleMouseDown, handleMouseMove } = useGridMouse({
         selection,
@@ -180,7 +169,7 @@ export const GridSheet = <const C extends readonly ColumnType[]>({
         setEditingCell,
         containerRef,
         onSelectionChange,
-        fullMinRow,
+        minRow,
         fullMinCol,
         maxRow,
         maxCol,
@@ -207,7 +196,6 @@ export const GridSheet = <const C extends readonly ColumnType[]>({
         maxRow,
         minCol,
         maxCol,
-        fullMinRow,
         fullMinCol,
     });
 
@@ -238,16 +226,13 @@ export const GridSheet = <const C extends readonly ColumnType[]>({
                 (() => {
                     const cornerSpan =
                         (hasTitle ? 1 : 0) + (headers?.length ?? 0);
-                    const canSelectAll =
-                        selectableRowNumbers &&
-                        ((hasTitle && selectableTitles) ||
-                            ((headers?.length ?? 0) > 0 && selectableHeaders));
+                    const canSelectAll = selectableRowNumbers;
                     return (
                         <div
                             key="select-all"
                             className={cn(
                                 styles.selectAll,
-                                isSelected(fullMinRow, 0, selection)
+                                isSelected(minRow, 0, selection)
                                     ? styles.selected
                                     : undefined,
                             )}
@@ -256,7 +241,7 @@ export const GridSheet = <const C extends readonly ColumnType[]>({
                                 gridColumn: 1,
                             }}
                             role="columnheader"
-                            data-row={fullMinRow}
+                            data-row={minRow}
                             data-col={0}
                             {...(canSelectAll
                                 ? { "data-type": "selectAll" }
@@ -406,14 +391,12 @@ export const GridSheet = <const C extends readonly ColumnType[]>({
                     "footer",
                     "footer",
                     footerCssRowStart,
-                    selectableFooters
-                        ? {
-                              rowOffset: footerRowOffset,
-                              colOffset,
-                              selection,
-                              cellType: "footer",
-                          }
-                        : undefined,
+                    {
+                        rowOffset: footerRowOffset,
+                        colOffset,
+                        selection,
+                        cellType: "footer",
+                    },
                     showRowNumbers,
                     showRowNumbers,
                 )}

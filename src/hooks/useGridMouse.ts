@@ -19,7 +19,7 @@ export type GridMouseParams = {
     setEditingCell: (cell: CellAddress | null) => void;
     containerRef: React.RefObject<HTMLDivElement | null>;
     onSelectionChange?: ((selection: Selection) => void) | undefined;
-    fullMinRow: number;
+    minRow: number;
     fullMinCol: number;
     maxRow: number;
     maxCol: number;
@@ -40,7 +40,7 @@ export function useGridMouse(params: GridMouseParams) {
                 selection,
                 containerRef,
                 onSelectionChange,
-                fullMinRow,
+                minRow,
                 fullMinCol,
                 maxRow,
                 maxCol,
@@ -61,13 +61,13 @@ export function useGridMouse(params: GridMouseParams) {
             if (cellType === "selectAll") {
                 // テーブル全選択
                 setSelection(() => ({
-                    start: { row: fullMinRow, col: fullMinCol },
+                    start: { row: minRow, col: fullMinCol },
                     end: { row: maxRow, col: maxCol },
                 }));
                 setDragMode("cell");
                 setIsDragging(false);
                 onSelectionChange?.({
-                    start: { row: fullMinRow, col: fullMinCol },
+                    start: { row: minRow, col: fullMinCol },
                     end: { row: maxRow, col: maxCol },
                 });
                 containerRef.current?.focus();
@@ -76,7 +76,7 @@ export function useGridMouse(params: GridMouseParams) {
             if (cellType === "title") {
                 // 列全選択
                 setSelection(() => ({
-                    start: { row: fullMinRow, col },
+                    start: { row: minRow, col },
                     end: { row: maxRow, col },
                 }));
                 setDragMode("column");
@@ -84,7 +84,7 @@ export function useGridMouse(params: GridMouseParams) {
                 // 列全選択（spanがある場合は複数列）
                 const span = Number(el.dataset.span) || 1;
                 setSelection(() => ({
-                    start: { row: fullMinRow, col },
+                    start: { row: minRow, col },
                     end: { row: maxRow, col: col + span - 1 },
                 }));
                 setDragMode("column");

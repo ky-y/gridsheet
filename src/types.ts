@@ -77,16 +77,10 @@ export type Selection = {
 } | null;
 
 export type GridSheetConfigs = {
-    /** title行を選択範囲に含めるか (default: false) */
-    selectableTitles?: boolean;
-    /** header行を選択範囲に含めるか (default: false) */
-    selectableHeaders?: boolean;
     /** 行番号列を表示するか (default: false) */
     showRowNumbers?: boolean;
     /** 行番号列を選択範囲に含めるか (default: false) */
     selectableRowNumbers?: boolean;
-    /** footer行を選択範囲に含めるか (default: false) */
-    selectableFooters?: boolean;
     /** 選択セルが画面外に出た場合にスクロールするか (default: true) */
     scrollToSelection?: boolean;
 };

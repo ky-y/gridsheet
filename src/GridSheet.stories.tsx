@@ -59,8 +59,6 @@ export const WithHeaders: Story = {
         data: sampleData,
         configs: {
             showRowNumbers: true,
-            selectableHeaders: true,
-            selectableTitles: true,
             selectableRowNumbers: true,
         },
         headers: [
@@ -78,7 +76,6 @@ export const WithFooters: Story = {
         data: sampleData,
         configs: {
             showRowNumbers: true,
-            selectableFooters: true,
         },
         footers: [
             [{ body: "Total" }, { body: "409" }, { body: "" }, { body: "" }],
@@ -92,10 +89,7 @@ export const WithHeadersAndFooters: Story = {
         data: sampleData,
         configs: {
             showRowNumbers: true,
-            selectableHeaders: true,
-            selectableTitles: true,
             selectableRowNumbers: true,
-            selectableFooters: true,
         },
         headers: [
             [
@@ -164,8 +158,6 @@ function InteractiveWrapper() {
                 onChange={setData}
                 configs={{
                     showRowNumbers: true,
-                    selectableHeaders: true,
-                    selectableTitles: true,
                     selectableRowNumbers: true,
                 }}
                 headers={[

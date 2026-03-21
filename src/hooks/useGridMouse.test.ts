@@ -15,7 +15,7 @@ function createParams(
         setEditingCell: vi.fn(),
         containerRef: { current: container },
         onSelectionChange: vi.fn(),
-        fullMinRow: 0,
+        minRow: 0,
         fullMinCol: 0,
         maxRow: 9,
         maxCol: 4,
