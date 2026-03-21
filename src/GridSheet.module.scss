@@ -38,6 +38,10 @@
         padding: 0 6px;
         background: #f0f0f0;
         font-weight: 600;
+
+        &:last-child {
+            border-right: none;
+        }
     }
 
     .rowNumber {

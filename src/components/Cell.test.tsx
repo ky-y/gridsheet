@@ -256,7 +256,7 @@ describe("RenderCell", () => {
         const col = {
             key: "name",
             type: "string" as const,
-            className: "col-class",
+            cellClassName: "col-class",
         };
         const { container } = render(
             <RenderCell
