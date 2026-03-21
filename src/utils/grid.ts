@@ -66,15 +66,14 @@ export function getCellValue<V>(cell: ExtCell<V>): V {
 /** Row を ExtRow に正規化（全セルを ExtCell でラップ） */
 export function toExtRow<C extends readonly ColumnType[]>(
     row: Row<C>,
-    columns: C,
 ): ExtRow<C> {
     const result = {} as Record<string, unknown>;
-    for (const col of columns) {
-        const raw = getCellRaw(row, col.key);
+    for (const key of Object.keys(row as Record<string, unknown>)) {
+        const raw = (row as Record<string, unknown>)[key];
         if (isExtCell(raw)) {
-            result[col.key] = raw;
+            result[key] = raw;
         } else {
-            result[col.key] = { value: raw };
+            result[key] = { value: raw };
         }
     }
     return result as ExtRow<C>;
@@ -83,12 +82,11 @@ export function toExtRow<C extends readonly ColumnType[]>(
 /** ExtRow を素の値のみの行に変換 */
 export function toPlainRow<C extends readonly ColumnType[]>(
     row: ExtRow<C>,
-    columns: C,
 ): PlainRow<C> {
     const result = {} as Record<string, unknown>;
-    for (const col of columns) {
-        const cell = (row as Record<string, ExtCell>)[col.key]!;
-        result[col.key] = cell.value;
+    for (const key of Object.keys(row as Record<string, unknown>)) {
+        const cell = (row as Record<string, ExtCell>)[key]!;
+        result[key] = cell.value;
     }
     return result as PlainRow<C>;
 }
@@ -96,17 +94,15 @@ export function toPlainRow<C extends readonly ColumnType[]>(
 /** ExtRow[] 全体を素の値のみの配列に変換 */
 export function toPlainData<C extends readonly ColumnType[]>(
     data: ExtRow<C>[],
-    columns: C,
 ): PlainRow<C>[] {
-    return data.map((row) => toPlainRow(row, columns));
+    return data.map((row) => toPlainRow(row));
 }
 
 /** Row[] 全体を ExtRow[] に正規化 */
 export function toExtData<C extends readonly ColumnType[]>(
     data: Row<C>[],
-    columns: C,
 ): ExtRow<C>[] {
-    return data.map((row) => toExtRow(row, columns));
+    return data.map((row) => toExtRow(row));
 }
 
 export function getCellAddress(target: EventTarget): CellAddress | null {

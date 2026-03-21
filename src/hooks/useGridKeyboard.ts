@@ -260,7 +260,7 @@ function handleDelete<C extends readonly ColumnType[]>(
             ? ({ ...d, [colDef.key]: cellUpdate } as Row<C>)
             : d,
     );
-    onChange(toExtData(newData, columns));
+    onChange(toExtData(newData));
     setEditingCell({ row: r, col: c });
     e.preventDefault();
     return true;
@@ -349,7 +349,7 @@ function handleCharInput<C extends readonly ColumnType[]>(
                 ? ({ ...d, [colDef.key]: cellUpdate } as Row<C>)
                 : d,
         );
-        onChange(toExtData(newData, columns));
+        onChange(toExtData(newData));
     } else if (onChange && colDef.type === "number" && /\d/.test(e.key)) {
         const cellUpdate = updateCellValue(raw, Number(e.key));
         const newData = data.map((d, i) =>
@@ -357,7 +357,7 @@ function handleCharInput<C extends readonly ColumnType[]>(
                 ? ({ ...d, [colDef.key]: cellUpdate } as Row<C>)
                 : d,
         );
-        onChange(toExtData(newData, columns));
+        onChange(toExtData(newData));
     }
     setEditingCell({ row: r, col: c });
     e.preventDefault();

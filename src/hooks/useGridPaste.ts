@@ -113,7 +113,7 @@ export function useGridPaste<C extends readonly ColumnType[]>(
                 }
                 return changed ? (updated as Row<C>) : r;
             });
-            onChange(toExtData(newData, columns));
+            onChange(toExtData(newData));
         },
         [],
     );

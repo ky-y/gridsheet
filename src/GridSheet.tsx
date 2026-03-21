@@ -72,7 +72,7 @@ export const GridSheet = <const C extends readonly ColumnType[]>({
             const newData = currentData.map((r, i) =>
                 i === rowIndex ? ({ ...r, [colKey]: newValue } as Row<C>) : r,
             );
-            currentOnChange(toExtData(newData, columnsRef.current));
+            currentOnChange(toExtData(newData));
         },
         [],
     );
