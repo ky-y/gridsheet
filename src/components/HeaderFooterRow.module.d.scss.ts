@@ -1,5 +1,7 @@
 export type Styles = {
+    footerBorder: string;
     footerCell: string;
+    headerBorder: string;
     headerCell: string;
     rowNumber: string;
     selected: string;
