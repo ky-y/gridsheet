@@ -6,7 +6,7 @@ export function App() {
     const [data, setData] = useState(initialData);
 
     const handleChange = (newData: ExtRow<typeof columns>[]) => {
-        toPlainData(newData, columns);
+        toPlainData(newData);
         newData.map((row) => getCellValue(row.active));
         setData(newData);
     };
