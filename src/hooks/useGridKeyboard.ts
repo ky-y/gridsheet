@@ -347,6 +347,12 @@ function handleEnterEdit<C extends readonly ColumnType[]>(
     const colIdx = c - colOffset;
     if (colIdx < 0 || colIdx >= columns.length) return false;
 
+    const colDef = columns[colIdx]!;
+    const dataRow = data[r - dataRowOffset]!;
+    const raw = getCellRaw(dataRow, colDef.key);
+    const cellData = resolveCell(raw);
+    if (cellData.readonly || colDef.readonly === true) return false;
+
     setEditingCell({ row: r, col: c });
     e.preventDefault();
     return true;

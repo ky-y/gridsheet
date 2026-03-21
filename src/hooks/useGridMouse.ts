@@ -6,10 +6,10 @@ import {
     useRef,
     useState,
 } from "react";
-import type { CellAddress, Selection } from "../types.js";
-import { getCellAddress } from "../utils/grid.js";
+import type { CellAddress, ColumnType, Row, Selection } from "../types.js";
+import { getCellAddress, getCellRaw, resolveCell } from "../utils/grid.js";
 
-export type GridMouseParams = {
+export type GridMouseParams<C extends readonly ColumnType[] = ColumnType[]> = {
     selection: { start: CellAddress; end: CellAddress } | null;
     setSelection: (
         updater: (
@@ -23,9 +23,15 @@ export type GridMouseParams = {
     fullMinCol: number;
     maxRow: number;
     maxCol: number;
+    data: Row<C>[];
+    columns: C;
+    colOffset: number;
+    dataRowOffset: number;
 };
 
-export function useGridMouse(params: GridMouseParams) {
+export function useGridMouse<C extends readonly ColumnType[]>(
+    params: GridMouseParams<C>,
+) {
     const { setSelection, setEditingCell } = params;
 
     const paramsRef = useRef(params);
@@ -96,7 +102,7 @@ export function useGridMouse(params: GridMouseParams) {
                 }));
                 setDragMode("row");
             } else {
-                // 既にアクティブなセルを再クリック → 編集モードに入る
+                // 既にアクティブなセルを再クリック → 編集モードに入る（readonlyでない場合）
                 if (
                     selection &&
                     selection.start.row === row &&
@@ -104,6 +110,24 @@ export function useGridMouse(params: GridMouseParams) {
                     selection.end.row === row &&
                     selection.end.col === col
                 ) {
+                    const { data, columns, colOffset, dataRowOffset } =
+                        paramsRef.current;
+                    const colIdx = col - colOffset;
+                    const dataIdx = row - dataRowOffset;
+                    if (
+                        colIdx >= 0 &&
+                        colIdx < columns.length &&
+                        dataIdx >= 0 &&
+                        dataIdx < data.length
+                    ) {
+                        const colDef = columns[colIdx]!;
+                        const raw = getCellRaw(data[dataIdx]!, colDef.key);
+                        const cellData = resolveCell(raw);
+                        if (cellData.readonly || colDef.readonly === true) {
+                            setIsDragging(false);
+                            return;
+                        }
+                    }
                     setEditingCell({ row, col });
                     setIsDragging(false);
                     return;

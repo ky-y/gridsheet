@@ -4,6 +4,22 @@ import { useGridMouse } from "./useGridMouse.js";
 import type { GridMouseParams } from "./useGridMouse.js";
 import type { Selection } from "../types.js";
 
+const defaultColumns = [
+    { key: "name", type: "string" as const },
+    { key: "age", type: "number" as const },
+    { key: "score", type: "number" as const },
+    { key: "active", type: "check" as const },
+    { key: "role", type: "string" as const },
+] as const;
+
+const defaultData = Array.from({ length: 10 }, (_, i) => ({
+    name: `User${i}`,
+    age: 20 + i,
+    score: 100 + i,
+    active: i % 2 === 0,
+    role: "member",
+}));
+
 function createParams(
     overrides: Partial<GridMouseParams> = {},
 ): GridMouseParams {
@@ -19,6 +35,10 @@ function createParams(
         fullMinCol: 0,
         maxRow: 9,
         maxCol: 4,
+        data: defaultData as any,
+        columns: defaultColumns as any,
+        colOffset: 0,
+        dataRowOffset: 0,
         ...overrides,
     };
 }
@@ -205,6 +225,62 @@ describe("useGridMouse", () => {
             window.dispatchEvent(new MouseEvent("mouseup"));
         });
         expect(onSelectionChange).toHaveBeenCalled();
+    });
+
+    it("does not enter edit mode on clicking readonly cell", () => {
+        const setEditingCell = vi.fn();
+        const selection = {
+            start: { row: 0, col: 0 },
+            end: { row: 0, col: 0 },
+        };
+        const readonlyData = [
+            {
+                name: { value: "Alice", readonly: true },
+                age: 25,
+                score: 100,
+                active: true,
+                role: "admin",
+            },
+        ] as any;
+        const { result } = renderHook(() =>
+            useGridMouse(
+                createParams({ setEditingCell, selection, data: readonlyData }),
+            ),
+        );
+        act(() => {
+            result.current.handleMouseDown(
+                makeMouseEvent({ row: "0", col: "0" }),
+            );
+        });
+        // setEditingCell should only be called with null (clearing), not with the cell address
+        expect(setEditingCell).not.toHaveBeenCalledWith({ row: 0, col: 0 });
+    });
+
+    it("does not enter edit mode on clicking cell with readonly column", () => {
+        const setEditingCell = vi.fn();
+        const selection = {
+            start: { row: 0, col: 0 },
+            end: { row: 0, col: 0 },
+        };
+        const readonlyColumns = [
+            { key: "name", type: "string" as const, readonly: true },
+            ...defaultColumns.slice(1),
+        ] as any;
+        const { result } = renderHook(() =>
+            useGridMouse(
+                createParams({
+                    setEditingCell,
+                    selection,
+                    columns: readonlyColumns,
+                }),
+            ),
+        );
+        act(() => {
+            result.current.handleMouseDown(
+                makeMouseEvent({ row: "0", col: "0" }),
+            );
+        });
+        expect(setEditingCell).not.toHaveBeenCalledWith({ row: 0, col: 0 });
     });
 
     it("ignores mouseMove when not dragging", () => {
