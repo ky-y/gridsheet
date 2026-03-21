@@ -35,7 +35,7 @@ type BaseColumn = {
     width?: "auto" | string | number;
     readonly?: boolean;
     style?: CSSProperties;
-    className?: string;
+    cellClassName?: string;
 };
 
 export type ColumnType =

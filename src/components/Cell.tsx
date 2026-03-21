@@ -277,7 +277,7 @@ export const RenderCell = memo(function RenderCell({
         : undefined;
     const style: CSSProperties | undefined =
         col.style || cellStyle ? { ...col.style, ...cellStyle } : undefined;
-    const className = cn(col.className, cellClassName) || undefined;
+    const className = cn(col.cellClassName, cellClassName) || undefined;
     const readOnly = isReadonly || col.readonly === true;
     const editing = isEditing;
     const baseProps = { readOnly, style, className, onChangeValue };
