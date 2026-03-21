@@ -5,6 +5,7 @@ export {
     type CellTypeToValue,
     type SelectOption,
     type CellDataType,
+    type CellDataRow,
     type ColumnType,
     type DataType,
     type HeaderFooterCell,
@@ -13,3 +14,4 @@ export {
     type GridSheetConfigs,
     type GridSheetType,
 } from "./types.js";
+export { getCellValue } from "./utils/grid.js";
