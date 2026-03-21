@@ -7,10 +7,13 @@ import type { Selection } from "../types.js";
 function createParams(
     overrides: Partial<GridMouseParams> = {},
 ): GridMouseParams {
+    const container = document.createElement("div");
+    container.focus = vi.fn();
     return {
         selection: null,
         setSelection: vi.fn((updater) => updater(null)),
         setEditingCell: vi.fn(),
+        containerRef: { current: container },
         onSelectionChange: vi.fn(),
         fullMinRow: 0,
         fullMinCol: 0,
