@@ -54,12 +54,6 @@ describe("extractText", () => {
     });
 
     it("handles mixed content in JSX", () => {
-        expect(
-            extractText(
-                <span>
-                    count: {123}
-                </span>,
-            ),
-        ).toBe("count: 123");
+        expect(extractText(<span>count: {123}</span>)).toBe("count: 123");
     });
 });
