@@ -15,7 +15,12 @@ import type {
     DataType,
     GridSheetType,
 } from "./types.js";
-import { getCellRaw, isSelected, resolveCellData } from "./utils/grid.js";
+import {
+    getCellRaw,
+    isSelected,
+    normalizeData,
+    resolveCellData,
+} from "./utils/grid.js";
 
 export const GridSheet = <const C extends readonly ColumnType[]>({
     className,
@@ -52,6 +57,9 @@ export const GridSheet = <const C extends readonly ColumnType[]>({
     const onChangeRef = useRef(onChange);
     onChangeRef.current = onChange;
 
+    const columnsRef = useRef(columns);
+    columnsRef.current = columns;
+
     const handleCellChange = useCallback(
         (
             rowIndex: number,
@@ -66,7 +74,7 @@ export const GridSheet = <const C extends readonly ColumnType[]>({
                     ? ({ ...r, [colKey]: newValue } as DataType<C>)
                     : r,
             );
-            currentOnChange(newData);
+            currentOnChange(normalizeData(newData, columnsRef.current));
         },
         [],
     );
