@@ -53,6 +53,11 @@ export type CellDataRow<C extends readonly ColumnType[]> = {
     [K in C[number] as K["key"]]: CellDataType<CellTypeToValue[K["type"]]>;
 };
 
+/** 素の値のみの行型（CellDataType を剥がした状態） */
+export type PlainRow<C extends readonly ColumnType[]> = {
+    [K in C[number] as K["key"]]: CellTypeToValue[K["type"]];
+};
+
 export type HeaderFooterCell = {
     body: string;
     span?: number;

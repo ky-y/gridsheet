@@ -5,6 +5,7 @@ import type {
     CellDataType,
     ColumnType,
     DataType,
+    PlainRow,
 } from "../types.js";
 
 /** CellDataType ラッパーかどうかを判定する型ガード */
@@ -77,6 +78,27 @@ export function normalizeRow<C extends readonly ColumnType[]>(
         }
     }
     return result as CellDataRow<C>;
+}
+
+/** CellDataRow の行を素の値のみの行に変換 */
+export function denormalizeRow<C extends readonly ColumnType[]>(
+    row: CellDataRow<C>,
+    columns: C,
+): PlainRow<C> {
+    const result = {} as Record<string, unknown>;
+    for (const col of columns) {
+        const cell = (row as Record<string, CellDataType>)[col.key]!;
+        result[col.key] = cell.value;
+    }
+    return result as PlainRow<C>;
+}
+
+/** CellDataRow[] 全体を素の値のみの配列に変換 */
+export function denormalizeData<C extends readonly ColumnType[]>(
+    data: CellDataRow<C>[],
+    columns: C,
+): PlainRow<C>[] {
+    return data.map((row) => denormalizeRow(row, columns));
 }
 
 /** DataType[] 全体を CellDataRow[] に正規化 */
