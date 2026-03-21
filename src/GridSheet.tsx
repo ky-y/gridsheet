@@ -12,14 +12,14 @@ import type {
     CellType,
     CellTypeToValue,
     ColumnType,
-    DataType,
     GridSheetType,
+    Row,
 } from "./types.js";
 import {
     getCellRaw,
     isSelected,
-    normalizeData,
-    resolveCellData,
+    resolveCell,
+    toExtData,
 } from "./utils/grid.js";
 
 export const GridSheet = <const C extends readonly ColumnType[]>({
@@ -70,11 +70,9 @@ export const GridSheet = <const C extends readonly ColumnType[]>({
             if (!currentOnChange) return;
             const currentData = dataRef.current;
             const newData = currentData.map((r, i) =>
-                i === rowIndex
-                    ? ({ ...r, [colKey]: newValue } as DataType<C>)
-                    : r,
+                i === rowIndex ? ({ ...r, [colKey]: newValue } as Row<C>) : r,
             );
-            currentOnChange(normalizeData(newData, columnsRef.current));
+            currentOnChange(toExtData(newData, columnsRef.current));
         },
         [],
     );
@@ -320,7 +318,7 @@ export const GridSheet = <const C extends readonly ColumnType[]>({
                         {columns.map((col, colIndex) => {
                             const absCol = colIndex + colOffset;
                             const raw = getCellRaw(row, col.key);
-                            const cell = resolveCellData(raw);
+                            const cell = resolveCell(raw);
                             const selected = isSelected(
                                 absoluteRow,
                                 absCol,

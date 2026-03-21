@@ -1,17 +1,12 @@
 import { useState } from "react";
-import {
-    type CellDataRow,
-    denormalizeData,
-    GridSheet,
-    getCellValue,
-} from "../index.js";
+import { type ExtRow, GridSheet, getCellValue, toPlainData } from "../index.js";
 import { columns, initialData } from "./sampleData.js";
 
 export function App() {
     const [data, setData] = useState(initialData);
 
-    const handleChange = (newData: CellDataRow<typeof columns>[]) => {
-        denormalizeData(newData, columns);
+    const handleChange = (newData: ExtRow<typeof columns>[]) => {
+        toPlainData(newData, columns);
         newData.map((row) => getCellValue(row.active));
         setData(newData);
     };

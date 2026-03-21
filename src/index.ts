@@ -1,18 +1,26 @@
 export { GridSheet } from "./GridSheet.js";
 export {
-    createCol,
+    type CellAddress,
     type CellType,
     type CellTypeToValue,
-    type SelectOption,
-    type CellDataType,
-    type CellDataRow,
-    type PlainRow,
     type ColumnType,
-    type DataType,
-    type HeaderFooterCell,
-    type CellAddress,
-    type Selection,
+    createCol,
+    type ExtCell,
+    type ExtRow,
     type GridSheetConfigs,
     type GridSheetType,
+    type HeaderFooterCell,
+    type PlainRow,
+    type Row,
+    type Selection,
+    type SelectOption,
 } from "./types.js";
-export { getCellValue, denormalizeRow, denormalizeData } from "./utils/grid.js";
+export {
+    getCellValue,
+    isExtCell,
+    resolveCell,
+    toExtData,
+    toExtRow,
+    toPlainData,
+    toPlainRow,
+} from "./utils/grid.js";

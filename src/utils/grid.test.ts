@@ -1,16 +1,11 @@
 import { describe, expect, it } from "vitest";
-import {
-    getCellAddress,
-    getCellRaw,
-    isSelected,
-    resolveCellData,
-} from "./grid.js";
-import type { CellDataType } from "../types.js";
+import { getCellAddress, getCellRaw, isSelected, resolveCell } from "./grid.js";
+import type { ExtCell } from "../types.js";
 import { testData } from "../test/fixtures.js";
 
-describe("resolveCellData", () => {
+describe("resolveCell", () => {
     it("returns raw value when given a primitive", () => {
-        const result = resolveCellData("hello");
+        const result = resolveCell("hello");
         expect(result).toEqual({
             value: "hello",
             readonly: false,
@@ -20,18 +15,18 @@ describe("resolveCellData", () => {
     });
 
     it("returns raw value for null/undefined", () => {
-        expect(resolveCellData(null).value).toBe(null);
-        expect(resolveCellData(undefined).value).toBe(undefined);
+        expect(resolveCell(null).value).toBe(null);
+        expect(resolveCell(undefined).value).toBe(undefined);
     });
 
-    it("unwraps CellDataType object", () => {
-        const cell: CellDataType<string> = {
+    it("unwraps ExtCell object", () => {
+        const cell: ExtCell<string> = {
             value: "test",
             readonly: true,
             style: { color: "red" },
             className: "custom",
         };
-        const result = resolveCellData(cell);
+        const result = resolveCell(cell);
         expect(result).toEqual({
             value: "test",
             readonly: true,
@@ -40,14 +35,14 @@ describe("resolveCellData", () => {
         });
     });
 
-    it("defaults readonly to false when not specified in CellDataType", () => {
-        const cell: CellDataType<number> = { value: 42 };
-        expect(resolveCellData(cell).readonly).toBe(false);
+    it("defaults readonly to false when not specified in ExtCell", () => {
+        const cell: ExtCell<number> = { value: 42 };
+        expect(resolveCell(cell).readonly).toBe(false);
     });
 
-    it("does not treat arrays as CellDataType", () => {
+    it("does not treat arrays as ExtCell", () => {
         const arr = [1, 2, 3];
-        expect(resolveCellData(arr).value).toBe(arr);
+        expect(resolveCell(arr).value).toBe(arr);
     });
 });
 
@@ -57,7 +52,7 @@ describe("getCellRaw", () => {
         expect(getCellRaw(testData[0]!, "age")).toBe(30);
     });
 
-    it("retrieves CellDataType object when present", () => {
+    it("retrieves ExtCell object when present", () => {
         const raw = getCellRaw(testData[2]!, "name");
         expect(raw).toEqual({
             value: "Charlie",

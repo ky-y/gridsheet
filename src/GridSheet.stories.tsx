@@ -2,7 +2,7 @@ import { useState } from "react";
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { fn } from "storybook/test";
 import { GridSheet } from "./GridSheet.js";
-import { createCol, type ColumnType, type DataType } from "./types.js";
+import { createCol, type ColumnType, type Row } from "./types.js";
 
 const columns = [
     createCol("name", "string", { title: "Name", width: "120px" }),
@@ -11,9 +11,9 @@ const columns = [
     createCol("note", "numberString", { title: "Note" }),
 ] as const satisfies readonly ColumnType[];
 
-type Row = DataType<typeof columns>;
+type SampleRow = Row<typeof columns>;
 
-const sampleData: Row[] = [
+const sampleData: SampleRow[] = [
     { name: "Alice", score: 95, active: true, note: "100" },
     { name: "Bob", score: 82, active: false, note: "200" },
     { name: "Charlie", score: 73, active: true, note: "300" },
@@ -130,7 +130,7 @@ export const WithSelectColumn: Story = {
             { name: "Alice", role: "admin", score: 95 },
             { name: "Bob", role: "editor", score: 82 },
             { name: "Charlie", role: "viewer", score: 73 },
-        ] as DataType<typeof selectColumns>[],
+        ] as Row<typeof selectColumns>[],
     },
 };
 
@@ -150,12 +150,12 @@ export const ReadOnly: Story = {
         data: [
             { name: "Alice", score: 95, active: true },
             { name: "Bob", score: 82, active: false },
-        ] as DataType<typeof readonlyColumns>[],
+        ] as Row<typeof readonlyColumns>[],
     },
 };
 
 function InteractiveWrapper() {
-    const [data, setData] = useState<Row[]>(sampleData);
+    const [data, setData] = useState<SampleRow[]>(sampleData);
     return (
         <div>
             <GridSheet

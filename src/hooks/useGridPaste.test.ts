@@ -153,7 +153,7 @@ describe("useGridPaste", () => {
         const { result } = renderHook(() =>
             useGridPaste(
                 createParams({
-                    // row 2, col 0 is Charlie (readonly CellDataType)
+                    // row 2, col 0 is Charlie (readonly ExtCell)
                     selection: {
                         start: { row: 2, col: 0 },
                         end: { row: 2, col: 0 },
@@ -187,10 +187,10 @@ describe("useGridPaste", () => {
         expect(newData[1].name.value).toBe("Same");
     });
 
-    it("preserves CellDataType wrapper when pasting into wrapped cells", () => {
+    it("preserves ExtCell wrapper when pasting into wrapped cells", () => {
         const onChange = vi.fn();
         // Paste into col 1 (age) for row 2 which is a plain value
-        // But row 2, col 0 (name) is a CellDataType — paste a multi-cell to cover it
+        // But row 2, col 0 (name) is an ExtCell — paste a multi-cell to cover it
         const { result } = renderHook(() =>
             useGridPaste(
                 createParams({

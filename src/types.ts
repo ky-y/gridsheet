@@ -20,8 +20,8 @@ export type SelectOption = {
     value: string;
 };
 
-/** セル単位の制御情報 */
-export type CellDataType<V = unknown> = {
+/** 拡張セル（value + readonly + style + className） */
+export type ExtCell<V = unknown> = {
     value: V;
     readonly?: boolean;
     style?: CSSProperties;
@@ -41,19 +41,19 @@ export type ColumnType =
     | (BaseColumn & { type: Exclude<CellType, "select"> })
     | (BaseColumn & { type: "select"; options: SelectOption[] });
 
-/** セルの値は直接の値 or CellDataType のどちらでも受け取れる */
-type CellValue<V> = V | CellDataType<V>;
+/** セルの値は直接の値 or ExtCell のどちらでも受け取れる */
+type Cell<V> = V | ExtCell<V>;
 
-export type DataType<C extends readonly ColumnType[]> = {
-    [K in C[number] as K["key"]]: CellValue<CellTypeToValue[K["type"]]>;
+export type Row<C extends readonly ColumnType[]> = {
+    [K in C[number] as K["key"]]: Cell<CellTypeToValue[K["type"]]>;
 };
 
-/** onChange で返却される行型（全セルが CellDataType でラップ済み） */
-export type CellDataRow<C extends readonly ColumnType[]> = {
-    [K in C[number] as K["key"]]: CellDataType<CellTypeToValue[K["type"]]>;
+/** 正規化済み行（全セルが ExtCell でラップ済み） */
+export type ExtRow<C extends readonly ColumnType[]> = {
+    [K in C[number] as K["key"]]: ExtCell<CellTypeToValue[K["type"]]>;
 };
 
-/** 素の値のみの行型（CellDataType を剥がした状態） */
+/** 素の値のみの行型（ExtCell を剥がした状態） */
 export type PlainRow<C extends readonly ColumnType[]> = {
     [K in C[number] as K["key"]]: CellTypeToValue[K["type"]];
 };
@@ -90,11 +90,11 @@ export type GridSheetConfigs = {
 
 export type GridSheetType<C extends readonly ColumnType[] = ColumnType[]> = {
     columns: C;
-    data: DataType<C>[];
+    data: Row<C>[];
     headers?: HeaderFooterCell[][];
     footers?: HeaderFooterCell[][];
     configs?: GridSheetConfigs;
-    onChange?: (data: CellDataRow<C>[]) => void;
+    onChange?: (data: ExtRow<C>[]) => void;
     onSelectionChange?: (selection: Selection) => void;
 };
 

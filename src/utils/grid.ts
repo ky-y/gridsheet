@@ -1,15 +1,15 @@
 import type { CSSProperties } from "react";
 import type {
     CellAddress,
-    CellDataRow,
-    CellDataType,
     ColumnType,
-    DataType,
+    ExtCell,
+    ExtRow,
     PlainRow,
+    Row,
 } from "../types.js";
 
-/** CellDataType ラッパーかどうかを判定する型ガード */
-export function isCellDataType(raw: unknown): raw is CellDataType {
+/** ExtCell ラッパーかどうかを判定する型ガード */
+export function isExtCell(raw: unknown): raw is ExtCell {
     return (
         raw != null &&
         typeof raw === "object" &&
@@ -19,14 +19,14 @@ export function isCellDataType(raw: unknown): raw is CellDataType {
     );
 }
 
-/** CellDataType か素の値かを判定し、value / readonly / style を返す */
-export function resolveCellData(raw: unknown): {
+/** ExtCell か素の値かを判定し、value / readonly / style を返す */
+export function resolveCell(raw: unknown): {
     value: unknown;
     readonly: boolean;
     style: CSSProperties | undefined;
     className: string | undefined;
 } {
-    if (isCellDataType(raw)) {
+    if (isExtCell(raw)) {
         return {
             value: raw.value,
             readonly: raw.readonly ?? false,
@@ -42,9 +42,9 @@ export function resolveCellData(raw: unknown): {
     };
 }
 
-/** CellDataType 構造を保持しつつセル値を更新する */
+/** ExtCell 構造を保持しつつセル値を更新する */
 export function updateCellValue(raw: unknown, newValue: unknown): unknown {
-    if (isCellDataType(raw)) {
+    if (isExtCell(raw)) {
         return { ...raw, value: newValue };
     }
     return newValue;
@@ -52,61 +52,61 @@ export function updateCellValue(raw: unknown, newValue: unknown): unknown {
 
 // セル値の取得用ヘルパー（型アサーション1箇所に集約）
 export function getCellRaw<C extends readonly ColumnType[]>(
-    row: DataType<C>,
+    row: Row<C>,
     key: string,
 ): unknown {
     return (row as Record<string, unknown>)[key];
 }
 
-/** CellDataType から値を取り出す */
-export function getCellValue<V>(cell: CellDataType<V>): V {
+/** ExtCell から値を取り出す */
+export function getCellValue<V>(cell: ExtCell<V>): V {
     return cell.value;
 }
 
-/** DataType の行を CellDataRow に正規化（全セルを CellDataType でラップ） */
-export function normalizeRow<C extends readonly ColumnType[]>(
-    row: DataType<C>,
+/** Row を ExtRow に正規化（全セルを ExtCell でラップ） */
+export function toExtRow<C extends readonly ColumnType[]>(
+    row: Row<C>,
     columns: C,
-): CellDataRow<C> {
+): ExtRow<C> {
     const result = {} as Record<string, unknown>;
     for (const col of columns) {
         const raw = getCellRaw(row, col.key);
-        if (isCellDataType(raw)) {
+        if (isExtCell(raw)) {
             result[col.key] = raw;
         } else {
             result[col.key] = { value: raw };
         }
     }
-    return result as CellDataRow<C>;
+    return result as ExtRow<C>;
 }
 
-/** CellDataRow の行を素の値のみの行に変換 */
-export function denormalizeRow<C extends readonly ColumnType[]>(
-    row: CellDataRow<C>,
+/** ExtRow を素の値のみの行に変換 */
+export function toPlainRow<C extends readonly ColumnType[]>(
+    row: ExtRow<C>,
     columns: C,
 ): PlainRow<C> {
     const result = {} as Record<string, unknown>;
     for (const col of columns) {
-        const cell = (row as Record<string, CellDataType>)[col.key]!;
+        const cell = (row as Record<string, ExtCell>)[col.key]!;
         result[col.key] = cell.value;
     }
     return result as PlainRow<C>;
 }
 
-/** CellDataRow[] 全体を素の値のみの配列に変換 */
-export function denormalizeData<C extends readonly ColumnType[]>(
-    data: CellDataRow<C>[],
+/** ExtRow[] 全体を素の値のみの配列に変換 */
+export function toPlainData<C extends readonly ColumnType[]>(
+    data: ExtRow<C>[],
     columns: C,
 ): PlainRow<C>[] {
-    return data.map((row) => denormalizeRow(row, columns));
+    return data.map((row) => toPlainRow(row, columns));
 }
 
-/** DataType[] 全体を CellDataRow[] に正規化 */
-export function normalizeData<C extends readonly ColumnType[]>(
-    data: DataType<C>[],
+/** Row[] 全体を ExtRow[] に正規化 */
+export function toExtData<C extends readonly ColumnType[]>(
+    data: Row<C>[],
     columns: C,
-): CellDataRow<C>[] {
-    return data.map((row) => normalizeRow(row, columns));
+): ExtRow<C>[] {
+    return data.map((row) => toExtRow(row, columns));
 }
 
 export function getCellAddress(target: EventTarget): CellAddress | null {

@@ -1,23 +1,18 @@
 import type React from "react";
 import { useCallback, useRef } from "react";
-import type {
-    CellAddress,
-    CellDataRow,
-    ColumnType,
-    DataType,
-} from "../types.js";
+import type { CellAddress, ColumnType, ExtRow, Row } from "../types.js";
 import {
     getCellRaw,
-    normalizeData,
-    resolveCellData,
+    resolveCell,
+    toExtData,
     updateCellValue,
 } from "../utils/grid.js";
 
 export type GridPasteParams<C extends readonly ColumnType[]> = {
     editingCell: CellAddress | null;
     selection: { start: CellAddress; end: CellAddress } | null;
-    onChange?: ((data: CellDataRow<C>[]) => void) | undefined;
-    data: DataType<C>[];
+    onChange?: ((data: ExtRow<C>[]) => void) | undefined;
+    data: Row<C>[];
     dataRowOffset: number;
     colOffset: number;
     columns: C;
@@ -90,13 +85,13 @@ export function useGridPaste<C extends readonly ColumnType[]>(
                         if (colIdx < 0 || colIdx >= columns.length) continue;
                         const col = columns[colIdx]!;
                         const raw = getCellRaw(r, col.key);
-                        const cell = resolveCellData(raw);
+                        const cell = resolveCell(raw);
                         if (cell.readonly || col.readonly === true) continue;
                         const newValue = applyValue(rows[0]?.[0] ?? "", col);
                         updated[col.key] = updateCellValue(raw, newValue);
                         changed = true;
                     }
-                    return changed ? (updated as DataType<C>) : r;
+                    return changed ? (updated as Row<C>) : r;
                 }
 
                 const pasteRowIdx = absoluteRow - sMinRow;
@@ -110,15 +105,15 @@ export function useGridPaste<C extends readonly ColumnType[]>(
                     if (colIdx < 0 || colIdx >= columns.length) continue;
                     const col = columns[colIdx]!;
                     const raw = getCellRaw(r, col.key);
-                    const cell = resolveCellData(raw);
+                    const cell = resolveCell(raw);
                     if (cell.readonly || col.readonly === true) continue;
                     const newValue = applyValue(pasteRow[pci]!, col);
                     updated[col.key] = updateCellValue(raw, newValue);
                     changed = true;
                 }
-                return changed ? (updated as DataType<C>) : r;
+                return changed ? (updated as Row<C>) : r;
             });
-            onChange(normalizeData(newData, columns));
+            onChange(toExtData(newData, columns));
         },
         [],
     );

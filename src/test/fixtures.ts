@@ -1,4 +1,4 @@
-import type { DataType, HeaderFooterCell } from "../types.js";
+import type { HeaderFooterCell, Row } from "../types.js";
 import { createCol } from "../types.js";
 
 export const testColumns = [
@@ -17,7 +17,7 @@ export const testColumns = [
 
 export type TestColumns = typeof testColumns;
 
-export const testData: DataType<TestColumns>[] = [
+export const testData: Row<TestColumns>[] = [
     { name: "Alice", age: 30, code: "0010", active: true, role: "admin" },
     { name: "Bob", age: 25, code: "0020", active: false, role: "user" },
     {

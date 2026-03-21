@@ -1,4 +1,4 @@
-import { type ColumnType, createCol, type DataType } from "../index.js";
+import { type ColumnType, createCol, type Row } from "../index.js";
 
 export const columns = [
     createCol("name", "string", {
@@ -40,7 +40,7 @@ const names = [
     "Zara",
 ];
 
-export const initialData: DataType<typeof columns>[] = new Array(1000)
+export const initialData: Row<typeof columns>[] = new Array(1000)
     .fill(null)
     .map((_, i) => ({
         name: names[i % names.length] as string,

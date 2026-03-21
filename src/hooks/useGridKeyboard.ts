@@ -1,16 +1,16 @@
 import { type KeyboardEvent, type RefObject, useCallback, useRef } from "react";
 import type {
     CellAddress,
-    CellDataRow,
     ColumnType,
-    DataType,
+    ExtRow,
     HeaderFooterCell,
+    Row,
     Selection,
 } from "../types.js";
 import {
     getCellRaw,
-    normalizeData,
-    resolveCellData,
+    resolveCell,
+    toExtData,
     updateCellValue,
 } from "../utils/grid.js";
 
@@ -26,9 +26,9 @@ export type GridKeyboardParams<C extends readonly ColumnType[]> = {
     ) => void;
     onSelectionChange?: ((selection: Selection) => void) | undefined;
     columns: C;
-    data: DataType<C>[];
+    data: Row<C>[];
     headers?: HeaderFooterCell[][] | undefined;
-    onChange?: ((data: CellDataRow<C>[]) => void) | undefined;
+    onChange?: ((data: ExtRow<C>[]) => void) | undefined;
     colOffset: number;
     titleRowIndex: number;
     hasTitle: boolean;
@@ -191,7 +191,7 @@ function handleCopy<C extends readonly ColumnType[]>(
                 if (colIdx >= 0 && colIdx < columns.length && dataRow) {
                     const col = columns[colIdx]!;
                     const raw = getCellRaw(dataRow, col.key);
-                    const cell = resolveCellData(raw);
+                    const cell = resolveCell(raw);
                     const v = cell.value;
                     if (typeof v === "boolean") {
                         cells.push(v ? "TRUE" : "FALSE");
@@ -247,7 +247,7 @@ function handleDelete<C extends readonly ColumnType[]>(
     const colDef = columns[colIdx]!;
     const dataRow = data[r - dataRowOffset]!;
     const raw = getCellRaw(dataRow, colDef.key);
-    const cellData = resolveCellData(raw);
+    const cellData = resolveCell(raw);
 
     if (cellData.readonly || colDef.readonly === true || !onChange)
         return false;
@@ -257,10 +257,10 @@ function handleDelete<C extends readonly ColumnType[]>(
     const cellUpdate = updateCellValue(raw, emptyValue);
     const newData = data.map((d, i) =>
         i === r - dataRowOffset
-            ? ({ ...d, [colDef.key]: cellUpdate } as DataType<C>)
+            ? ({ ...d, [colDef.key]: cellUpdate } as Row<C>)
             : d,
     );
-    onChange(normalizeData(newData, columns));
+    onChange(toExtData(newData, columns));
     setEditingCell({ row: r, col: c });
     e.preventDefault();
     return true;
@@ -335,7 +335,7 @@ function handleCharInput<C extends readonly ColumnType[]>(
     const colDef = columns[colIdx]!;
     const dataRow = data[r - dataRowOffset]!;
     const raw = getCellRaw(dataRow, colDef.key);
-    const cellData = resolveCellData(raw);
+    const cellData = resolveCell(raw);
 
     if (cellData.readonly || colDef.readonly === true) return false;
 
@@ -346,18 +346,18 @@ function handleCharInput<C extends readonly ColumnType[]>(
         const cellUpdate = updateCellValue(raw, e.key);
         const newData = data.map((d, i) =>
             i === r - dataRowOffset
-                ? ({ ...d, [colDef.key]: cellUpdate } as DataType<C>)
+                ? ({ ...d, [colDef.key]: cellUpdate } as Row<C>)
                 : d,
         );
-        onChange(normalizeData(newData, columns));
+        onChange(toExtData(newData, columns));
     } else if (onChange && colDef.type === "number" && /\d/.test(e.key)) {
         const cellUpdate = updateCellValue(raw, Number(e.key));
         const newData = data.map((d, i) =>
             i === r - dataRowOffset
-                ? ({ ...d, [colDef.key]: cellUpdate } as DataType<C>)
+                ? ({ ...d, [colDef.key]: cellUpdate } as Row<C>)
                 : d,
         );
-        onChange(normalizeData(newData, columns));
+        onChange(toExtData(newData, columns));
     }
     setEditingCell({ row: r, col: c });
     e.preventDefault();
