@@ -1,12 +1,18 @@
 import { useState } from "react";
-import { type DataType, GridSheet } from "../index.js";
-
+import {
+    type CellDataRow,
+    denormalizeData,
+    GridSheet,
+    getCellValue,
+} from "../index.js";
 import { columns, initialData } from "./sampleData.js";
 
 export function App() {
     const [data, setData] = useState(initialData);
 
-    const handleChange = (newData: DataType<typeof columns>[]) => {
+    const handleChange = (newData: CellDataRow<typeof columns>[]) => {
+        denormalizeData(newData, columns);
+        newData.map((row) => getCellValue(row.active));
         setData(newData);
     };
 
