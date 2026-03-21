@@ -1,9 +1,9 @@
 export type Styles = {
-    GridSheet: string;
-    titleCell: string;
-    rowNumber: string;
-    selectAll: string;
-    selected: string;
+  'GridSheet': string;
+  'rowNumber': string;
+  'selectAll': string;
+  'selected': string;
+  'titleCell': string;
 };
 
 export type ClassNames = keyof Styles;
