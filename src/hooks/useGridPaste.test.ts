@@ -56,8 +56,8 @@ describe("useGridPaste", () => {
         act(() => result.current(makePasteEvent("NewName")));
         expect(onChange).toHaveBeenCalledTimes(1);
         const newData = onChange.mock.calls[0]?.[0];
-        expect(newData[0].name).toBe("NewName");
-        expect(newData[1].name).toBe("Bob"); // unchanged
+        expect(newData[0].name.value).toBe("NewName");
+        expect(newData[1].name.value).toBe("Bob"); // unchanged
     });
 
     it("parses TSV with CRLF line endings", () => {
@@ -75,10 +75,10 @@ describe("useGridPaste", () => {
         );
         act(() => result.current(makePasteEvent("X\t99\r\nY\t88\r\n")));
         const newData = onChange.mock.calls[0]?.[0];
-        expect(newData[0].name).toBe("X");
-        expect(newData[0].age).toBe(99);
-        expect(newData[1].name).toBe("Y");
-        expect(newData[1].age).toBe(88);
+        expect(newData[0].name.value).toBe("X");
+        expect(newData[0].age.value).toBe(99);
+        expect(newData[1].name.value).toBe("Y");
+        expect(newData[1].age.value).toBe(88);
     });
 
     it("converts check column values (TRUE/true/1 → boolean)", () => {
@@ -95,7 +95,7 @@ describe("useGridPaste", () => {
             ),
         );
         act(() => result.current(makePasteEvent("TRUE")));
-        expect(onChange.mock.calls[0]?.[0][0].active).toBe(true);
+        expect(onChange.mock.calls[0]?.[0][0].active.value).toBe(true);
 
         const onChange2 = vi.fn();
         const { result: r2 } = renderHook(() =>
@@ -110,7 +110,7 @@ describe("useGridPaste", () => {
             ),
         );
         act(() => r2.current(makePasteEvent("false")));
-        expect(onChange2.mock.calls[0]?.[0][1].active).toBe(false);
+        expect(onChange2.mock.calls[0]?.[0][1].active.value).toBe(false);
     });
 
     it("converts number column values", () => {
@@ -127,7 +127,7 @@ describe("useGridPaste", () => {
             ),
         );
         act(() => result.current(makePasteEvent("42")));
-        expect(onChange.mock.calls[0]?.[0][0].age).toBe(42);
+        expect(onChange.mock.calls[0]?.[0][0].age.value).toBe(42);
     });
 
     it("converts empty string to 0 for number columns", () => {

@@ -1,12 +1,18 @@
 import { type KeyboardEvent, type RefObject, useCallback, useRef } from "react";
 import type {
     CellAddress,
+    CellDataRow,
     ColumnType,
     DataType,
     HeaderFooterCell,
     Selection,
 } from "../types.js";
-import { getCellRaw, resolveCellData, updateCellValue } from "../utils/grid.js";
+import {
+    getCellRaw,
+    normalizeData,
+    resolveCellData,
+    updateCellValue,
+} from "../utils/grid.js";
 
 export type GridKeyboardParams<C extends readonly ColumnType[]> = {
     editingCell: CellAddress | null;
@@ -22,7 +28,7 @@ export type GridKeyboardParams<C extends readonly ColumnType[]> = {
     columns: C;
     data: DataType<C>[];
     headers?: HeaderFooterCell[][] | undefined;
-    onChange?: ((data: DataType<C>[]) => void) | undefined;
+    onChange?: ((data: CellDataRow<C>[]) => void) | undefined;
     colOffset: number;
     titleRowIndex: number;
     hasTitle: boolean;
@@ -254,7 +260,7 @@ function handleDelete<C extends readonly ColumnType[]>(
             ? ({ ...d, [colDef.key]: cellUpdate } as DataType<C>)
             : d,
     );
-    onChange(newData);
+    onChange(normalizeData(newData, columns));
     setEditingCell({ row: r, col: c });
     e.preventDefault();
     return true;
@@ -343,7 +349,7 @@ function handleCharInput<C extends readonly ColumnType[]>(
                 ? ({ ...d, [colDef.key]: cellUpdate } as DataType<C>)
                 : d,
         );
-        onChange(newData);
+        onChange(normalizeData(newData, columns));
     } else if (onChange && colDef.type === "number" && /\d/.test(e.key)) {
         const cellUpdate = updateCellValue(raw, Number(e.key));
         const newData = data.map((d, i) =>
@@ -351,7 +357,7 @@ function handleCharInput<C extends readonly ColumnType[]>(
                 ? ({ ...d, [colDef.key]: cellUpdate } as DataType<C>)
                 : d,
         );
-        onChange(newData);
+        onChange(normalizeData(newData, columns));
     }
     setEditingCell({ row: r, col: c });
     e.preventDefault();

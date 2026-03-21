@@ -1,12 +1,17 @@
 import type React from "react";
 import { useCallback, useRef } from "react";
-import type { CellAddress, ColumnType, DataType } from "../types.js";
-import { getCellRaw, resolveCellData, updateCellValue } from "../utils/grid.js";
+import type { CellAddress, CellDataRow, ColumnType, DataType } from "../types.js";
+import {
+    getCellRaw,
+    normalizeData,
+    resolveCellData,
+    updateCellValue,
+} from "../utils/grid.js";
 
 export type GridPasteParams<C extends readonly ColumnType[]> = {
     editingCell: CellAddress | null;
     selection: { start: CellAddress; end: CellAddress } | null;
-    onChange?: ((data: DataType<C>[]) => void) | undefined;
+    onChange?: ((data: CellDataRow<C>[]) => void) | undefined;
     data: DataType<C>[];
     dataRowOffset: number;
     colOffset: number;
@@ -108,7 +113,7 @@ export function useGridPaste<C extends readonly ColumnType[]>(
                 }
                 return changed ? (updated as DataType<C>) : r;
             });
-            onChange(newData);
+            onChange(normalizeData(newData, columns));
         },
         [],
     );
