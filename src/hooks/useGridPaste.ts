@@ -54,19 +54,37 @@ export function useGridPaste<C extends readonly ColumnType[]>(
             const isMultiCellSelection =
                 sMinRow !== sMaxRow || sMinCol !== sMaxCol;
 
+            /** 貼り付け値を型変換する。型が合わなければ null を返す */
             const applyValue = (
                 pasteValue: string,
                 col: (typeof columns)[number],
-            ): unknown => {
+            ): unknown | null => {
                 switch (col.type) {
-                    case "check":
-                        return (
-                            pasteValue === "TRUE" ||
-                            pasteValue === "true" ||
-                            pasteValue === "1"
-                        );
-                    case "number":
-                        return pasteValue === "" ? 0 : Number(pasteValue);
+                    case "check": {
+                        const lower = pasteValue.toLowerCase();
+                        if (
+                            lower === "true" ||
+                            lower === "false" ||
+                            pasteValue === "1" ||
+                            pasteValue === "0"
+                        )
+                            return lower === "true" || pasteValue === "1";
+                        return null;
+                    }
+                    case "number": {
+                        if (pasteValue === "") return 0;
+                        const n = Number(pasteValue);
+                        if (Number.isNaN(n)) return null;
+                        return n;
+                    }
+                    case "select": {
+                        if (
+                            col.type === "select" &&
+                            !col.options.some((o) => o.value === pasteValue)
+                        )
+                            return null;
+                        return pasteValue;
+                    }
                     default:
                         return pasteValue;
                 }
@@ -88,6 +106,7 @@ export function useGridPaste<C extends readonly ColumnType[]>(
                         const cell = resolveCell(raw);
                         if (cell.readonly || col.readonly === true) continue;
                         const newValue = applyValue(rows[0]?.[0] ?? "", col);
+                        if (newValue === null) continue;
                         updated[col.key] = updateCellValue(raw, newValue);
                         changed = true;
                     }
@@ -96,10 +115,15 @@ export function useGridPaste<C extends readonly ColumnType[]>(
 
                 const pasteRowIdx = absoluteRow - sMinRow;
                 if (pasteRowIdx < 0 || pasteRowIdx >= rows.length) return r;
+                // 選択範囲が複数セルなら、その範囲内だけ貼り付ける
+                if (isMultiCellSelection && absoluteRow > sMaxRow) return r;
                 const pasteRow = rows[pasteRowIdx]!;
                 const updated = { ...r } as Record<string, unknown>;
                 let changed = false;
-                for (let pci = 0; pci < pasteRow.length; pci++) {
+                const maxPasteCols = isMultiCellSelection
+                    ? Math.min(pasteRow.length, sMaxCol - sMinCol + 1)
+                    : pasteRow.length;
+                for (let pci = 0; pci < maxPasteCols; pci++) {
                     const targetCol = sMinCol + pci;
                     const colIdx = targetCol - colOffset;
                     if (colIdx < 0 || colIdx >= columns.length) continue;
@@ -108,6 +132,7 @@ export function useGridPaste<C extends readonly ColumnType[]>(
                     const cell = resolveCell(raw);
                     if (cell.readonly || col.readonly === true) continue;
                     const newValue = applyValue(pasteRow[pci]!, col);
+                    if (newValue === null) continue;
                     updated[col.key] = updateCellValue(raw, newValue);
                     changed = true;
                 }
