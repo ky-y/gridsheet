@@ -48,6 +48,11 @@ export type DataType<C extends readonly ColumnType[]> = {
     [K in C[number] as K["key"]]: CellValue<CellTypeToValue[K["type"]]>;
 };
 
+/** onChange で返却される行型（全セルが CellDataType でラップ済み） */
+export type CellDataRow<C extends readonly ColumnType[]> = {
+    [K in C[number] as K["key"]]: CellDataType<CellTypeToValue[K["type"]]>;
+};
+
 export type HeaderFooterCell = {
     body: string;
     span?: number;
@@ -84,7 +89,7 @@ export type GridSheetType<C extends readonly ColumnType[] = ColumnType[]> = {
     headers?: HeaderFooterCell[][];
     footers?: HeaderFooterCell[][];
     configs?: GridSheetConfigs;
-    onChange?: (data: DataType<C>[]) => void;
+    onChange?: (data: CellDataRow<C>[]) => void;
     onSelectionChange?: (selection: Selection) => void;
 };
 
