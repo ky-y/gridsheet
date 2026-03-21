@@ -1,6 +1,11 @@
 import type React from "react";
 import { useCallback, useRef } from "react";
-import type { CellAddress, CellDataRow, ColumnType, DataType } from "../types.js";
+import type {
+    CellAddress,
+    CellDataRow,
+    ColumnType,
+    DataType,
+} from "../types.js";
 import {
     getCellRaw,
     normalizeData,

@@ -165,7 +165,7 @@ describe("useGridPaste", () => {
         act(() => result.current(makePasteEvent("Override")));
         const newData = onChange.mock.calls[0]?.[0];
         // Charlie is readonly, so name should be unchanged
-        expect((newData[2].name as { value: string }).value).toBe("Charlie");
+        expect(newData[2].name.value).toBe("Charlie");
     });
 
     it("fills single value across multi-cell selection", () => {
@@ -183,8 +183,8 @@ describe("useGridPaste", () => {
         );
         act(() => result.current(makePasteEvent("Same")));
         const newData = onChange.mock.calls[0]?.[0];
-        expect(newData[0].name).toBe("Same");
-        expect(newData[1].name).toBe("Same");
+        expect(newData[0].name.value).toBe("Same");
+        expect(newData[1].name.value).toBe("Same");
     });
 
     it("preserves CellDataType wrapper when pasting into wrapped cells", () => {
@@ -204,6 +204,6 @@ describe("useGridPaste", () => {
         );
         act(() => result.current(makePasteEvent("50")));
         const newData = onChange.mock.calls[0]?.[0];
-        expect(newData[2].age).toBe(50);
+        expect(newData[2].age.value).toBe(50);
     });
 });
