@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { cn } from "@/utils/cn.js";
 import { RenderCell } from "./components/Cell.js";
 import cellStyles from "./components/Cell.module.scss";
-import { renderHeaderFooterRow } from "./components/HeaderFooterRow.js";
+import { renderHeaderFooterRows } from "./components/HeaderFooterRow.js";
 import styles from "./GridSheet.module.scss";
 import { useGridKeyboard } from "./hooks/useGridKeyboard.js";
 import { useGridMouse } from "./hooks/useGridMouse.js";
@@ -92,6 +92,12 @@ export const GridSheet = <const C extends readonly ColumnType[]>({
     if (headers?.length) nextRow += headers.length;
     const dataRowOffset = nextRow;
     const footerRowOffset = dataRowOffset + data.length;
+
+    // CSS grid rows are 1-based
+    const titleCssRow = hasTitle ? 1 : -1;
+    const headerCssRowStart = (hasTitle ? 1 : 0) + 1;
+    const dataCssRowStart = headerCssRowStart + (headers?.length ?? 0);
+    const footerCssRowStart = dataCssRowStart + data.length;
 
     const minRow =
         selectableTitles && hasTitle
@@ -245,7 +251,10 @@ export const GridSheet = <const C extends readonly ColumnType[]>({
                                     ? styles.selected
                                     : undefined,
                             )}
-                            style={{ gridRow: `span ${cornerSpan}` }}
+                            style={{
+                                gridRow: `1 / span ${cornerSpan}`,
+                                gridColumn: 1,
+                            }}
                             role="columnheader"
                             data-row={fullMinRow}
                             data-col={0}
@@ -255,45 +264,56 @@ export const GridSheet = <const C extends readonly ColumnType[]>({
                         />
                     );
                 })()}
-            {hasTitle && (
-                <div role="row" style={{ display: "contents" }}>
-                    {columns.map((col, colIndex) => {
-                        const absCol = colIndex + colOffset;
-                        const selected = isSelected(
-                            titleRowIndex,
-                            absCol,
-                            selection,
-                        );
-                        return (
-                            <div
-                                key={`title-${col.key}`}
-                                data-row={titleRowIndex}
-                                data-col={absCol}
-                                data-type="title"
-                                role="columnheader"
-                                className={cn(
-                                    styles.titleCell,
-                                    col.titleClassName,
-                                    selected ? styles.selected : undefined,
-                                )}
-                            >
-                                {col.title ?? ""}
-                            </div>
-                        );
-                    })}
-                </div>
-            )}
-            {headers?.map((row, ri) =>
-                renderHeaderFooterRow(row, columns, `header-${ri}`, "header", {
-                    rowIndex: headerRowOffset + ri,
-                    colOffset,
-                    selection,
-                    cellType: "header",
-                }),
-            )}
+            {hasTitle &&
+                columns.map((col, colIndex) => {
+                    const absCol = colIndex + colOffset;
+                    const selected = isSelected(
+                        titleRowIndex,
+                        absCol,
+                        selection,
+                    );
+                    return (
+                        <div
+                            key={`title-${col.key}`}
+                            data-row={titleRowIndex}
+                            data-col={absCol}
+                            data-type="title"
+                            role="columnheader"
+                            style={{
+                                gridRow: titleCssRow,
+                                gridColumn: colIndex + (showRowNumbers ? 2 : 1),
+                            }}
+                            className={cn(
+                                styles.titleCell,
+                                col.titleClassName,
+                                selected ? styles.selected : undefined,
+                            )}
+                        >
+                            {col.title ?? ""}
+                        </div>
+                    );
+                })}
+            {headers &&
+                headers.length > 0 &&
+                renderHeaderFooterRows(
+                    headers,
+                    columns,
+                    "header",
+                    "header",
+                    headerCssRowStart,
+                    {
+                        rowOffset: headerRowOffset,
+                        colOffset,
+                        selection,
+                        cellType: "header",
+                    },
+                    showRowNumbers,
+                    false, // select-allセルが行番号列をカバーする
+                )}
             {data.map((row, rowIndex) => {
                 const absoluteRow = dataRowOffset + rowIndex;
                 const rowNum = rowIndex + 1;
+                const cssRow = dataCssRowStart + rowIndex;
                 return (
                     <div
                         key={rowIndex}
@@ -309,6 +329,7 @@ export const GridSheet = <const C extends readonly ColumnType[]>({
                                         ? styles.selected
                                         : undefined,
                                 )}
+                                style={{ gridRow: cssRow, gridColumn: 1 }}
                                 role="rowheader"
                                 data-row={absoluteRow}
                                 data-col={0}
@@ -333,6 +354,11 @@ export const GridSheet = <const C extends readonly ColumnType[]>({
                                     data-row={absoluteRow}
                                     data-col={absCol}
                                     role="gridcell"
+                                    style={{
+                                        gridRow: cssRow,
+                                        gridColumn:
+                                            colIndex + (showRowNumbers ? 2 : 1),
+                                    }}
                                     className={cn(
                                         cellStyles.cell,
                                         col.type === "number" ||
@@ -372,23 +398,25 @@ export const GridSheet = <const C extends readonly ColumnType[]>({
                     </div>
                 );
             })}
-            {footers?.map((row, ri) =>
-                renderHeaderFooterRow(
-                    row,
+            {footers &&
+                footers.length > 0 &&
+                renderHeaderFooterRows(
+                    footers,
                     columns,
-                    `footer-${ri}`,
                     "footer",
+                    "footer",
+                    footerCssRowStart,
                     selectableFooters
                         ? {
-                              rowIndex: footerRowOffset + ri,
+                              rowOffset: footerRowOffset,
                               colOffset,
                               selection,
                               cellType: "footer",
                           }
                         : undefined,
-                    showRowNumbers ? { content: "" } : undefined,
-                ),
-            )}
+                    showRowNumbers,
+                    showRowNumbers,
+                )}
         </div>
     );
 };

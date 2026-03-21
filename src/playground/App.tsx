@@ -16,6 +16,34 @@ export function App() {
             <h1>gridsheet playground</h1>
             <GridSheet
                 columns={columns}
+                headers={[
+                    [
+                        {
+                            body: "Name",
+                            rowSpan: 2,
+                        },
+                        {
+                            body: "Score",
+                        },
+                        {
+                            body: "Active",
+                        },
+                        {
+                            body: "Note",
+                        },
+                    ],
+                    [
+                        {
+                            body: "Score",
+                        },
+                        {
+                            body: "Active",
+                        },
+                        {
+                            body: "Note",
+                        },
+                    ],
+                ]}
                 data={data}
                 onChange={handleChange}
                 configs={{

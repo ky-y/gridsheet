@@ -62,6 +62,7 @@ export type PlainRow<C extends readonly ColumnType[]> = {
 export type HeaderFooterCell = {
     body: ReactNode;
     span?: number;
+    rowSpan?: number;
     className?: string;
 };
 

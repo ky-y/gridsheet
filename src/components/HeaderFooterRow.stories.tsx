@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
-import { renderHeaderFooterRow } from "./HeaderFooterRow.js";
+import { renderHeaderFooterRows } from "./HeaderFooterRow.js";
 import { createCol, type ColumnType } from "../types.js";
 
 const columns = [
@@ -17,14 +17,17 @@ function HeaderRowWrapper() {
                 gridTemplateColumns: "120px 1fr 1fr 1fr",
             }}
         >
-            {renderHeaderFooterRow(
+            {renderHeaderFooterRows(
                 [
-                    { body: "Personal", span: 2 },
-                    { body: "Status", span: 2 },
+                    [
+                        { body: "Personal", span: 2 },
+                        { body: "Status", span: 2 },
+                    ],
                 ],
                 columns,
-                "header-0",
                 "header",
+                "header",
+                1,
             )}
         </div>
     );
@@ -38,16 +41,19 @@ function FooterRowWrapper() {
                 gridTemplateColumns: "120px 1fr 1fr 1fr",
             }}
         >
-            {renderHeaderFooterRow(
+            {renderHeaderFooterRows(
                 [
-                    { body: "Total" },
-                    { body: "409" },
-                    { body: "" },
-                    { body: "" },
+                    [
+                        { body: "Total" },
+                        { body: "409" },
+                        { body: "" },
+                        { body: "" },
+                    ],
                 ],
                 columns,
-                "footer-0",
                 "footer",
+                "footer",
+                1,
             )}
         </div>
     );
@@ -61,11 +67,12 @@ function HeaderWithSpanWrapper() {
                 gridTemplateColumns: "120px 1fr 1fr 1fr",
             }}
         >
-            {renderHeaderFooterRow(
-                [{ body: "All Columns", span: 4 }],
+            {renderHeaderFooterRows(
+                [[{ body: "All Columns", span: 4 }]],
                 columns,
                 "header-span",
                 "header",
+                1,
             )}
         </div>
     );
@@ -79,18 +86,21 @@ function HeaderWithSelectionWrapper() {
                 gridTemplateColumns: "120px 1fr 1fr 1fr",
             }}
         >
-            {renderHeaderFooterRow(
+            {renderHeaderFooterRows(
                 [
-                    { body: "Col A" },
-                    { body: "Col B" },
-                    { body: "Col C" },
-                    { body: "Col D" },
+                    [
+                        { body: "Col A" },
+                        { body: "Col B" },
+                        { body: "Col C" },
+                        { body: "Col D" },
+                    ],
                 ],
                 columns,
                 "header-sel",
                 "header",
+                1,
                 {
-                    rowIndex: 0,
+                    rowOffset: 0,
                     colOffset: 0,
                     selection: {
                         start: { row: 0, col: 1 },
@@ -98,6 +108,31 @@ function HeaderWithSelectionWrapper() {
                     },
                     cellType: "header",
                 },
+            )}
+        </div>
+    );
+}
+
+function HeaderWithRowSpanWrapper() {
+    return (
+        <div
+            style={{
+                display: "grid",
+                gridTemplateColumns: "120px 1fr 1fr 1fr",
+            }}
+        >
+            {renderHeaderFooterRows(
+                [
+                    [
+                        { body: "Name", rowSpan: 2 },
+                        { body: "Details", span: 3 },
+                    ],
+                    [{ body: "Score" }, { body: "Active" }, { body: "Note" }],
+                ],
+                columns,
+                "header-rowspan",
+                "header",
+                1,
             )}
         </div>
     );
@@ -127,4 +162,8 @@ export const FullSpanHeader: Story = {
 
 export const HeaderWithSelection: Story = {
     render: () => <HeaderWithSelectionWrapper />,
+};
+
+export const HeaderWithRowSpan: Story = {
+    render: () => <HeaderWithRowSpanWrapper />,
 };
