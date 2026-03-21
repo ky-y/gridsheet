@@ -32,7 +32,8 @@
         ".": {
             "types": "./dist/index.d.ts",
             "import": "./dist/index.js"
-        }
+        },
+        "./dist/style.css": "./dist/style.css"
     },
     "files": [
         "dist"
