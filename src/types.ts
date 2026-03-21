@@ -1,4 +1,4 @@
-import type { CSSProperties } from "react";
+import type { CSSProperties, ReactNode } from "react";
 
 export type CellType =
     | "string"
@@ -30,7 +30,7 @@ export type ExtCell<V = unknown> = {
 
 type BaseColumn = {
     key: string;
-    title?: string;
+    title?: ReactNode;
     titleClassName?: string;
     width?: "auto" | string | number;
     readonly?: boolean;
@@ -60,7 +60,7 @@ export type PlainRow<C extends readonly ColumnType[]> = {
 };
 
 export type HeaderFooterCell = {
-    body: string;
+    body: ReactNode;
     span?: number;
     className?: string;
 };
