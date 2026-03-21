@@ -1,3 +1,4 @@
+import type React from "react";
 import {
     type MouseEvent,
     useCallback,
@@ -16,6 +17,7 @@ export type GridMouseParams = {
         ) => { start: CellAddress; end: CellAddress } | null,
     ) => void;
     setEditingCell: (cell: CellAddress | null) => void;
+    containerRef: React.RefObject<HTMLDivElement | null>;
     onSelectionChange?: ((selection: Selection) => void) | undefined;
     fullMinRow: number;
     fullMinCol: number;
@@ -36,6 +38,7 @@ export function useGridMouse(params: GridMouseParams) {
         (e: MouseEvent<HTMLDivElement>) => {
             const {
                 selection,
+                containerRef,
                 onSelectionChange,
                 fullMinRow,
                 fullMinCol,
@@ -67,6 +70,7 @@ export function useGridMouse(params: GridMouseParams) {
                     start: { row: fullMinRow, col: fullMinCol },
                     end: { row: maxRow, col: maxCol },
                 });
+                containerRef.current?.focus();
                 return;
             }
             if (cellType === "title") {
@@ -111,6 +115,7 @@ export function useGridMouse(params: GridMouseParams) {
                 setDragMode("cell");
             }
             setIsDragging(true);
+            containerRef.current?.focus();
         },
         [setSelection, setEditingCell],
     );

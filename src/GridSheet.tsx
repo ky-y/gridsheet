@@ -172,6 +172,7 @@ export const GridSheet = <const C extends readonly ColumnType[]>({
         selection,
         setSelection,
         setEditingCell,
+        containerRef,
         onSelectionChange,
         fullMinRow,
         fullMinCol,
