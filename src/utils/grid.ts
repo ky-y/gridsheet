@@ -1,6 +1,7 @@
 import type { CSSProperties } from "react";
 import type {
     CellAddress,
+    CellDataRow,
     CellDataType,
     ColumnType,
     DataType,
@@ -54,6 +55,36 @@ export function getCellRaw<C extends readonly ColumnType[]>(
     key: string,
 ): unknown {
     return (row as Record<string, unknown>)[key];
+}
+
+/** CellDataType から値を取り出す */
+export function getCellValue<V>(cell: CellDataType<V>): V {
+    return cell.value;
+}
+
+/** DataType の行を CellDataRow に正規化（全セルを CellDataType でラップ） */
+export function normalizeRow<C extends readonly ColumnType[]>(
+    row: DataType<C>,
+    columns: C,
+): CellDataRow<C> {
+    const result = {} as Record<string, unknown>;
+    for (const col of columns) {
+        const raw = getCellRaw(row, col.key);
+        if (isCellDataType(raw)) {
+            result[col.key] = raw;
+        } else {
+            result[col.key] = { value: raw };
+        }
+    }
+    return result as CellDataRow<C>;
+}
+
+/** DataType[] 全体を CellDataRow[] に正規化 */
+export function normalizeData<C extends readonly ColumnType[]>(
+    data: DataType<C>[],
+    columns: C,
+): CellDataRow<C>[] {
+    return data.map((row) => normalizeRow(row, columns));
 }
 
 export function getCellAddress(target: EventTarget): CellAddress | null {
