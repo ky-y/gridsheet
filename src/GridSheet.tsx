@@ -41,12 +41,17 @@ export const GridSheet = <const C extends readonly ColumnType[]>({
     } | null>(null);
     const [editingCell, setEditingCell] = useState<CellAddress | null>(null);
 
+    // タイトル行（カラム見出し）を表示するか: いずれかの列に title が設定されていれば true
     const hasTitle = columns.some((col) => col.title != null);
+    // 行番号列の表示有無
     const showRowNumbers = configs?.showRowNumbers === true;
+    // 行番号列をクリックして行選択を許可するか（showRowNumbers が前提）
     const selectableRowNumbers =
         configs?.selectableRowNumbers === true && showRowNumbers;
+    // 選択セルが画面外に出たときに自動スクロールするか（既定 true、明示的に false の時だけ無効）
     const scrollToSelection = configs?.scrollToSelection !== false;
 
+    // 行番号列がある場合、データ列のインデックスは 1 ずれる（先頭列が行番号列になるため）
     const colOffset = showRowNumbers ? 1 : 0;
 
     const dataRef = useRef(data);
@@ -74,6 +79,10 @@ export const GridSheet = <const C extends readonly ColumnType[]>({
         [],
     );
 
+    // CSS grid-template-columns 文字列を組み立てる。
+    //   - 数値指定: fr 単位（比率指定）
+    //   - 文字列指定: そのまま使用（"100px" 等）
+    //   - 未指定: auto
     const gridTemplateColumns = [
         ...(showRowNumbers ? ["3rem"] : []),
         ...columns.map((col) => {
@@ -83,6 +92,9 @@ export const GridSheet = <const C extends readonly ColumnType[]>({
         }),
     ].join(" ");
 
+    // --- 論理行インデックスの計算 ---
+    // 行レイアウトは「タイトル行 → ヘッダー行 → データ行 → フッター行」の順。
+    // 各セクションが存在する場合だけ次のオフセットを進める。
     let nextRow = 0;
     const titleRowIndex = hasTitle ? nextRow++ : -1;
     const headerRowOffset = headers?.length ? nextRow : -1;
@@ -90,25 +102,31 @@ export const GridSheet = <const C extends readonly ColumnType[]>({
     const dataRowOffset = nextRow;
     const footerRowOffset = dataRowOffset + data.length;
 
-    // CSS grid rows are 1-based
+    // CSS grid の row は 1 始まり（論理インデックスは 0 始まりなので +1 する）
     const titleCssRow = hasTitle ? 1 : -1;
     const headerCssRowStart = (hasTitle ? 1 : 0) + 1;
     const dataCssRowStart = headerCssRowStart + (headers?.length ?? 0);
     const footerCssRowStart = dataCssRowStart + data.length;
 
+    // 選択可能領域の境界。
+    // minRow: タイトル → ヘッダー → データ の順で「最も上にある領域」を採用
     const minRow = hasTitle
         ? titleRowIndex
         : headers?.length
           ? headerRowOffset
           : dataRowOffset;
+    // maxRow: フッターがあればフッター末尾、なければデータ末尾
     const maxRow = footers?.length
         ? footerRowOffset + footers.length - 1
         : dataRowOffset + data.length - 1;
+    // minCol: 行番号列を選択可能にする設定なら 0、それ以外は colOffset から
     const minCol = selectableRowNumbers ? 0 : colOffset;
     const maxCol = columns.length - 1 + colOffset;
+    // fullMinCol: 行全体選択時の列開始位置（行番号列を含めるかどうか）
     const fullMinCol = showRowNumbers ? 0 : colOffset;
 
-    // 編集モード時にinputをフォーカス
+    // 編集モードに入ったとき、対象セル内の input/select に自動フォーカスする。
+    // text input の場合はキャレットを末尾に移動して、続けて入力できるようにする。
     useEffect(() => {
         if (!editingCell || !containerRef.current) return;
         const cell = containerRef.current.querySelector<HTMLElement>(
@@ -120,6 +138,7 @@ export const GridSheet = <const C extends readonly ColumnType[]>({
         );
         if (input) {
             input.focus();
+            // text input ではキャレットを末尾に置く（既存値を維持しつつ続けて入力できる位置）
             if (input instanceof HTMLInputElement && input.type === "text") {
                 const len = input.value.length;
                 input.setSelectionRange(len, len);
@@ -127,10 +146,12 @@ export const GridSheet = <const C extends readonly ColumnType[]>({
         }
     }, [editingCell]);
 
-    // GridSheet外クリックでeditingモード・選択モード終了
+    // GridSheet 外をクリックしたら編集・選択をリセットする。
+    // editingCell/selection がどちらも null なら購読する必要がないので早期 return で最適化。
     useEffect(() => {
         if (!editingCell && !selection) return;
         const handleOutsideClick = (e: MouseEvent) => {
+            // クリック先がグリッドコンテナの外側だった場合のみリセット
             if (
                 containerRef.current &&
                 !containerRef.current.contains(e.target as Node)
@@ -144,21 +165,25 @@ export const GridSheet = <const C extends readonly ColumnType[]>({
             document.removeEventListener("mousedown", handleOutsideClick);
     }, [editingCell, selection]);
 
-    // 選択セルが画面外に出た場合にスクロール
-    // 列全選択・行全選択・全選択時はスクロールしない
+    // 選択セルが画面外に出たら自動スクロールする。
+    // ただし「行全体選択 / 列全体選択 / 全選択」のときはスクロールするとUX的に不自然なのでスキップ。
     useEffect(() => {
         if (!scrollToSelection || !selection || !containerRef.current) return;
+        // 行全範囲 = 選択の縦範囲が minRow〜maxRow を完全に覆っている
         const isFullRowSpan =
             selection.start.row === minRow && selection.end.row === maxRow;
+        // 列全範囲 = 選択の横範囲が fullMinCol〜maxCol を完全に覆っている
         const isFullColSpan =
             selection.start.col === fullMinCol && selection.end.col === maxCol;
         if (isFullRowSpan || isFullColSpan) return;
+        // end 側（カーソル側）のセルを画面内に収める
         const targetRow = selection.end.row;
         const targetCol = selection.end.col;
         const cell = containerRef.current.querySelector<HTMLElement>(
             `[data-row="${targetRow}"][data-col="${targetCol}"]`,
         );
         if (cell) {
+            // 「画面内ならスクロールしない、外なら最小限だけスクロール」モード
             cell.scrollIntoView({ block: "nearest", inline: "nearest" });
         }
     }, [scrollToSelection, selection, minRow, maxRow, fullMinCol, maxCol]);
