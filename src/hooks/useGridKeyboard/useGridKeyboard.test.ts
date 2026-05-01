@@ -2,8 +2,8 @@ import { describe, expect, it, vi, beforeEach } from "vitest";
 import { renderHook, act } from "@testing-library/react";
 import { useGridKeyboard } from "./useGridKeyboard.js";
 import type { GridKeyboardParams } from "./useGridKeyboard.js";
-import type { Selection } from "../types.js";
-import { testColumns, testData } from "../test/fixtures.js";
+import type { Selection } from "../../types.js";
+import { testColumns, testData } from "../../test/fixtures.js";
 
 function createParams(
     overrides: Partial<GridKeyboardParams<typeof testColumns>> = {},

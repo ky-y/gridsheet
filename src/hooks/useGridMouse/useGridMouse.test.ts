@@ -2,7 +2,7 @@ import { describe, expect, it, vi } from "vitest";
 import { renderHook, act } from "@testing-library/react";
 import { useGridMouse } from "./useGridMouse.js";
 import type { GridMouseParams } from "./useGridMouse.js";
-import type { Selection } from "../types.js";
+import type { Selection } from "../../types.js";
 
 const defaultColumns = [
     { key: "name", type: "string" as const },

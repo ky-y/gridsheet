@@ -4,9 +4,9 @@ import { RenderCell } from "./components/Cell.js";
 import cellStyles from "./components/Cell.module.scss";
 import { renderHeaderFooterRows } from "./components/HeaderFooterRow.js";
 import styles from "./GridSheet.module.scss";
-import { useGridKeyboard } from "./hooks/useGridKeyboard.js";
-import { useGridMouse } from "./hooks/useGridMouse.js";
-import { useGridPaste } from "./hooks/useGridPaste.js";
+import { useGridKeyboard } from "./hooks/useGridKeyboard/index.js";
+import { useGridMouse } from "./hooks/useGridMouse/index.js";
+import { useGridPaste } from "./hooks/useGridPaste/index.js";
 import type {
     CellAddress,
     CellType,

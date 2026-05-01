@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from "vitest";
 import { renderHook, act } from "@testing-library/react";
 import { useGridPaste } from "./useGridPaste.js";
-import { testColumns, testData } from "../test/fixtures.js";
+import { testColumns, testData } from "../../test/fixtures.js";
 import type { GridPasteParams } from "./useGridPaste.js";
 
 function createParams(
