@@ -49,10 +49,13 @@
         "lint": "biome lint --write",
         "lint:check": "biome lint",
         "storybook": "storybook dev -p 6006",
-        "build-storybook": "storybook build"
+        "build-storybook": "storybook build",
+        "changeset": "changeset"
     },
     "devDependencies": {
         "@biomejs/biome": "^2.4.6",
+        "@changesets/changelog-github": "^1.0.1",
+        "@changesets/cli": "^3.0.3",
         "@chromatic-com/storybook": "^5.0.1",
         "@storybook/addon-a11y": "^10.2.16",
         "@storybook/addon-docs": "^10.2.16",

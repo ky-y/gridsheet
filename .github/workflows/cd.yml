@@ -1,53 +1,138 @@
-name: Publish to npm
+# Opens the release PR when there are changesets, and publishes to npm when it is merged.
+# Based on https://changesets.dev/guide/automating (trusted publishing).
+# Do not rename this file: npm Trusted Publishing is bound to "cd.yml".
+name: Release
 
 on:
     push:
-        tags: ['v*']
+        branches: [main]
+
+permissions: {}
+
+# Never cancel a run in the middle of publishing.
+concurrency:
+    group: ${{ github.workflow }}-${{ github.ref }}
+    cancel-in-progress: false
 
 jobs:
-    publish:
+    select-mode:
         runs-on: ubuntu-latest
-
+        outputs:
+            mode: ${{ steps.select-mode.outputs.mode }}
+            publish-plan-artifact-id: ${{ steps.select-mode.outputs.publish-plan-artifact-id }}
         permissions:
-            contents: write
-            id-token: write
-
+            contents: read
         steps:
-            - uses: actions/checkout@v4
+            - uses: actions/checkout@v7
+              with:
+                  persist-credentials: false
 
-            - uses: pnpm/action-setup@v4
+            - uses: pnpm/action-setup@v6
 
-            - uses: actions/setup-node@v4
+            - uses: actions/setup-node@v7
               with:
                   node-version: '24'
-                  cache: 'pnpm'
-                  registry-url: 'https://registry.npmjs.org'
+                  package-manager-cache: false
 
             - name: Install Dependencies
               run: pnpm install --frozen-lockfile
 
-            - name: Update package.json version and commit
-              run: |
-                  git config user.name "github-actions[bot]"
-                  git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-                  git fetch origin main
-                  git checkout main
-                  git pull --rebase origin main
-                  npm version "${VERSION#v}" --no-git-tag-version --allow-same-version
-                  git add package.json
-                  git diff --cached --quiet && echo "No changes to commit" || git commit -m "chore: bump version to ${VERSION#v}"
-                  git push origin main
+            - name: Select Changesets mode
+              id: select-mode
+              uses: changesets/action/select-mode@v2
+
+    version:
+        needs: select-mode
+        if: needs.select-mode.outputs.mode == 'version'
+        runs-on: ubuntu-latest
+        permissions:
+            contents: write
+            pull-requests: write
+        steps:
+            - uses: actions/checkout@v7
+              with:
+                  persist-credentials: false
+
+            - uses: pnpm/action-setup@v6
+
+            - uses: actions/setup-node@v7
+              with:
+                  node-version: '24'
+                  package-manager-cache: false
+
+            - name: Install Dependencies
+              run: pnpm install --frozen-lockfile
+
+            - name: Create or update Release PR
+              uses: changesets/action/version@v2
+              with:
+                  pr-title: 'chore: release'
+                  commit-message: 'chore: release'
               env:
-                  VERSION: ${{ github.ref_name }}
+                  # Used by @changesets/changelog-github.
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    pack:
+        needs: select-mode
+        if: needs.select-mode.outputs.mode == 'publish'
+        runs-on: ubuntu-latest
+        outputs:
+            pack-dir-artifact-id: ${{ steps.pack.outputs.pack-dir-artifact-id }}
+        permissions:
+            contents: read
+        steps:
+            - uses: actions/checkout@v7
+              with:
+                  persist-credentials: false
+
+            - uses: pnpm/action-setup@v6
+
+            - uses: actions/setup-node@v7
+              with:
+                  node-version: '24'
+                  package-manager-cache: false
+
+            - name: Install Dependencies
+              run: pnpm install --frozen-lockfile
+
+            # CI runs in parallel, so verify again before publishing.
+            - name: Lint
+              run: pnpm run lint:check && pnpm run format:check
+
+            - name: Test
+              run: pnpm test --run --project unit
 
             - name: Build
               run: pnpm run build
 
-            - name: Create GitHub Release
-              run: gh release create "$TAG" --generate-notes
-              env:
-                  TAG: ${{ github.ref_name }}
-                  GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+            - name: Pack
+              id: pack
+              uses: changesets/action/pack@v2
+              with:
+                  publish-plan-artifact-id: ${{ needs.select-mode.outputs.publish-plan-artifact-id }}
+
+    publish:
+        needs: pack
+        runs-on: ubuntu-latest
+        permissions:
+            contents: write # git tags and GitHub Releases
+            id-token: write # npm Trusted Publishing
+        steps:
+            - uses: actions/checkout@v7
+              with:
+                  persist-credentials: false
+
+            - uses: pnpm/action-setup@v6
+
+            - uses: actions/setup-node@v7
+              with:
+                  node-version: '24'
+                  package-manager-cache: false
+
+            - name: Install Dependencies
+              run: pnpm install --frozen-lockfile
 
             - name: Publish to npm
-              run: pnpm publish --no-git-checks --access public --provenance
+              uses: changesets/action/publish@v2
+              with:
+                  pack-dir-artifact-id: ${{ needs.pack.outputs.pack-dir-artifact-id }}
