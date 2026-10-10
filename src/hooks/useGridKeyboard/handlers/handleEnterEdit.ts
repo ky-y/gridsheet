@@ -16,9 +16,8 @@ export function handleEnterEdit<C extends readonly ColumnType[]>(
         selection,
         data,
         columns,
-        colOffset,
-        dataRowOffset,
         setEditingCell,
+        geometry: { colOffset, dataRowOffset },
     } = params;
 
     // 単一セル選択時のみ編集を開始する（範囲選択中は対象セルが曖昧なので無視）

@@ -1,9 +1,10 @@
 export type Styles = {
-    footerBorder: string;
-    footerCell: string;
-    headerBorder: string;
+    dividerBottom: string;
+    dividerRight: string;
+    dividerTop: string;
     headerCell: string;
-    rowNumber: string;
+    index: string;
+    selectAll: string;
     selected: string;
 };
 

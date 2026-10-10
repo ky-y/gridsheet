@@ -18,8 +18,7 @@ export function handleEditingKeys<C extends readonly ColumnType[]>(
         containerRef,
         setSelection,
         onSelectionChange,
-        minCol,
-        maxCol,
+        geometry: { minCol, maxCol },
     } = params;
 
     // 編集モードでなければこのハンドラは無関係

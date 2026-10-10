@@ -1,30 +1,10 @@
 import { describe, expect, it, vi } from "vitest";
 import { renderHook, act } from "@testing-library/react";
 import { useGridPaste } from "./useGridPaste.js";
-import { testColumns, testData } from "../../test/fixtures.js";
-import type { GridPasteParams } from "./useGridPaste.js";
-
-function createParams(
-    overrides: Partial<GridPasteParams<typeof testColumns>> = {},
-): GridPasteParams<typeof testColumns> {
-    return {
-        editingCell: null,
-        selection: { start: { row: 0, col: 0 }, end: { row: 0, col: 0 } },
-        onChange: vi.fn(),
-        data: testData,
-        dataRowOffset: 0,
-        colOffset: 0,
-        columns: testColumns,
-        ...overrides,
-    };
-}
-
-function makePasteEvent(text: string) {
-    return {
-        clipboardData: { getData: () => text },
-        preventDefault: vi.fn(),
-    } as unknown as React.ClipboardEvent<HTMLDivElement>;
-}
+import {
+    createPasteParams as createParams,
+    makePasteEvent,
+} from "../../test/handlerHelpers.js";
 
 describe("useGridPaste", () => {
     it("does nothing when editingCell is set", () => {

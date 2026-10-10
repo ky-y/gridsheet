@@ -22,10 +22,9 @@ export function handleCharInput<C extends readonly ColumnType[]>(
         selection,
         data,
         columns,
-        colOffset,
-        dataRowOffset,
         onChange,
         setEditingCell,
+        geometry: { colOffset, dataRowOffset },
     } = params;
 
     // 単一セル選択時のみ動作（複数セルの一括書き換えを避ける）

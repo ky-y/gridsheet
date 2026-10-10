@@ -1,0 +1,43 @@
+@layer gridsheet {
+    .headerCell {
+        display: flex;
+        align-items: center;
+        border-right: 1px solid #e0e0e0;
+        border-bottom: 1px solid #e0e0e0;
+        min-height: 28px;
+        padding: 0 6px;
+        background: #f0f0f0;
+        font-weight: 600;
+    }
+
+    // インデックス（1, 2, 3 / A, B, C）は行番号風の控えめな見た目にする
+    .index {
+        justify-content: center;
+        color: #999;
+        font-size: 12px;
+        font-weight: normal;
+        background: #fafafa;
+    }
+
+    .selectAll {
+        cursor: pointer;
+    }
+
+    // データ領域との境界線（divider）
+    .dividerTop {
+        border-top: 2px solid #c0c0c0;
+    }
+
+    .dividerBottom {
+        border-bottom: 2px solid #c0c0c0;
+    }
+
+    .dividerRight {
+        border-right: 2px solid #c0c0c0;
+    }
+
+    .selected {
+        background-color: rgba(33, 133, 208, 0.12);
+        box-shadow: inset 0 0 0 1px rgba(33, 133, 208, 0.4);
+    }
+}

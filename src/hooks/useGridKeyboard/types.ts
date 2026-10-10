@@ -3,10 +3,11 @@ import type {
     CellAddress,
     ColumnType,
     ExtRow,
-    HeaderFooterCell,
     Row,
     Selection,
 } from "../../types.js";
+import type { GridGeometry } from "../../utils/gridGeometry.js";
+import type { PlacedHeaderCell } from "../../utils/headerLayout.js";
 
 export type GridKeyboardParams<C extends readonly ColumnType[]> = {
     editingCell: CellAddress | null;
@@ -21,17 +22,8 @@ export type GridKeyboardParams<C extends readonly ColumnType[]> = {
     onSelectionChange?: ((selection: Selection) => void) | undefined;
     columns: C;
     data: Row<C>[];
-    headers?: HeaderFooterCell[][] | undefined;
+    /** 配置済みの見出しセル（コピー時に見出しのテキストを引くのに使う） */
+    headerCells: PlacedHeaderCell[];
     onChange?: ((data: ExtRow<C>[]) => void) | undefined;
-    colOffset: number;
-    titleRowIndex: number;
-    hasTitle: boolean;
-    headerRowOffset: number;
-    dataRowOffset: number;
-    showRowNumbers: boolean;
-    minRow: number;
-    maxRow: number;
-    minCol: number;
-    maxCol: number;
-    fullMinCol: number;
+    geometry: GridGeometry;
 };

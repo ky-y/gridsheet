@@ -94,7 +94,7 @@ describe("handleEditingKeys", () => {
         const params = createKeyboardParams({
             editingCell: { row: 0, col: 4 },
             setSelection,
-            maxCol: 4,
+            geometry: { maxCol: 4 },
         });
         handleEditingKeys(makeKeyEvent("Tab"), params);
         const sel = setSelection.mock.calls[0]?.[0]({

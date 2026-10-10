@@ -43,13 +43,21 @@ export const Default: Story = {
     },
 };
 
-export const WithRowNumbers: Story = {
+export const WithRowHeaders: Story = {
     args: {
         columns,
         data: sampleData,
-        configs: {
-            showRowNumbers: true,
-        },
+        rowHeaders: [{ type: "index" }],
+    },
+};
+
+// スプレッドシート風: 列は A, B, C…、行は 1, 2, 3…
+export const SpreadsheetStyle: Story = {
+    args: {
+        columns,
+        data: sampleData,
+        headers: [{ type: "index", format: "upperAlpha" }, { type: "title" }],
+        rowHeaders: [{ type: "index" }],
     },
 };
 
@@ -58,14 +66,52 @@ export const WithHeaders: Story = {
         columns,
         data: sampleData,
         configs: {
-            showRowNumbers: true,
-            selectableRowNumbers: true,
+            selectableRowHeaders: true,
         },
+        rowHeaders: [{ type: "index" }],
         headers: [
             [
                 { body: "Personal", span: 2 },
                 { body: "Status", span: 2 },
             ],
+            { type: "title" },
+        ],
+    },
+};
+
+// divider で太線の有無を行ごとに切り替える
+export const CustomDividers: Story = {
+    args: {
+        columns,
+        data: sampleData,
+        rowHeaders: [{ type: "index", format: "lowerAlpha", divider: false }],
+        headers: [
+            {
+                cells: [
+                    { body: "Personal", span: 2 },
+                    { body: "Status", span: 2 },
+                ],
+                divider: true,
+            },
+            { type: "title", divider: false },
+        ],
+    },
+};
+
+// rowHeaders もセルを並べられ、rowSpan で縦に結合できる
+export const GroupedRowHeaders: Story = {
+    args: {
+        columns,
+        data: sampleData,
+        rowHeaders: [
+            {
+                cells: [
+                    { body: "Team A", rowSpan: 3 },
+                    { body: "Team B", rowSpan: 2 },
+                ],
+                width: "80px",
+            },
+            { type: "index" },
         ],
     },
 };
@@ -74,9 +120,7 @@ export const WithFooters: Story = {
     args: {
         columns,
         data: sampleData,
-        configs: {
-            showRowNumbers: true,
-        },
+        rowHeaders: [{ type: "index" }],
         footers: [
             [{ body: "Total" }, { body: "409" }, { body: "" }, { body: "" }],
         ],
@@ -88,14 +132,15 @@ export const WithHeadersAndFooters: Story = {
         columns,
         data: sampleData,
         configs: {
-            showRowNumbers: true,
-            selectableRowNumbers: true,
+            selectableRowHeaders: true,
         },
+        rowHeaders: [{ type: "index" }],
         headers: [
             [
                 { body: "Personal", span: 2 },
                 { body: "Status", span: 2 },
             ],
+            { type: "title" },
         ],
         footers: [
             [{ body: "Total" }, { body: "409" }, { body: "" }, { body: "" }],
@@ -156,15 +201,14 @@ function InteractiveWrapper() {
                 columns={columns}
                 data={data}
                 onChange={setData}
-                configs={{
-                    showRowNumbers: true,
-                    selectableRowNumbers: true,
-                }}
+                configs={{ selectableRowHeaders: true }}
+                rowHeaders={[{ type: "index" }]}
                 headers={[
                     [
                         { body: "Personal", span: 2 },
                         { body: "Status", span: 2 },
                     ],
+                    { type: "title" },
                 ]}
             />
         </div>

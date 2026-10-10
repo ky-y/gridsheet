@@ -1,40 +1,8 @@
 import { describe, expect, it, vi, beforeEach } from "vitest";
 import { renderHook, act } from "@testing-library/react";
 import { useGridKeyboard } from "./useGridKeyboard.js";
-import type { GridKeyboardParams } from "./useGridKeyboard.js";
 import type { Selection } from "../../types.js";
-import { testColumns, testData } from "../../test/fixtures.js";
-
-function createParams(
-    overrides: Partial<GridKeyboardParams<typeof testColumns>> = {},
-): GridKeyboardParams<typeof testColumns> {
-    return {
-        editingCell: null,
-        setEditingCell: vi.fn(),
-        containerRef: {
-            current: { focus: vi.fn() } as unknown as HTMLDivElement,
-        },
-        selection: { start: { row: 0, col: 0 }, end: { row: 0, col: 0 } },
-        setSelection: vi.fn((updater) => updater(null)),
-        onSelectionChange: vi.fn(),
-        columns: testColumns,
-        data: testData,
-        headers: undefined,
-        onChange: vi.fn(),
-        colOffset: 0,
-        titleRowIndex: -1,
-        hasTitle: false,
-        headerRowOffset: -1,
-        dataRowOffset: 0,
-        showRowNumbers: false,
-        minRow: 0,
-        maxRow: 2,
-        minCol: 0,
-        maxCol: 4,
-        fullMinCol: 0,
-        ...overrides,
-    };
-}
+import { createKeyboardParams as createParams } from "../../test/handlerHelpers.js";
 
 function makeKeyEvent(
     key: string,

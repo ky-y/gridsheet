@@ -142,7 +142,7 @@ describe("handleArrowNavigation", () => {
         );
         const params = createKeyboardParams({
             setSelection,
-            colOffset: 0,
+            geometry: { colOffset: 0 },
         });
         handleArrowNavigation(makeKeyEvent("ArrowRight"), params);
         const sel = setSelection.mock.calls[0]?.[0]({

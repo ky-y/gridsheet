@@ -126,3 +126,21 @@ export function isSelected(
     const maxCol = Math.max(selection.start.col, selection.end.col);
     return row >= minRow && row <= maxRow && col >= minCol && col <= maxCol;
 }
+
+/** 結合セル（row, col から rowSpan × colSpan の矩形）が選択範囲と重なるか */
+export function intersectsSelection(
+    area: { row: number; col: number; rowSpan: number; colSpan: number },
+    selection: { start: CellAddress; end: CellAddress } | null,
+): boolean {
+    if (!selection) return false;
+    const minRow = Math.min(selection.start.row, selection.end.row);
+    const maxRow = Math.max(selection.start.row, selection.end.row);
+    const minCol = Math.min(selection.start.col, selection.end.col);
+    const maxCol = Math.max(selection.start.col, selection.end.col);
+    return (
+        area.row <= maxRow &&
+        area.row + area.rowSpan - 1 >= minRow &&
+        area.col <= maxCol &&
+        area.col + area.colSpan - 1 >= minCol
+    );
+}

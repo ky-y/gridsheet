@@ -53,7 +53,7 @@ describe("handleMouseDown", () => {
         expect(onSelectionChange).toHaveBeenCalled();
     });
 
-    it("selects column on title click", () => {
+    it("selects column on columnHeader click", () => {
         const setSelection = vi.fn(
             (updater: (prev: Selection | null) => Selection | null) =>
                 updater(null),
@@ -61,7 +61,7 @@ describe("handleMouseDown", () => {
         const setDragMode = vi.fn();
         const params = createMouseHandlerParams({ setSelection, setDragMode });
         handleMouseDown(
-            makeMouseEvent({ row: "0", col: "2", type: "title" }),
+            makeMouseEvent({ row: "0", col: "2", type: "columnHeader" }),
             params,
         );
         const sel = setSelection.mock.calls[0]?.[0](null);
@@ -72,7 +72,7 @@ describe("handleMouseDown", () => {
         expect(setDragMode).toHaveBeenCalledWith("column");
     });
 
-    it("respects span on header click", () => {
+    it("respects colSpan on columnHeader click", () => {
         const setSelection = vi.fn(
             (updater: (prev: Selection | null) => Selection | null) =>
                 updater(null),
@@ -82,8 +82,8 @@ describe("handleMouseDown", () => {
             makeMouseEvent({
                 row: "1",
                 col: "1",
-                type: "header",
-                span: "3",
+                type: "columnHeader",
+                colSpan: "3",
             }),
             params,
         );
@@ -94,14 +94,14 @@ describe("handleMouseDown", () => {
         });
     });
 
-    it("treats footer like header for column selection", () => {
+    it("selects column from a footer row columnHeader", () => {
         const setSelection = vi.fn(
             (updater: (prev: Selection | null) => Selection | null) =>
                 updater(null),
         );
         const params = createMouseHandlerParams({ setSelection });
         handleMouseDown(
-            makeMouseEvent({ row: "12", col: "2", type: "footer" }),
+            makeMouseEvent({ row: "12", col: "2", type: "columnHeader" }),
             params,
         );
         const sel = setSelection.mock.calls[0]?.[0](null);
@@ -111,7 +111,7 @@ describe("handleMouseDown", () => {
         });
     });
 
-    it("selects entire row on rowNumber click", () => {
+    it("selects entire row on rowHeader click", () => {
         const setSelection = vi.fn(
             (updater: (prev: Selection | null) => Selection | null) =>
                 updater(null),
@@ -119,7 +119,7 @@ describe("handleMouseDown", () => {
         const setDragMode = vi.fn();
         const params = createMouseHandlerParams({ setSelection, setDragMode });
         handleMouseDown(
-            makeMouseEvent({ row: "3", col: "0", type: "rowNumber" }),
+            makeMouseEvent({ row: "3", col: "0", type: "rowHeader" }),
             params,
         );
         const sel = setSelection.mock.calls[0]?.[0](null);
@@ -128,6 +128,28 @@ describe("handleMouseDown", () => {
             end: { row: 3, col: 4 },
         });
         expect(setDragMode).toHaveBeenCalledWith("row");
+    });
+
+    it("respects rowSpan on rowHeader click", () => {
+        const setSelection = vi.fn(
+            (updater: (prev: Selection | null) => Selection | null) =>
+                updater(null),
+        );
+        const params = createMouseHandlerParams({ setSelection });
+        handleMouseDown(
+            makeMouseEvent({
+                row: "2",
+                col: "0",
+                type: "rowHeader",
+                rowSpan: "3",
+            }),
+            params,
+        );
+        const sel = setSelection.mock.calls[0]?.[0](null);
+        expect(sel).toEqual({
+            start: { row: 2, col: 0 },
+            end: { row: 4, col: 4 },
+        });
     });
 
     it("selects single cell on regular cell click", () => {

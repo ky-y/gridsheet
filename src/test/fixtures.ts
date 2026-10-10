@@ -1,4 +1,4 @@
-import type { HeaderFooterCell, Row } from "../types.js";
+import type { HeaderRow, Row } from "../types.js";
 import { createCol } from "../types.js";
 
 export const testColumns = [
@@ -34,7 +34,7 @@ export const testData: Row<TestColumns>[] = [
     },
 ];
 
-export const testHeaders: HeaderFooterCell[][] = [
+export const testHeaders: HeaderRow[] = [
     [
         { body: "個人情報", span: 2 },
         { body: "コード" },
@@ -42,7 +42,7 @@ export const testHeaders: HeaderFooterCell[][] = [
     ],
 ];
 
-export const testFooters: HeaderFooterCell[][] = [
+export const testFooters: HeaderRow[] = [
     [
         { body: "合計" },
         { body: "95" },
