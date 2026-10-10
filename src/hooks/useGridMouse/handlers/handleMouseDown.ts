@@ -5,11 +5,10 @@ import type { GridMouseHandlerParams } from "../types.js";
 
 // === マウスダウン: 選択開始 / 編集モード突入の判定 ===
 // クリックされた要素の data-type 属性で挙動が分岐する:
-//   - selectAll : 左上コーナー → テーブル全選択
-//   - title     : タイトル行 → 単一列の全選択
-//   - header/footer : ヘッダー/フッター → span を考慮した列選択
-//   - rowNumber : 行番号列 → 行の全選択
-//   - その他    : 通常セル → セル選択 or 既選択セルなら編集モードに入る
+//   - selectAll    : 見出しの角 → テーブル全選択
+//   - columnHeader : headers / footers → 結合（data-col-span）を考慮した列選択
+//   - rowHeader    : rowHeaders → 結合（data-row-span）を考慮した行選択
+//   - その他       : 通常セル → セル選択 or 既選択セルなら編集モードに入る
 export function handleMouseDown<C extends readonly ColumnType[]>(
     e: MouseEvent<HTMLDivElement>,
     params: GridMouseHandlerParams<C>,
@@ -20,16 +19,18 @@ export function handleMouseDown<C extends readonly ColumnType[]>(
         setEditingCell,
         containerRef,
         onSelectionChange,
-        minRow,
-        fullMinCol,
-        maxRow,
-        maxCol,
         data,
         columns,
-        colOffset,
-        dataRowOffset,
         setIsDragging,
         setDragMode,
+        geometry: {
+            minRow,
+            fullMinCol,
+            maxRow,
+            maxCol,
+            colOffset,
+            dataRowOffset,
+        },
     } = params;
 
     // クリック位置から最も近い「セル要素」を辿る。data-row 属性を持つ要素がセルの目印
@@ -61,27 +62,21 @@ export function handleMouseDown<C extends readonly ColumnType[]>(
         containerRef.current?.focus();
         return;
     }
-    if (cellType === "title") {
-        // タイトル行（カラム見出し）クリック → その列を全行選択
+    if (cellType === "columnHeader") {
+        // 列見出しクリック → 結合している列ぶんを全行選択
+        const colSpan = Number(el.dataset.colSpan) || 1;
         setSelection(() => ({
             start: { row: minRow, col },
-            end: { row: maxRow, col },
+            end: { row: maxRow, col: col + colSpan - 1 },
         }));
         // 以後ドラッグで列を拡張するためのモード
         setDragMode("column");
-    } else if (cellType === "header" || cellType === "footer") {
-        // ヘッダー/フッターは colSpan を持つことがあるので span 分の列を選択する
-        const span = Number(el.dataset.span) || 1;
-        setSelection(() => ({
-            start: { row: minRow, col },
-            end: { row: maxRow, col: col + span - 1 },
-        }));
-        setDragMode("column");
-    } else if (cellType === "rowNumber") {
-        // 行番号列クリック → その行を全列選択
+    } else if (cellType === "rowHeader") {
+        // 行見出しクリック → 結合している行ぶんを全列選択
+        const rowSpan = Number(el.dataset.rowSpan) || 1;
         setSelection(() => ({
             start: { row, col: fullMinCol },
-            end: { row, col: maxCol },
+            end: { row: row + rowSpan - 1, col: maxCol },
         }));
         setDragMode("row");
     } else {

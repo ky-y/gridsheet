@@ -17,6 +17,8 @@ export function App() {
             <GridSheet
                 columns={columns}
                 headers={[
+                    { type: "index", format: "upperAlpha" },
+                    { type: "title", divider: false },
                     [
                         {
                             body: "Name",
@@ -46,9 +48,9 @@ export function App() {
                 ]}
                 data={data}
                 onChange={handleChange}
+                rowHeaders={[{ type: "index" }]}
                 configs={{
-                    showRowNumbers: true,
-                    selectableRowNumbers: true,
+                    selectableRowHeaders: true,
                 }}
             />
             <pre>{JSON.stringify(data, null, 2)}</pre>

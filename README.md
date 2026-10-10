@@ -10,8 +10,7 @@ A lightweight React grid sheet component — a spreadsheet without formula suppo
 - **Keyboard navigation**: Arrow keys, Tab, Enter, F2, Escape, Ctrl+C, Backspace/Delete, Ctrl+Arrow
 - **Mouse drag** range selection
 - **Clipboard paste** support (TSV and single-value expansion to multiple cells)
-- **Header / Footer rows** with cell merging
-- **Row numbers** display
+- **Headers / Footers / Row headers** unified: column titles, indexes (`1, 2, 3` / `A, B, C` / `a, b, c`) and custom cells with merging, on top, bottom and left
 - **Selection change** callback
 - **ARIA grid roles** for screen reader accessibility
 
@@ -44,7 +43,7 @@ function App() {
       columns={columns}
       data={data}
       onChange={setData}
-      configs={{ showRowNumbers: true }}
+      rowHeaders={[{ type: "index" }]}
     />
   );
 }
@@ -58,8 +57,9 @@ function App() {
 |---------------------|----------------------------------|--------------------------------------------|
 | `columns`           | `ColumnType[]`                   | Array of column definitions                |
 | `data`              | `DataType<C>[]`                  | Array of row data                          |
-| `headers`           | `HeaderFooterCell[][]`           | Header rows (optional)                     |
-| `footers`           | `HeaderFooterCell[][]`           | Footer rows (optional)                     |
+| `headers`           | `HeaderRow[]`                    | Header rows (optional, see below)          |
+| `footers`           | `HeaderRow[]`                    | Footer rows (optional)                     |
+| `rowHeaders`        | `RowHeaderColumn[]`              | Header columns on the left (optional)      |
 | `configs`           | `GridSheetConfigs`               | Configuration options (optional)           |
 | `onChange`          | `(data: DataType<C>[]) => void`  | Callback when data changes (optional)      |
 | `onSelectionChange` | `(selection: Selection) => void` | Callback when selection changes (optional) |
@@ -69,8 +69,7 @@ function App() {
 
 | Option                 | Default | Description                              |
 |------------------------|---------|------------------------------------------|
-| `showRowNumbers`       | `false` | Show a row number column                 |
-| `selectableRowNumbers` | `false` | Allow selecting the row number column    |
+| `selectableRowHeaders` | `false` | Allow keyboard navigation into `rowHeaders` |
 | `scrollToSelection`    | `true`  | Scroll to keep the selected cell in view |
 
 ### Cell Types
@@ -103,6 +102,41 @@ const data = [
 | `readonly`  | `boolean`                    | Per-cell read-only flag (optional) |
 | `style`     | `CSSProperties`              | Per-cell inline style (optional)   |
 | `className` | `string`                     | Per-cell class name (optional)     |
+
+### Headers, footers and row headers
+
+`headers` (top), `footers` (bottom) and `rowHeaders` (left) share the same building blocks.
+Each entry is one row (`headers` / `footers`) or one column (`rowHeaders`):
+
+| Entry                                   | Description                                                    |
+|-----------------------------------------|----------------------------------------------------------------|
+| `HeaderCell[]`                          | Custom cells (shorthand of `{ cells }`)                        |
+| `{ cells: HeaderCell[] }`               | Custom cells                                                   |
+| `{ type: "title" }`                     | `columns[].title` (headers / footers only)                     |
+| `{ type: "index", format? }`            | Indexes. `format`: `"number"` (default), `"upperAlpha"`, `"lowerAlpha"` |
+
+Every object entry also accepts `divider` (draw the thick line on the data side; by default only the line next to the data area has it) and `className`. `rowHeaders` entries accept `width`.
+A `HeaderCell` is `{ body, span?, rowSpan?, className? }` — `span` merges horizontally and `rowSpan` vertically.
+
+When `headers` is omitted, a title row is shown if any column has a `title`.
+
+```tsx
+<GridSheet
+  columns={columns}
+  data={data}
+  headers={[
+    { type: "index", format: "upperAlpha" }, // A, B, C ...
+    { type: "title", divider: false },
+  ]}
+  rowHeaders={[
+    { cells: [{ body: "Team A", rowSpan: 3 }, { body: "Team B", rowSpan: 2 }] },
+    { type: "index" }, // 1, 2, 3 ...
+  ]}
+  footers={[[{ body: "Total" }, { body: "409" }]]}
+/>
+```
+
+Clicking a header cell selects its columns (or rows for `rowHeaders`), including merged ones. The corners select all.
 
 ### `createCol(key, type, options?)`
 

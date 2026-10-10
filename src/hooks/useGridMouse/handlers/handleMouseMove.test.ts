@@ -51,7 +51,7 @@ describe("handleMouseMove", () => {
         });
     });
 
-    it("updates selection in column drag mode (extends rows to maxRow + span)", () => {
+    it("updates selection in column drag mode (extends rows to maxRow + colSpan)", () => {
         const setSelection = vi.fn(
             (updater: (prev: Selection | null) => Selection | null) =>
                 updater({
@@ -65,7 +65,7 @@ describe("handleMouseMove", () => {
             dragMode: "column",
         });
         handleMouseMove(
-            makeMouseEvent({ row: "5", col: "3", span: "2" }),
+            makeMouseEvent({ row: "5", col: "3", colSpan: "2" }),
             params,
         );
         const sel = setSelection.mock.calls[0]?.[0]({
@@ -99,6 +99,30 @@ describe("handleMouseMove", () => {
         expect(sel).toEqual({
             start: { row: 1, col: 0 },
             end: { row: 5, col: 4 },
+        });
+    });
+
+    it("extends row drag by rowSpan of the hovered row header", () => {
+        const setSelection = vi.fn(
+            (updater: (prev: Selection | null) => Selection | null) =>
+                updater(null),
+        );
+        const params = createMouseHandlerParams({
+            setSelection,
+            isDragging: true,
+            dragMode: "row",
+        });
+        handleMouseMove(
+            makeMouseEvent({ row: "5", col: "0", rowSpan: "3" }),
+            params,
+        );
+        const sel = setSelection.mock.calls[0]?.[0]({
+            start: { row: 1, col: 0 },
+            end: { row: 1, col: 4 },
+        });
+        expect(sel).toEqual({
+            start: { row: 1, col: 0 },
+            end: { row: 7, col: 4 },
         });
     });
 

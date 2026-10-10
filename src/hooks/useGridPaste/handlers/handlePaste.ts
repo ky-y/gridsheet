@@ -21,9 +21,8 @@ export function handlePaste<C extends readonly ColumnType[]>(
         selection,
         onChange,
         data,
-        dataRowOffset,
-        colOffset,
         columns,
+        geometry: { dataRowOffset, colOffset },
     } = params;
 
     // 編集中のセルにはブラウザ標準のペースト（input への入力）を任せる

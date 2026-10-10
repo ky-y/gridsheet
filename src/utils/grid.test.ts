@@ -1,5 +1,11 @@
 import { describe, expect, it } from "vitest";
-import { getCellAddress, getCellRaw, isSelected, resolveCell } from "./grid.js";
+import {
+    getCellAddress,
+    getCellRaw,
+    intersectsSelection,
+    isSelected,
+    resolveCell,
+} from "./grid.js";
 import type { ExtCell } from "../types.js";
 import { testData } from "../test/fixtures.js";
 
@@ -119,5 +125,48 @@ describe("isSelected", () => {
         const sel = { start: { row: 3, col: 3 }, end: { row: 1, col: 1 } };
         expect(isSelected(2, 2, sel)).toBe(true);
         expect(isSelected(0, 0, sel)).toBe(false);
+    });
+});
+
+describe("intersectsSelection", () => {
+    const sel = { start: { row: 3, col: 3 }, end: { row: 2, col: 2 } };
+
+    it("returns false when selection is null", () => {
+        expect(
+            intersectsSelection(
+                { row: 0, col: 0, rowSpan: 1, colSpan: 1 },
+                null,
+            ),
+        ).toBe(false);
+    });
+
+    it("detects overlap of a spanned area", () => {
+        expect(
+            intersectsSelection(
+                { row: 0, col: 0, rowSpan: 3, colSpan: 3 },
+                sel,
+            ),
+        ).toBe(true);
+        expect(
+            intersectsSelection(
+                { row: 3, col: 1, rowSpan: 1, colSpan: 2 },
+                sel,
+            ),
+        ).toBe(true);
+    });
+
+    it("returns false for areas outside the selection", () => {
+        expect(
+            intersectsSelection(
+                { row: 0, col: 0, rowSpan: 2, colSpan: 5 },
+                sel,
+            ),
+        ).toBe(false);
+        expect(
+            intersectsSelection(
+                { row: 2, col: 4, rowSpan: 2, colSpan: 1 },
+                sel,
+            ),
+        ).toBe(false);
     });
 });

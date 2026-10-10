@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { cn } from "@/utils/cn.js";
 import { RenderCell } from "./components/Cell.js";
 import cellStyles from "./components/Cell.module.scss";
-import { renderHeaderFooterRows } from "./components/HeaderFooterRow.js";
+import { RenderHeaderCell } from "./components/HeaderCell.js";
 import styles from "./GridSheet.module.scss";
 import { useGridKeyboard } from "./hooks/useGridKeyboard/index.js";
 import { useGridMouse } from "./hooks/useGridMouse/index.js";
@@ -17,17 +17,25 @@ import type {
 } from "./types.js";
 import {
     getCellRaw,
+    intersectsSelection,
     isSelected,
     resolveCell,
     toExtData,
 } from "./utils/grid.js";
+import { computeGridGeometry } from "./utils/gridGeometry.js";
+import {
+    layoutHeaderCells,
+    type PlacedHeaderCell,
+    resolveHeaders,
+} from "./utils/headerLayout.js";
 
 export const GridSheet = <const C extends readonly ColumnType[]>({
     className,
     columns,
     data,
-    headers,
-    footers,
+    headers: headersProp,
+    footers = [],
+    rowHeaders = [],
     configs,
     onChange,
     onSelectionChange,
@@ -41,18 +49,38 @@ export const GridSheet = <const C extends readonly ColumnType[]>({
     } | null>(null);
     const [editingCell, setEditingCell] = useState<CellAddress | null>(null);
 
-    // タイトル行（カラム見出し）を表示するか: いずれかの列に title が設定されていれば true
-    const hasTitle = columns.some((col) => col.title != null);
-    // 行番号列の表示有無
-    const showRowNumbers = configs?.showRowNumbers === true;
-    // 行番号列をクリックして行選択を許可するか（showRowNumbers が前提）
-    const selectableRowNumbers =
-        configs?.selectableRowNumbers === true && showRowNumbers;
+    // 見出しは headers / footers / rowHeaders（とその角）をすべて同じ「配置済みセル」として扱う。
+    // 座標系は computeGridGeometry、セル配置は layoutHeaderCells に集約
+    const headers = resolveHeaders(headersProp, columns);
+    const layoutParams = {
+        columns,
+        dataLength: data.length,
+        headers,
+        footers,
+        rowHeaders,
+    };
+    const geometry = computeGridGeometry({ ...layoutParams, configs });
+    const headerCells = layoutHeaderCells(layoutParams, geometry);
+    const {
+        colOffset,
+        dataRowOffset,
+        footerRowOffset,
+        minRow,
+        maxRow,
+        fullMinCol,
+        maxCol,
+        gridTemplateColumns,
+    } = geometry;
+
+    // 描画は論理行ごとに行う。各行には「その行から始まる見出しセル」とデータセルが入る
+    const headerCellsByRow: PlacedHeaderCell[][] = Array.from(
+        { length: maxRow + 1 },
+        () => [],
+    );
+    for (const cell of headerCells) headerCellsByRow[cell.row]!.push(cell);
+
     // 選択セルが画面外に出たときに自動スクロールするか（既定 true、明示的に false の時だけ無効）
     const scrollToSelection = configs?.scrollToSelection !== false;
-
-    // 行番号列がある場合、データ列のインデックスは 1 ずれる（先頭列が行番号列になるため）
-    const colOffset = showRowNumbers ? 1 : 0;
 
     const dataRef = useRef(data);
     dataRef.current = data;
@@ -78,52 +106,6 @@ export const GridSheet = <const C extends readonly ColumnType[]>({
         },
         [],
     );
-
-    // CSS grid-template-columns 文字列を組み立てる。
-    //   - 数値指定: fr 単位（比率指定）
-    //   - 文字列指定: そのまま使用（"100px" 等）
-    //   - 未指定: auto
-    const gridTemplateColumns = [
-        ...(showRowNumbers ? ["3rem"] : []),
-        ...columns.map((col) => {
-            if (typeof col.width === "number") return `${col.width}fr`;
-            if (typeof col.width === "string") return col.width;
-            return "auto";
-        }),
-    ].join(" ");
-
-    // --- 論理行インデックスの計算 ---
-    // 行レイアウトは「タイトル行 → ヘッダー行 → データ行 → フッター行」の順。
-    // 各セクションが存在する場合だけ次のオフセットを進める。
-    let nextRow = 0;
-    const titleRowIndex = hasTitle ? nextRow++ : -1;
-    const headerRowOffset = headers?.length ? nextRow : -1;
-    if (headers?.length) nextRow += headers.length;
-    const dataRowOffset = nextRow;
-    const footerRowOffset = dataRowOffset + data.length;
-
-    // CSS grid の row は 1 始まり（論理インデックスは 0 始まりなので +1 する）
-    const titleCssRow = hasTitle ? 1 : -1;
-    const headerCssRowStart = (hasTitle ? 1 : 0) + 1;
-    const dataCssRowStart = headerCssRowStart + (headers?.length ?? 0);
-    const footerCssRowStart = dataCssRowStart + data.length;
-
-    // 選択可能領域の境界。
-    // minRow: タイトル → ヘッダー → データ の順で「最も上にある領域」を採用
-    const minRow = hasTitle
-        ? titleRowIndex
-        : headers?.length
-          ? headerRowOffset
-          : dataRowOffset;
-    // maxRow: フッターがあればフッター末尾、なければデータ末尾
-    const maxRow = footers?.length
-        ? footerRowOffset + footers.length - 1
-        : dataRowOffset + data.length - 1;
-    // minCol: 行番号列を選択可能にする設定なら 0、それ以外は colOffset から
-    const minCol = selectableRowNumbers ? 0 : colOffset;
-    const maxCol = columns.length - 1 + colOffset;
-    // fullMinCol: 行全体選択時の列開始位置（行番号列を含めるかどうか）
-    const fullMinCol = showRowNumbers ? 0 : colOffset;
 
     // 編集モードに入ったとき、対象セル内の input/select に自動フォーカスする。
     // text input の場合はキャレットを末尾に移動して、続けて入力できるようにする。
@@ -194,14 +176,9 @@ export const GridSheet = <const C extends readonly ColumnType[]>({
         setEditingCell,
         containerRef,
         onSelectionChange,
-        minRow,
-        fullMinCol,
-        maxRow,
-        maxCol,
         data,
         columns,
-        colOffset,
-        dataRowOffset,
+        geometry,
     });
 
     const handleKeyDown = useGridKeyboard({
@@ -213,19 +190,9 @@ export const GridSheet = <const C extends readonly ColumnType[]>({
         onSelectionChange,
         columns,
         data,
-        headers,
+        headerCells,
         onChange,
-        colOffset,
-        titleRowIndex,
-        hasTitle,
-        headerRowOffset,
-        dataRowOffset,
-        showRowNumbers,
-        minRow,
-        maxRow,
-        minCol,
-        maxCol,
-        fullMinCol,
+        geometry,
     });
 
     const handlePaste = useGridPaste({
@@ -233,9 +200,8 @@ export const GridSheet = <const C extends readonly ColumnType[]>({
         selection,
         onChange,
         data,
-        dataRowOffset,
-        colOffset,
         columns,
+        geometry,
     });
 
     return (
@@ -250,185 +216,80 @@ export const GridSheet = <const C extends readonly ColumnType[]>({
             onKeyDown={handleKeyDown}
             onPaste={handlePaste}
         >
-            {showRowNumbers &&
-                (hasTitle || (headers?.length ?? 0) > 0) &&
-                (() => {
-                    const cornerSpan =
-                        (hasTitle ? 1 : 0) + (headers?.length ?? 0);
-                    const canSelectAll = selectableRowNumbers;
-                    return (
-                        <div
-                            key="select-all"
-                            className={cn(
-                                styles.selectAll,
-                                isSelected(minRow, 0, selection)
-                                    ? styles.selected
-                                    : undefined,
-                            )}
-                            style={{
-                                gridRow: `1 / span ${cornerSpan}`,
-                                gridColumn: 1,
-                            }}
-                            role="columnheader"
-                            data-row={minRow}
-                            data-col={0}
-                            {...(canSelectAll
-                                ? { "data-type": "selectAll" }
-                                : {})}
-                        />
-                    );
-                })()}
-            {hasTitle &&
-                columns.map((col, colIndex) => {
-                    const absCol = colIndex + colOffset;
-                    const selected = isSelected(
-                        titleRowIndex,
-                        absCol,
-                        selection,
-                    );
-                    return (
-                        <div
-                            key={`title-${col.key}`}
-                            data-row={titleRowIndex}
-                            data-col={absCol}
-                            data-type="title"
-                            role="columnheader"
-                            style={{
-                                gridRow: titleCssRow,
-                                gridColumn: colIndex + (showRowNumbers ? 2 : 1),
-                            }}
-                            className={cn(
-                                styles.titleCell,
-                                col.titleClassName,
-                                selected ? styles.selected : undefined,
-                            )}
-                        >
-                            {col.title ?? ""}
-                        </div>
-                    );
-                })}
-            {headers &&
-                headers.length > 0 &&
-                renderHeaderFooterRows(
-                    headers,
-                    columns,
-                    "header",
-                    "header",
-                    headerCssRowStart,
-                    {
-                        rowOffset: headerRowOffset,
-                        colOffset,
-                        selection,
-                        cellType: "header",
-                    },
-                    showRowNumbers,
-                    false, // select-allセルが行番号列をカバーする
-                )}
-            {data.map((row, rowIndex) => {
-                const absoluteRow = dataRowOffset + rowIndex;
-                const rowNum = rowIndex + 1;
-                const cssRow = dataCssRowStart + rowIndex;
+            {headerCellsByRow.map((rowCells, row) => {
+                const dataIndex = row - dataRowOffset;
+                const dataRow =
+                    row >= dataRowOffset && row < footerRowOffset
+                        ? data[dataIndex]
+                        : undefined;
                 return (
-                    <div
-                        key={rowIndex}
-                        role="row"
-                        style={{ display: "contents" }}
-                    >
-                        {showRowNumbers && (
-                            <div
-                                key={`rn-${rowIndex}`}
-                                className={cn(
-                                    styles.rowNumber,
-                                    isSelected(absoluteRow, 0, selection)
-                                        ? styles.selected
-                                        : undefined,
-                                )}
-                                style={{ gridRow: cssRow, gridColumn: 1 }}
-                                role="rowheader"
-                                data-row={absoluteRow}
-                                data-col={0}
-                                data-type="rowNumber"
-                            >
-                                {rowNum}
-                            </div>
-                        )}
-                        {columns.map((col, colIndex) => {
-                            const absCol = colIndex + colOffset;
-                            const raw = getCellRaw(row, col.key);
-                            const cell = resolveCell(raw);
-                            const selected = isSelected(
-                                absoluteRow,
-                                absCol,
-                                selection,
-                            );
+                    <div key={row} role="row" style={{ display: "contents" }}>
+                        {rowCells.map((cell) => (
+                            <RenderHeaderCell
+                                key={cell.key}
+                                cell={cell}
+                                selected={intersectsSelection(cell, selection)}
+                            />
+                        ))}
+                        {dataRow &&
+                            columns.map((col, colIndex) => {
+                                const absCol = colIndex + colOffset;
+                                const raw = getCellRaw(dataRow, col.key);
+                                const cell = resolveCell(raw);
+                                const selected = isSelected(
+                                    row,
+                                    absCol,
+                                    selection,
+                                );
+                                const isEditing =
+                                    editingCell?.row === row &&
+                                    editingCell?.col === absCol;
 
-                            return (
-                                <div
-                                    key={`${rowIndex}-${col.key}`}
-                                    data-row={absoluteRow}
-                                    data-col={absCol}
-                                    role="gridcell"
-                                    style={{
-                                        gridRow: cssRow,
-                                        gridColumn:
-                                            colIndex + (showRowNumbers ? 2 : 1),
-                                    }}
-                                    className={cn(
-                                        cellStyles.cell,
-                                        col.type === "number" ||
-                                            col.type === "numberString"
-                                            ? cellStyles.numericCell
-                                            : undefined,
-                                        selected
-                                            ? cellStyles.selected
-                                            : undefined,
-                                        editingCell?.row === absoluteRow &&
-                                            editingCell?.col === absCol
-                                            ? cellStyles.editing
-                                            : undefined,
-                                    )}
-                                >
-                                    <RenderCell
-                                        col={col}
-                                        value={cell.value}
-                                        isReadonly={cell.readonly}
-                                        isEditing={
-                                            editingCell?.row === absoluteRow &&
-                                            editingCell?.col === absCol
-                                        }
-                                        cellStyle={cell.style}
-                                        cellClassName={cell.className}
-                                        rowIndex={rowIndex}
-                                        colKey={col.key}
-                                        onCellChange={
-                                            onChange
-                                                ? handleCellChange
-                                                : undefined
-                                        }
-                                    />
-                                </div>
-                            );
-                        })}
+                                return (
+                                    <div
+                                        key={col.key}
+                                        data-row={row}
+                                        data-col={absCol}
+                                        role="gridcell"
+                                        style={{
+                                            gridRow: row + 1,
+                                            gridColumn: absCol + 1,
+                                        }}
+                                        className={cn(
+                                            cellStyles.cell,
+                                            col.type === "number" ||
+                                                col.type === "numberString"
+                                                ? cellStyles.numericCell
+                                                : undefined,
+                                            selected
+                                                ? cellStyles.selected
+                                                : undefined,
+                                            isEditing
+                                                ? cellStyles.editing
+                                                : undefined,
+                                        )}
+                                    >
+                                        <RenderCell
+                                            col={col}
+                                            value={cell.value}
+                                            isReadonly={cell.readonly}
+                                            isEditing={isEditing}
+                                            cellStyle={cell.style}
+                                            cellClassName={cell.className}
+                                            rowIndex={dataIndex}
+                                            colKey={col.key}
+                                            onCellChange={
+                                                onChange
+                                                    ? handleCellChange
+                                                    : undefined
+                                            }
+                                        />
+                                    </div>
+                                );
+                            })}
                     </div>
                 );
             })}
-            {footers &&
-                footers.length > 0 &&
-                renderHeaderFooterRows(
-                    footers,
-                    columns,
-                    "footer",
-                    "footer",
-                    footerCssRowStart,
-                    {
-                        rowOffset: footerRowOffset,
-                        colOffset,
-                        selection,
-                        cellType: "footer",
-                    },
-                    showRowNumbers,
-                    showRowNumbers,
-                )}
         </div>
     );
 };

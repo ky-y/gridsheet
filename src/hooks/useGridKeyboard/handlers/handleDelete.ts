@@ -21,10 +21,9 @@ export function handleDelete<C extends readonly ColumnType[]>(
         selection,
         data,
         columns,
-        colOffset,
-        dataRowOffset,
         onChange,
         setEditingCell,
+        geometry: { colOffset, dataRowOffset },
     } = params;
 
     // 単一セル選択でない場合は処理しない

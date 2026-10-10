@@ -30,12 +30,7 @@ export function handleArrowNavigation<C extends readonly ColumnType[]>(
     const {
         setSelection,
         onSelectionChange,
-        colOffset,
-        minRow,
-        maxRow,
-        minCol,
-        maxCol,
-        fullMinCol,
+        geometry: { colOffset, minRow, maxRow, minCol, maxCol, fullMinCol },
     } = params;
 
     setSelection((prev) => {

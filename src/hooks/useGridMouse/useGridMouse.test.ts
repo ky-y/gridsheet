@@ -1,57 +1,11 @@
 import { describe, expect, it, vi } from "vitest";
 import { renderHook, act } from "@testing-library/react";
 import { useGridMouse } from "./useGridMouse.js";
-import type { GridMouseParams } from "./useGridMouse.js";
 import type { Selection } from "../../types.js";
-
-const defaultColumns = [
-    { key: "name", type: "string" as const },
-    { key: "age", type: "number" as const },
-    { key: "score", type: "number" as const },
-    { key: "active", type: "check" as const },
-    { key: "role", type: "string" as const },
-] as const;
-
-const defaultData = Array.from({ length: 10 }, (_, i) => ({
-    name: `User${i}`,
-    age: 20 + i,
-    score: 100 + i,
-    active: i % 2 === 0,
-    role: "member",
-}));
-
-function createParams(
-    overrides: Partial<GridMouseParams> = {},
-): GridMouseParams {
-    const container = document.createElement("div");
-    container.focus = vi.fn();
-    return {
-        selection: null,
-        setSelection: vi.fn((updater) => updater(null)),
-        setEditingCell: vi.fn(),
-        containerRef: { current: container },
-        onSelectionChange: vi.fn(),
-        minRow: 0,
-        fullMinCol: 0,
-        maxRow: 9,
-        maxCol: 4,
-        data: defaultData as any,
-        columns: defaultColumns as any,
-        colOffset: 0,
-        dataRowOffset: 0,
-        ...overrides,
-    };
-}
-
-function makeMouseEvent(
-    dataset: Record<string, string>,
-): React.MouseEvent<HTMLDivElement> {
-    const el = document.createElement("div");
-    for (const [k, v] of Object.entries(dataset)) {
-        el.dataset[k] = v;
-    }
-    return { target: el } as unknown as React.MouseEvent<HTMLDivElement>;
-}
+import {
+    createMouseParams as createParams,
+    makeMouseEvent,
+} from "../../test/handlerHelpers.js";
 
 describe("useGridMouse", () => {
     it("selects all on selectAll cell type click", () => {
@@ -75,7 +29,7 @@ describe("useGridMouse", () => {
         });
     });
 
-    it("selects column on title cell click", () => {
+    it("selects column on columnHeader cell click", () => {
         const setSelection = vi.fn(
             (updater: (prev: Selection | null) => Selection | null) =>
                 updater(null),
@@ -85,7 +39,7 @@ describe("useGridMouse", () => {
         );
         act(() => {
             result.current.handleMouseDown(
-                makeMouseEvent({ row: "0", col: "2", type: "title" }),
+                makeMouseEvent({ row: "0", col: "2", type: "columnHeader" }),
             );
         });
         const sel = setSelection.mock.calls[0]?.[0](null);
@@ -95,7 +49,7 @@ describe("useGridMouse", () => {
         });
     });
 
-    it("selects columns with span on header cell click", () => {
+    it("selects columns with colSpan on columnHeader cell click", () => {
         const setSelection = vi.fn(
             (updater: (prev: Selection | null) => Selection | null) =>
                 updater(null),
@@ -108,8 +62,8 @@ describe("useGridMouse", () => {
                 makeMouseEvent({
                     row: "1",
                     col: "1",
-                    type: "header",
-                    span: "3",
+                    type: "columnHeader",
+                    colSpan: "3",
                 }),
             );
         });
@@ -120,7 +74,7 @@ describe("useGridMouse", () => {
         });
     });
 
-    it("selects row on rowNumber cell click", () => {
+    it("selects row on rowHeader cell click", () => {
         const setSelection = vi.fn(
             (updater: (prev: Selection | null) => Selection | null) =>
                 updater(null),
@@ -130,7 +84,7 @@ describe("useGridMouse", () => {
         );
         act(() => {
             result.current.handleMouseDown(
-                makeMouseEvent({ row: "3", col: "0", type: "rowNumber" }),
+                makeMouseEvent({ row: "3", col: "0", type: "rowHeader" }),
             );
         });
         const sel = setSelection.mock.calls[0]?.[0](null);
@@ -264,7 +218,10 @@ describe("useGridMouse", () => {
         };
         const readonlyColumns = [
             { key: "name", type: "string" as const, readonly: true },
-            ...defaultColumns.slice(1),
+            { key: "age", type: "number" as const },
+            { key: "score", type: "number" as const },
+            { key: "active", type: "check" as const },
+            { key: "role", type: "string" as const },
         ] as any;
         const { result } = renderHook(() =>
             useGridMouse(

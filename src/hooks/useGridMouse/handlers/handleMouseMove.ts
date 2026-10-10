@@ -9,7 +9,12 @@ export function handleMouseMove<C extends readonly ColumnType[]>(
     e: MouseEvent<HTMLDivElement>,
     params: GridMouseHandlerParams<C>,
 ): void {
-    const { isDragging, dragMode, maxRow, maxCol, setSelection } = params;
+    const {
+        isDragging,
+        dragMode,
+        setSelection,
+        geometry: { maxRow, maxCol },
+    } = params;
 
     // mouseDown でドラッグ開始されていなければ何もしない
     if (!isDragging) return;
@@ -19,8 +24,9 @@ export function handleMouseMove<C extends readonly ColumnType[]>(
     if (!el) return;
     const addr = getCellAddress(e.target);
     if (!addr) return;
-    // colSpan を考慮（ヘッダー上をドラッグした際、span 分先まで含めて選択する）
-    const span = Number(el.dataset.span) || 1;
+    // 結合セルの上をドラッグした際は、結合ぶん先まで含めて選択する
+    const colSpan = Number(el.dataset.colSpan) || 1;
+    const rowSpan = Number(el.dataset.rowSpan) || 1;
     setSelection((prev) => {
         // selection は mouseDown で必ず設定されている前提だが、念のため null ガード
         if (!prev) return null;
@@ -28,14 +34,14 @@ export function handleMouseMove<C extends readonly ColumnType[]>(
             // 列ドラッグ: 行方向は常に最下端まで埋め、列方向のみ拡張
             return {
                 start: prev.start,
-                end: { row: maxRow, col: addr.col + span - 1 },
+                end: { row: maxRow, col: addr.col + colSpan - 1 },
             };
         }
         if (dragMode === "row") {
             // 行ドラッグ: 列方向は最右端まで埋め、行方向のみ拡張
             return {
                 start: prev.start,
-                end: { row: addr.row, col: maxCol },
+                end: { row: addr.row + rowSpan - 1, col: maxCol },
             };
         }
         // 通常セルドラッグ: 端点をホバー先のセルに合わせる（矩形選択）
