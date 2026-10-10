@@ -1,34 +1,30 @@
 /// <reference types="vitest/config" />
-import path, { resolve } from "node:path";
-import { fileURLToPath } from "node:url";
+import { join, resolve } from "node:path";
 import { storybookTest } from "@storybook/addon-vitest/vitest-plugin";
 import react from "@vitejs/plugin-react";
 import { playwright } from "@vitest/browser-playwright";
 import dts from "vite-plugin-dts";
 import { defineConfig } from "vitest/config";
 
-const dirname =
-    typeof __dirname !== "undefined"
-        ? __dirname
-        : path.dirname(fileURLToPath(import.meta.url));
+const dirname = import.meta.dirname;
 
 // More info at: https://storybook.js.org/docs/next/writing-tests/integrations/vitest-addon
 export default defineConfig({
-    plugins: [react(), dts({ rollupTypes: true })],
+    plugins: [react(), dts({ bundleTypes: true })],
     resolve: {
         alias: {
-            "@": resolve(__dirname, "src"),
+            "@": resolve(dirname, "src"),
         },
     },
     css: {},
     build: {
         lib: {
-            entry: resolve(__dirname, "src/index.ts"),
+            entry: resolve(dirname, "src/index.ts"),
             formats: ["es"],
             fileName: "index",
             cssFileName: "style",
         },
-        rollupOptions: {
+        rolldownOptions: {
             external: ["react", "react-dom", "react/jsx-runtime"],
         },
     },
@@ -49,7 +45,7 @@ export default defineConfig({
                     // The plugin will run tests for the stories defined in your Storybook config
                     // See options at: https://storybook.js.org/docs/next/writing-tests/integrations/vitest-addon#storybooktest
                     storybookTest({
-                        configDir: path.join(dirname, ".storybook"),
+                        configDir: join(dirname, ".storybook"),
                     }),
                 ],
                 test: {

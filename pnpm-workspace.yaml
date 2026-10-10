@@ -1,2 +1,8 @@
-onlyBuiltDependencies:
-  - esbuild
+allowBuilds:
+  esbuild: true
+  # Only needed for `sass --watch`, which this project doesn't use.
+  '@parcel/watcher': false
+
+overrides:
+  # typed-scss-modules pins esbuild ^0.17 (GHSA-67mh-4wv8-2f99), and Vite 8 expects ^0.27 || ^0.28.
+  esbuild: ^0.28.2
