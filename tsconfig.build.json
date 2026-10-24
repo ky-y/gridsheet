@@ -1,0 +1,15 @@
+{
+    "extends": "./tsconfig.json",
+    "compilerOptions": {
+        "emitDeclarationOnly": true
+    },
+    "exclude": [
+        "node_modules",
+        "dist",
+        "src/playground",
+        "src/**/*.test.ts",
+        "src/**/*.test.tsx",
+        "src/**/*.stories.tsx",
+        "src/test"
+    ]
+}
