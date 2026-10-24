@@ -40,7 +40,7 @@
     ],
     "scripts": {
         "dev": "vite -c vite.playground.config.ts",
-        "build": "tsc --noEmit && vite build",
+        "build": "tsc --noEmit && vite build && tsc -p tsconfig.build.json",
         "scss:generate": "typed-scss-modules src --exportType default --nameFormat none --allowArbitraryExtensions",
         "scss:watch": "typed-scss-modules src --exportType default --nameFormat none --allowArbitraryExtensions --watch",
         "test": "vitest",
@@ -57,7 +57,6 @@
         "@changesets/changelog-github": "^1.0.1",
         "@changesets/cli": "^3.0.3",
         "@chromatic-com/storybook": "^5.4.0",
-        "@microsoft/api-extractor": "^7.59.4",
         "@storybook/addon-a11y": "^10.6.1",
         "@storybook/addon-docs": "^10.6.1",
         "@storybook/addon-onboarding": "^10.6.1",
@@ -78,9 +77,8 @@
         "sass": "^1.105.1",
         "storybook": "^10.6.1",
         "typed-scss-modules": "^8.1.1",
-        "typescript": "^6.0.3",
+        "typescript": "^7.0.2",
         "vite": "^8.3.4",
-        "vite-plugin-dts": "^5.1.2",
         "vitest": "^5.0.3"
     },
     "peerDependencies": {

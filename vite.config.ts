@@ -3,14 +3,13 @@ import { join, resolve } from "node:path";
 import { storybookTest } from "@storybook/addon-vitest/vitest-plugin";
 import react from "@vitejs/plugin-react";
 import { playwright } from "@vitest/browser-playwright";
-import dts from "vite-plugin-dts";
 import { defineConfig } from "vitest/config";
 
 const dirname = import.meta.dirname;
 
 // More info at: https://storybook.js.org/docs/next/writing-tests/integrations/vitest-addon
 export default defineConfig({
-    plugins: [react(), dts({ bundleTypes: true })],
+    plugins: [react()],
     resolve: {
         alias: {
             "@": resolve(dirname, "src"),
