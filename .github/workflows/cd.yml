@@ -31,7 +31,7 @@ jobs:
 
             - uses: actions/setup-node@v7
               with:
-                  node-version: '24'
+                  node-version: "24"
                   package-manager-cache: false
 
             - name: Install Dependencies
@@ -57,7 +57,7 @@ jobs:
 
             - uses: actions/setup-node@v7
               with:
-                  node-version: '24'
+                  node-version: "24"
                   package-manager-cache: false
 
             - name: Install Dependencies
@@ -66,8 +66,8 @@ jobs:
             - name: Create or update Release PR
               uses: changesets/action/version@v2
               with:
-                  pr-title: 'chore: release'
-                  commit-message: 'chore: release'
+                  pr-title: "chore: release"
+                  commit-message: "chore: release"
               env:
                   # Used by @changesets/changelog-github.
                   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -89,7 +89,7 @@ jobs:
 
             - uses: actions/setup-node@v7
               with:
-                  node-version: '24'
+                  node-version: "24"
                   package-manager-cache: false
 
             - name: Install Dependencies
@@ -126,7 +126,7 @@ jobs:
 
             - uses: actions/setup-node@v7
               with:
-                  node-version: '24'
+                  node-version: "24"
                   package-manager-cache: false
 
             - name: Install Dependencies
